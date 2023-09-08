@@ -1,0 +1,62 @@
+
+.cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    $cell: 50px;
+    width: $cell;
+    height: $cell;
+    border: 1px solid #a8a8a8;
+    background-color: rgba(255, 255, 255, 0.7);
+
+    font-size: 20px;
+    font-family: sans-serif;
+
+    &.cell_highlighted {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &__inner {
+        width: 50%;
+        height: 50%;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.1)
+    }
+
+    &__select {
+        display: flex;
+        position: absolute;
+        z-index: 2;
+        left: -100%;
+        top: -100%;
+        width: 300%;
+        height: 300%;
+        border-radius: 50%;
+        background-color: #fff;
+    }
+
+    &__select-item {
+        position: absolute;
+        $square: 25%;
+        width: $square;
+        height: $square;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        border: 1px solid transparent;
+
+        cursor: pointer;
+
+        &:hover {
+            border-color: black;
+        }
+
+        &.cell__select-item_close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
