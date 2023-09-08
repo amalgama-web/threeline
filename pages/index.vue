@@ -9,9 +9,9 @@
         input.game__counts-text(v-model="fillText")
         div
             button.btn.mr-8(@click="highlight") Подсветить
-            button.btn.btn_err(@click="unHighlight") Убрать подсветку
-            button.btn(@click="applyHighlight") Применить
-            button.btn(@click="getDown") Сдвинуть
+            button.btn.mr-8(@click="applyHighlight") Применить
+            button.btn.mr-8(@click="getDown") Сдвинуть
+            button.btn.mr-8(@click="makeFullStep") =>
         div
             button.btn.mr-8.mr-8(@click="save") Сохранить состояние
             button.btn.btn_err.mr-8(@click="load") Загрузить состояние
@@ -80,6 +80,8 @@ export default {
             selectorType: null,
             postfix: '',
             fillText: '',
+
+            //stesp
         }
     },
     computed: {
@@ -137,10 +139,24 @@ export default {
         getDown() {
             gridGetDown(this.grid)
         },
+        makeFullStep() {
+            highlightHLines(this.grid, findHLines(this.grid))
+            highlightVLines(this.grid, findVLines(this.grid))
+            highlightSquare(this.grid, findSquare(this.grid))
+
+            setTimeout(() => {
+                removeHighlighted(this.grid)
+                setTimeout(() => {
+                    gridGetDown(this.grid)
+                }, 200);
+            }, 200);
+
+        },
         fillFromText() {
             let i = 0;
+            const clearedText = this.fillText.replace(/ /g, '');
             this.grid = this.grid.map(row => row.map(cell => ({
-                type: colorTypePairs[this.fillText[i++]],
+                type: colorTypePairs[clearedText[i++]],
                 highlighted: false,
             })))
         },

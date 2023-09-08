@@ -63,10 +63,12 @@ export default {
                 return null;
             }
 
-            return imageTypePairs[this.type] ? {
+            return bgs[this.type] ? {
                 backgroundImage: bgs[this.type]
             } : {
-                backgroundColor: typeColors[this.type]
+                backgroundColor: typeColors[this.type],
+                width: '40%',
+                height: '40%'
             }
         }
     },
