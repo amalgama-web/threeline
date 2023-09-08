@@ -20,6 +20,14 @@ export const colorTypePairs = {
     'ч': 5,
 }
 
+export const imageTypePairs = {
+    0: 'coin',
+    1: 'case',
+    2: 'wallet',
+    3: 'pig',
+    4: 'hourglass',
+}
+
 export function findHLines(grid) {
     let findLines = [];
 
@@ -243,7 +251,6 @@ export function getExistedResults(grid) {
             }
         }
     }
-    debugger
     grid = JSON.parse(JSON.stringify(initialGrid))
 
     return variants;

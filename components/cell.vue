@@ -18,7 +18,21 @@
 </template>
 <script>
 
-import { typeColors } from '~/logic/find-figures';
+import icon_coin from 'assets/coin.png'
+import icon_case from 'assets/case.png'
+import icon_wallet from 'assets/wallet.png'
+import icon_hourglass from 'assets/hourglass.png'
+import icon_pig from 'assets/pig.png'
+
+const bgs = [
+    `url(${icon_coin})`,
+    `url(${icon_case})`,
+    `url(${icon_wallet})`,
+    `url(${icon_pig})`,
+    `url(${icon_hourglass})`,
+]
+
+import { typeColors, imageTypePairs } from '~/logic/find-figures';
 export default {
     data() {
         return {
@@ -48,7 +62,10 @@ export default {
             if (this.type === null) {
                 return null;
             }
-            return {
+
+            return imageTypePairs[this.type] ? {
+                backgroundImage: bgs[this.type]
+            } : {
                 backgroundColor: typeColors[this.type]
             }
         }

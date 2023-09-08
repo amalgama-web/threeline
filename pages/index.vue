@@ -3,7 +3,9 @@
     .game__counts
         | Total: {{points}}
         //button.btn(@click="generate") Сгенерировать
-        button.btn(@click="fillFromText") Заполнить
+        div
+            button.btn.mr-8(@click="fillFromText") Заполнить
+            button.btn(@click="clearFillText") Очистить текст
         input.game__counts-text(v-model="fillText")
         div
             button.btn.mr-8(@click="highlight") Подсветить
@@ -136,15 +138,14 @@ export default {
             gridGetDown(this.grid)
         },
         fillFromText() {
-            console.log(this.fillText)
-            console.log(this.fillText[0])
             let i = 0;
             this.grid = this.grid.map(row => row.map(cell => ({
                 type: colorTypePairs[this.fillText[i++]],
-                // type: getRandomInt(cellsTypesCount),
                 highlighted: false,
             })))
-
+        },
+        clearFillText() {
+            this.fillText = ''
         }
     },
     components: {
