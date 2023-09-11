@@ -122,7 +122,7 @@ export function findSquare(grid) {
     let findSquares = [];
 
     for (let r = 0; r < gridHeight - 1; r++) {
-        for (let c = 0; c < gridWidth -1 ; c++) {
+        for (let c = 0; c < gridWidth - 1; c++) {
             const currentType = grid[r][c].type;
 
             if (currentType !== undefined &&
@@ -130,7 +130,7 @@ export function findSquare(grid) {
                 grid[r][c + 1].type === currentType &&
                 grid[r + 1][c + 1].type === currentType
             ) {
-               findSquares.push([r,c])
+                findSquares.push([r, c])
             }
         }
     }
@@ -140,17 +140,18 @@ export function findSquare(grid) {
 
 
 // highlights
-export function highlightHLines(grid, linesConfigs) {
+export function highlightHLines(grid, linesConfigs, propName = 'highlighted') {
     linesConfigs.forEach(config => {
         for (let i = config.coordinates[1]; i > config.coordinates[1] - config.length; i--) {
-            grid[config.coordinates[0]][i].highlighted = true;
+            grid[config.coordinates[0]][i][propName] = true;
         }
     })
 }
-export function highlightVLines(grid, linesConfigs) {
+
+export function highlightVLines(grid, linesConfigs, propName = 'highlighted') {
     linesConfigs.forEach(config => {
         for (let i = config.coordinates[0]; i > config.coordinates[0] - config.length; i--) {
-            grid[i][config.coordinates[1]].highlighted = true;
+            grid[i][config.coordinates[1]][propName] = true;
         }
     })
 }
@@ -205,7 +206,6 @@ export function getExistedResults(grid) {
                         points: points
                     }
                     variants.push(variant);
-                    console.log(`Row: ${r}, Col: ${c}, ${c + 1}, Points: ${points}`)
                 }
 
 
@@ -243,7 +243,6 @@ export function getExistedResults(grid) {
                         },
                         points: points
                     });
-                    console.log(`Row: ${r}, ${r + 1}, Col: ${c}, Points: ${points}`)
                 }
 
                 exampleGrid = JSON.parse(JSON.stringify(initialGrid))
@@ -290,6 +289,7 @@ export function applyVariant(grid, variant) {
     grid[variant.cell1.r][variant.cell1.c].type = grid[variant.cell2.r][variant.cell2.c].type
     grid[variant.cell2.r][variant.cell2.c].type = tmpType
 }
+
 export function gridGetDown(grid) {
     for (let r = 0; r < gridHeight; r++) {
         for (let c = 0; c < gridWidth; c++) {
@@ -307,4 +307,27 @@ function downColumn(grid, row, col) {
     grid[0][col].type = undefined
 }
 
+
+export function findCrosses(hLines, vLines) {
+    console.log('find line cross')
+    console.log(hLines, vLines)
+    let matrixCrosses = Array(7).fill(Array(6).fill(null)).map(row => row.map(cell => ({
+            isInHLine: false,
+            isInVLine: false,
+            isInSquare: false
+        }
+    )))
+    highlightHLines(matrixCrosses, hLines, 'isInHLine')
+    highlightVLines(matrixCrosses, vLines, 'isInVLine')
+    const sun = []
+    matrixCrosses.forEach((row, rIndex) => {
+        row.forEach((cell, cIndex) => {
+            if (cell.isInHLine && cell.isInVLine) {
+                sun.push(rIndex, cIndex)
+            }
+        })
+    })
+    console.log(sun)
+    return matrixCrosses
+}
 

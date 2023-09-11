@@ -14,10 +14,12 @@
         .gap-15.mb-24
             div
                 button.btn.mr-8(@click="fillFromText") Заполнить
-                button.btn.btn_err(@click="clearFillText") Очистить текст
+                button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
+                button.btn.mr-8(@click="fillRandom") Рандом
             input.game__buttons-input(v-model="fillText")
         .mb-24
-            button.btn.mr-8(@click="highlight") Подсв
+            button.btn.mr-8(@click="highlight") Пдсв
+            button.btn.mr-8(@click="unHighlight") Убр пдсв
             button.btn.mr-8(@click="applyHighlight") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
@@ -78,6 +80,7 @@ import {
     gridGetDown,
     typeColors,
     colorTypePairs,
+    findCrosses,
 } from '~/logic/find-figures';
 
 
@@ -115,6 +118,14 @@ export default {
             this.grid[rowIndex][cellIndex].type = type;
         },
         highlight() {
+            const hLines = findHLines(this.grid)
+            const vLines = findVLines(this.grid)
+            const squares = findSquare(this.grid)
+
+            // console.log(hLines)
+            // console.log(vLines)
+            // console.log(squares)
+            console.log(findCrosses(hLines, vLines))
             highlightHLines(this.grid, findHLines(this.grid))
             highlightVLines(this.grid, findVLines(this.grid))
             highlightSquare(this.grid, findSquare(this.grid))
@@ -193,6 +204,15 @@ export default {
         clearFillText() {
             this.fillText = ''
         },
+        fillRandom() {
+            this.grid = this.grid.map(row => row.map(cell => ({
+                type: getRandomInt(5),
+                highlighted: false,
+            })))
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            }
+        }
 
     },
 
