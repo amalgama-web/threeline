@@ -169,28 +169,27 @@ export function getExistedResults(grid) {
     const variants = [];
 
     const initialGrid = JSON.parse(JSON.stringify(grid))
-    console.log(grid)
-    console.log(initialGrid)
+    let exampleGrid = JSON.parse(JSON.stringify(grid))
 
     for (let r = 0; r < gridHeight; r++) {
         for (let c = 0; c < gridWidth; c++) {
 
             if (c < gridWidth - 1) {
-                applyVariant(grid, {
+                applyVariant(exampleGrid, {
                     cell1: {r: r, c: c},
                     cell2: {r: r, c: c + 1}
                 })
-                highlight(grid)
-                let points = getTotalPoints(grid);
+                highlight(exampleGrid)
+                let points = getTotalPoints(exampleGrid);
 
                 if (points) {
                     let additionalPoints = 0;
                     do {
                         additionalPoints = 0;
-                        removeHighlighted(grid);
-                        gridGetDown(grid);
-                        highlight(grid);
-                        additionalPoints = getTotalPoints(grid);
+                        removeHighlighted(exampleGrid);
+                        gridGetDown(exampleGrid);
+                        highlight(exampleGrid);
+                        additionalPoints = getTotalPoints(exampleGrid);
                         points += additionalPoints;
                     } while (additionalPoints !== 0)
 
@@ -211,25 +210,25 @@ export function getExistedResults(grid) {
 
 
                 // back
-                grid = JSON.parse(JSON.stringify(initialGrid))
+                exampleGrid = JSON.parse(JSON.stringify(initialGrid))
             }
 
             if (r < gridHeight - 1) {
-                applyVariant(grid, {
+                applyVariant(exampleGrid, {
                     cell1: {r: r, c: c},
                     cell2: {r: r + 1, c: c}
                 })
-                highlight(grid)
-                let points = getTotalPoints(grid);
+                highlight(exampleGrid)
+                let points = getTotalPoints(exampleGrid);
 
                 if (points) {
                     let additionalPoints = 0;
                     do {
                         additionalPoints = 0;
-                        removeHighlighted(grid);
-                        gridGetDown(grid);
-                        highlight(grid);
-                        additionalPoints = getTotalPoints(grid);
+                        removeHighlighted(exampleGrid);
+                        gridGetDown(exampleGrid);
+                        highlight(exampleGrid);
+                        additionalPoints = getTotalPoints(exampleGrid);
                         points += additionalPoints;
                     } while (additionalPoints !== 0)
 
@@ -247,11 +246,11 @@ export function getExistedResults(grid) {
                     console.log(`Row: ${r}, ${r + 1}, Col: ${c}, Points: ${points}`)
                 }
 
-                grid = JSON.parse(JSON.stringify(initialGrid))
+                exampleGrid = JSON.parse(JSON.stringify(initialGrid))
             }
         }
     }
-    grid = JSON.parse(JSON.stringify(initialGrid))
+    exampleGrid = JSON.parse(JSON.stringify(initialGrid))
 
     return variants;
 }

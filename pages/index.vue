@@ -1,25 +1,39 @@
 <template lang="pug">
 .game
-    .game__counts
-        | Total: {{points}}
-        //button.btn(@click="generate") Сгенерировать
-        div
-            button.btn.mr-8(@click="fillFromText") Заполнить
-            button.btn(@click="clearFillText") Очистить текст
-        input.game__counts-text(v-model="fillText")
-        div
-            button.btn.mr-8(@click="highlight") Подсветить
-            button.btn.mr-8(@click="applyHighlight") Применить
-            button.btn.mr-8(@click="getDown") Сдвинуть
+    .game__history
+        .step-list
+            .step-item(v-for="step in steps")
+                div
+                    span.step-item__right.link.link_red(@click="removeStamp(step.stepChain)") Rmv
+                    span.step-item__left  {{step.stepChain}}
+                div
+                    span.step-item__right.link(@click="loadStamp(step.stepChain)") Load
+
+
+    .game__buttons
+        .gap-15.mb-24
+            div
+                button.btn.mr-8(@click="fillFromText") Заполнить
+                button.btn.btn_err(@click="clearFillText") Очистить текст
+            input.game__buttons-input(v-model="fillText")
+        .mb-24
+            button.btn.mr-8(@click="highlight") Подсв
+            button.btn.mr-8(@click="applyHighlight") Прим
+            button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
+        .mb-24
+            button.btn.mr-8.mr-8(@click="saveStep") Сохранить шаг
+            input(v-model="customLinkName")
+            //button.btn.btn_err.mr-8(@click="loadLastStamp") Загрузить состояние
+            //input(v-model="postfix")
         div
-            button.btn.mr-8.mr-8(@click="save") Сохранить состояние
-            button.btn.btn_err.mr-8(@click="load") Загрузить состояние
-            input(v-model="postfix")
-        button.btn(@click="calc") Просчитать варианты
+            button.btn.btn_scs(@click="calc") Просчитать варианты
 
         .game__variants
-            .game__variants-item(v-for="variant in existedVariants" @click="applyVariant(variant)") {{variant}}
+            .game__variants-item(
+                v-for="variant in existedVariants"
+                @click="applyVariant(variant)"
+            ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
 
     .game__grid
         .grid.mr-8
@@ -37,7 +51,7 @@
                 )
         .game__selectors
             CellComponent(
-                v-for="(item, index) in Array(cellsTypesCount)"
+                v-for="(item, index) in Array(cellsTypesCount + 2)"
                 :type="index"
                 :is-selector="true"
                 @activate-selector="selectorType = selectorType === index ? null : index"
@@ -73,15 +87,21 @@ export default {
     data() {
         return {
             grid: Array(gridHeight).fill(Array(gridWidth).fill(0, 0), 0),
+
             gridHeight: gridHeight,
             gridWidth: gridWidth,
+
             existedVariants: [],
             cellsTypesCount: cellsTypesCount,
             selectorType: null,
             postfix: '',
             fillText: '',
 
-            //stesp
+            //steps
+            steps: [],
+            stepAction: null,
+            stepChain: '_',
+            customLinkName: '',
         }
     },
     computed: {
@@ -89,25 +109,10 @@ export default {
             return getTotalPoints(this.grid)
         }
     },
-    mounted() {
-        // generate types
-        this.grid = this.grid.map(row => row.map(cell => ({
-            type: undefined,
-            // type: getRandomInt(cellsTypesCount),
-            highlighted: false,
-        })))
-    },
+
     methods: {
         setCellType(type, rowIndex, cellIndex) {
             this.grid[rowIndex][cellIndex].type = type;
-        },
-        generate() {
-            this.grid.forEach(row => {
-                row.forEach(cell => {
-                    cell.type = getRandomInt(cellsTypesCount);
-                    cell.highlighted = false;
-                })
-            })
         },
         highlight() {
             highlightHLines(this.grid, findHLines(this.grid))
@@ -121,16 +126,41 @@ export default {
                 })
             })
         },
-        save() {
-            window.localStorage.setItem(`grid${this.postfix}`, JSON.stringify(this.grid))
+        saveStep() {
+            if (this.customLinkName !== '') {
+                this.stepChain += `${this.customLinkName}_`;
+            } else {
+                if (this.stepAction !== null) {
+
+                    this.stepChain += `${this.stepAction}_`;
+                }
+            }
+            this.customLinkName = '';
+
+
+
+            const stampName = `grid${this.stepChain}`;
+
+            this.steps.push({
+                stepChain: this.stepChain
+            })
+            this.stepAction = null;
+            window.localStorage.setItem(stampName, JSON.stringify(this.grid))
         },
-        load() {
-            this.grid = JSON.parse(window.localStorage.getItem(`grid${this.postfix}`))
+        loadStamp(chain) {
+            this.grid = JSON.parse(window.localStorage.getItem(`grid${chain}`));
+            this.stepChain = chain;
+        },
+        removeStamp(chain) {
+            this.steps = this.steps.filter(item => item.stepChain !== chain)
+            window.localStorage.removeItem(`grid${chain}`)
+
         },
         calc() {
             this.existedVariants = getExistedResults(this.grid);
         },
         applyVariant(variant) {
+            this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
             applyVariant(this.grid, variant);
         },
         applyHighlight() {
@@ -162,15 +192,24 @@ export default {
         },
         clearFillText() {
             this.fillText = ''
-        }
+        },
+
     },
+
+    mounted() {
+        this.grid = this.grid.map(row => row.map(cell => ({
+            type: undefined,
+            highlighted: false,
+        })))
+
+        let LSKeys = Object.keys(localStorage).filter(item => item.includes('grid')).map(item => item.replace('grid',''));
+        LSKeys = LSKeys.sort((item1, item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
+        this.steps = LSKeys.map(item => ({stepChain: item}))
+    },
+
     components: {
         CellComponent
     }
-}
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
 }
 
 </script>

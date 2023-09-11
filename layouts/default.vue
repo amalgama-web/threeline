@@ -31,4 +31,34 @@ body {
 .mr-8 {
     margin-right: 8px;
 }
+.mb-20 {
+    margin-bottom: 20px;
+}
+.mb-24 {
+    margin-bottom: 24px;
+}
+.gap-15 {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 15px;
+}
+.link {
+    color: cornflowerblue;
+    cursor: pointer;
+    &:hover {
+        color: black;
+    }
+    &:active {
+        color: cornflowerblue;
+    }
+    &_red {
+        color: indianred;
+        &:hover {
+            color: black;
+        }
+        &:active {
+            color: indianred;
+        }
+    }
+}
 </style>
