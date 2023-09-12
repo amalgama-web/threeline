@@ -18,9 +18,9 @@
                 button.btn.mr-8(@click="fillRandom") Рандом
             input.game__buttons-input(v-model="fillText")
         .mb-24
-            button.btn.mr-8(@click="highlight") Пдсв
-            button.btn.mr-8(@click="unHighlight") Убр пдсв
-            button.btn.mr-8(@click="applyHighlight") Прим
+            button.btn.mr-8(@click="highlightCombinations") Пдсв
+            button.btn.mr-8(@click="resetMatrix") Убр пдсв
+            button.btn.mr-8(@click="applyCombinations") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
         .mb-24
@@ -72,25 +72,15 @@ import CellComponent from '/components/cell.vue'
 import {
     gridWidth,
     gridHeight,
-    findVLines,
-    findHLines,
-    findSquare,
-    highlightHLines,
-    highlightVLines,
-    highlightSquare,
     getExistedResults,
     getTotalPoints,
     applyVariant,
-    removeHighlighted,
-    gridGetDown,
-    typeColors,
     colorTypePairs,
-    markDeletedForSun,
-    markHLinesInMatrix,
-    markVLinesInMatrix,
-    highlightCells,
-    disableCrossedLines,
-    markDeletedForOrdinaryLines
+
+    highlightCombinations,
+    applyCombinations,
+    resetMatrix,
+    gridGetDown,
 } from '~/logic/find-figures';
 
 
@@ -124,69 +114,39 @@ export default {
     },
 
     methods: {
+        // cell defines and loads
         setCellType(type, rowIndex, cellIndex) {
             this.grid[rowIndex][cellIndex].type = type;
         },
-        highlight() {
-            const hLines = findHLines(this.grid)
-            const vLines = findVLines(this.grid)
-            // todo squares
-            // const squares = findSquare(this.grid)
 
-            markHLinesInMatrix(this.grid ,hLines)
-            markVLinesInMatrix(this.grid, vLines)
-
-
-            disableCrossedLines(this.grid, hLines, vLines)
-
-            // highlight all cells in lines
-            highlightCells(this.grid)
-
-            markDeletedForOrdinaryLines(this.grid, hLines, vLines)
-            markDeletedForSun(this.grid)
-
+        //  combinations
+        highlightCombinations() {
+            highlightCombinations(this.grid)
+        },
+        applyCombinations() {
+            applyCombinations(this.grid)
+            resetMatrix(this.grid)
+        },
+        getDown() {
+            gridGetDown(this.grid)
         },
         makeFullStep() {
-            highlightHLines(this.grid, findHLines(this.grid))
-            highlightVLines(this.grid, findVLines(this.grid))
-            highlightSquare(this.grid, findSquare(this.grid))
+            highlightCombinations(this.grid)
 
             setTimeout(() => {
-                removeHighlighted(this.grid)
+                applyCombinations(this.grid)
+                resetMatrix(this.grid)
                 setTimeout(() => {
                     gridGetDown(this.grid)
                 }, 200);
             }, 200);
-
         },
-        unHighlight() {
-            this.grid.forEach(row => {
-                row.forEach(cell => {
-                    cell.highlighted = false;
-                })
-            })
+        resetMatrix() {
+            resetMatrix(this.grid)
         },
-        saveStep() {
-            if (this.customLinkName !== '') {
-                this.stepChain += `${this.customLinkName}_`;
-            } else {
-                if (this.stepAction !== null) {
-
-                    this.stepChain += `${this.stepAction}_`;
-                }
-            }
-            this.customLinkName = '';
 
 
-
-            const stampName = `grid${this.stepChain}`;
-
-            this.steps.push({
-                stepChain: this.stepChain
-            })
-            this.stepAction = null;
-            window.localStorage.setItem(stampName, JSON.stringify(this.grid))
-        },
+        // stamps
         loadStamp(chain) {
             this.grid = JSON.parse(window.localStorage.getItem(`grid${chain}`));
             this.stepChain = chain;
@@ -203,12 +163,7 @@ export default {
             this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
             applyVariant(this.grid, variant);
         },
-        applyHighlight() {
-            removeHighlighted(this.grid)
-        },
-        getDown() {
-            gridGetDown(this.grid)
-        },
+
 
         fillFromText() {
             let i = 0;
@@ -237,7 +192,7 @@ export default {
 
     mounted() {
         this.grid = this.grid.map(row => row.map(cell => ({
-            type: undefined,
+            type: null,
             highlighted: false,
             deleted: false,
             vLine: null,

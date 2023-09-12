@@ -28,6 +28,36 @@ export const imageTypePairs = {
     4: 'hourglass',
 }
 
+export function highlightCombinations(matrix) {
+    const hLines = findHLines(matrix)
+    const vLines = findVLines(matrix)
+    // todo squares
+    // const squares = findSquare(matrix)
+
+    markHLinesInMatrix(matrix ,hLines)
+    markVLinesInMatrix(matrix, vLines)
+
+
+    disableCrossedLines(matrix, hLines, vLines)
+
+    // highlight all cells in lines
+    highlightCells(matrix)
+
+    markDeletedForOrdinaryLines(matrix, hLines, vLines)
+    markDeletedForSun(matrix)
+}
+
+export function applyCombinations(matrix) {
+    matrix.forEach(row => {
+        row.forEach(cell => {
+            if (cell.deleted === true) {
+                cell.type = null;
+            }
+        })
+    })
+}
+
+
 export function findHLines(grid) {
     let findLines = {};
     let currentLine = 1;
@@ -135,11 +165,6 @@ export function findVLines(grid) {
 
 }
 
-export function getTotalPoints(grid) {
-    return grid.reduce((sum, row) => sum + row.reduce((sum, cell) => sum + cell.highlighted, 0), 0)
-}
-
-
 export function findSquare(grid) {
     let findSquares = [];
 
@@ -159,7 +184,12 @@ export function findSquare(grid) {
 
     return findSquares;
 }
-// highlights
+
+
+export function getTotalPoints(grid) {
+    return grid.reduce((sum, row) => sum + row.reduce((sum, cell) => sum + cell.highlighted, 0), 0)
+}
+
 
 export function highlightHLines(grid, linesConfigs, propName = 'highlighted') {
     linesConfigs.forEach(config => {
@@ -281,25 +311,18 @@ function highlight(grid) {
     highlightSquare(grid, findSquare(grid))
 }
 
-function resetHighlight(grid) {
-    grid.forEach(row => {
+export function resetMatrix(matrix) {
+    matrix.forEach(row => {
         row.forEach(cell => {
             cell.highlighted = false;
+            cell.deleted = false;
+            cell.hLine = null;
+            cell.vLine = null;
+            cell.square = null;
         })
     })
 }
 
-
-export function removeHighlighted(grid) {
-    grid.forEach(row => {
-        row.forEach(cell => {
-            if (cell.highlighted === true) {
-                cell.type = undefined;
-                cell.highlighted = false;
-            }
-        })
-    })
-}
 
 export function applyVariant(grid, variant) {
     let tmpType = grid[variant.cell1.r][variant.cell1.c].type
@@ -310,7 +333,7 @@ export function applyVariant(grid, variant) {
 export function gridGetDown(grid) {
     for (let r = 0; r < gridHeight; r++) {
         for (let c = 0; c < gridWidth; c++) {
-            if (grid[r][c].type === undefined) {
+            if (grid[r][c].type === null) {
                 downColumn(grid, r, c)
             }
         }
