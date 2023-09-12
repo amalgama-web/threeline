@@ -187,7 +187,7 @@ export function findSquare(grid) {
 
 
 export function getTotalPoints(grid) {
-    return grid.reduce((sum, row) => sum + row.reduce((sum, cell) => sum + cell.highlighted, 0), 0)
+    return grid.reduce((sum, row) => sum + row.reduce((sum, cell) => sum + cell.deleted, 0), 0)
 }
 
 
@@ -217,90 +217,72 @@ export function highlightSquare(grid, squareConfigs) {
     })
 }
 
-export function getExistedResults(grid) {
+export function getExistedVariants(grid) {
     const variants = [];
 
-    const initialGrid = JSON.parse(JSON.stringify(grid))
-    let exampleGrid = JSON.parse(JSON.stringify(grid))
+    const initialMatrix = JSON.parse(JSON.stringify(grid))
+    let variationMatrix = JSON.parse(JSON.stringify(grid))
 
     for (let r = 0; r < gridHeight; r++) {
         for (let c = 0; c < gridWidth; c++) {
 
-            if (c < gridWidth - 1) {
-                applyVariant(exampleGrid, {
-                    cell1: {r: r, c: c},
-                    cell2: {r: r, c: c + 1}
-                })
-                highlight(exampleGrid)
-                let points = getTotalPoints(exampleGrid);
+            // vertical and horizontal swaps
+            const changeVariants = [
+                {
+                    condition: c < gridWidth - 1,
+                    rowInc: 0,
+                    colInc: 1
+                },
+                {
+                    condition: r < gridHeight - 1,
+                    rowInc: 1,
+                    colInc: 0
+                }
+            ]
 
-                if (points) {
-                    let additionalPoints = 0;
-                    do {
-                        additionalPoints = 0;
-                        removeHighlighted(exampleGrid);
-                        gridGetDown(exampleGrid);
-                        highlight(exampleGrid);
-                        additionalPoints = getTotalPoints(exampleGrid);
-                        points += additionalPoints;
-                    } while (additionalPoints !== 0)
+            changeVariants.forEach(variant => {
+                if (variant.condition) {
+                    applyVariant(variationMatrix, {
+                        cell1: {r: r, c: c},
+                        cell2: {r: r + variant.rowInc, c: c + variant.colInc}
+                    })
 
-                    const variant = {
-                        cell1: {
-                            r,
-                            c
-                        },
-                        cell2: {
-                            r: r,
-                            c: c + 1
-                        },
-                        points: points
+                    highlightCombinations(variationMatrix)
+
+                    let points = getTotalPoints(variationMatrix);
+
+                    if (points) {
+                        let additionalPoints = 0;
+                        do {
+                            additionalPoints = 0;
+                            applyCombinations(variationMatrix)
+                            resetMatrix(variationMatrix);
+                            gridGetDown(variationMatrix);
+                            highlightCombinations(variationMatrix);
+                            additionalPoints = getTotalPoints(variationMatrix);
+                            points += additionalPoints;
+                        } while (additionalPoints !== 0)
+
+                        const variant = {
+                            cell1: {
+                                r,
+                                c
+                            },
+                            cell2: {
+                                r: r + variant.rowInc,
+                                c: c + variant.colInc
+                            },
+                            points: points
+                        }
+                        variants.push(variant);
                     }
-                    variants.push(variant);
+
+                    variationMatrix = JSON.parse(JSON.stringify(initialMatrix))
                 }
 
-
-                // back
-                exampleGrid = JSON.parse(JSON.stringify(initialGrid))
-            }
-
-            if (r < gridHeight - 1) {
-                applyVariant(exampleGrid, {
-                    cell1: {r: r, c: c},
-                    cell2: {r: r + 1, c: c}
-                })
-                highlight(exampleGrid)
-                let points = getTotalPoints(exampleGrid);
-
-                if (points) {
-                    let additionalPoints = 0;
-                    do {
-                        additionalPoints = 0;
-                        removeHighlighted(exampleGrid);
-                        gridGetDown(exampleGrid);
-                        highlight(exampleGrid);
-                        additionalPoints = getTotalPoints(exampleGrid);
-                        points += additionalPoints;
-                    } while (additionalPoints !== 0)
-
-                    variants.push({
-                        cell1: {
-                            r,
-                            c
-                        },
-                        cell2: {
-                            r: r + 1,
-                            c
-                        },
-                        points: points
-                    });
-                }
-
-                exampleGrid = JSON.parse(JSON.stringify(initialGrid))
-            }
+            })
         }
     }
-    exampleGrid = JSON.parse(JSON.stringify(initialGrid))
 
     return variants;
 }

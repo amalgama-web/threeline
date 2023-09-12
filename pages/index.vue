@@ -26,10 +26,8 @@
         .mb-24
             button.btn.mr-8.mr-8(@click="saveStep") Сохранить шаг
             input(v-model="customLinkName")
-            //button.btn.btn_err.mr-8(@click="loadLastStamp") Загрузить состояние
-            //input(v-model="postfix")
         div
-            button.btn.btn_scs(@click="calc") Просчитать варианты
+            button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
         .game__variants
             .game__variants-item(
@@ -72,7 +70,7 @@ import CellComponent from '/components/cell.vue'
 import {
     gridWidth,
     gridHeight,
-    getExistedResults,
+    getExistedVariants,
     getTotalPoints,
     applyVariant,
     colorTypePairs,
@@ -146,7 +144,36 @@ export default {
         },
 
 
+        getVariants() {
+            this.existedVariants = getExistedVariants(this.grid);
+        },
+        applyVariant(variant) {
+            this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
+            applyVariant(this.grid, variant);
+        },
+
         // stamps
+        saveStep() {
+            if (this.customLinkName !== '') {
+                this.stepChain += `${this.customLinkName}_`;
+            } else {
+                if (this.stepAction !== null) {
+
+                    this.stepChain += `${this.stepAction}_`;
+                }
+            }
+            this.customLinkName = '';
+
+
+
+            const stampName = `grid${this.stepChain}`;
+
+            this.steps.push({
+                stepChain: this.stepChain
+            })
+            this.stepAction = null;
+            window.localStorage.setItem(stampName, JSON.stringify(this.grid))
+        },
         loadStamp(chain) {
             this.grid = JSON.parse(window.localStorage.getItem(`grid${chain}`));
             this.stepChain = chain;
@@ -154,17 +181,7 @@ export default {
         removeStamp(chain) {
             this.steps = this.steps.filter(item => item.stepChain !== chain)
             window.localStorage.removeItem(`grid${chain}`)
-
         },
-        calc() {
-            this.existedVariants = getExistedResults(this.grid);
-        },
-        applyVariant(variant) {
-            this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
-            applyVariant(this.grid, variant);
-        },
-
-
         fillFromText() {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
