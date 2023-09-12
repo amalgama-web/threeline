@@ -186,8 +186,8 @@ export function findSquare(grid) {
 }
 
 
-export function getTotalPoints(grid) {
-    return grid.reduce((sum, row) => sum + row.reduce((sum, cell) => sum + cell.deleted, 0), 0)
+export function getTotalPoints(matrix) {
+    return matrix.reduce((sum, row) => sum + row.reduce((sum, cell) => sum + !!cell.deleted, 0), 0)
 }
 
 
@@ -240,37 +240,36 @@ export function getExistedVariants(grid) {
                 }
             ]
 
-            changeVariants.forEach(variant => {
-                if (variant.condition) {
+            changeVariants.forEach(changeVariant => {
+                if (changeVariant.condition) {
                     applyVariant(variationMatrix, {
                         cell1: {r: r, c: c},
-                        cell2: {r: r + variant.rowInc, c: c + variant.colInc}
+                        cell2: {r: r + changeVariant.rowInc, c: c + changeVariant.colInc}
                     })
 
-                    highlightCombinations(variationMatrix)
 
-                    let points = getTotalPoints(variationMatrix);
+                    let points = 0;
+                    let additionalPoints = 0;
+
+                    do {
+                        additionalPoints = 0;
+                        highlightCombinations(variationMatrix);
+                        additionalPoints = getTotalPoints(variationMatrix);
+                        applyCombinations(variationMatrix)
+                        resetMatrix(variationMatrix);
+                        gridGetDown(variationMatrix);
+                        points += additionalPoints;
+                    } while (additionalPoints !== 0)
 
                     if (points) {
-                        let additionalPoints = 0;
-                        do {
-                            additionalPoints = 0;
-                            applyCombinations(variationMatrix)
-                            resetMatrix(variationMatrix);
-                            gridGetDown(variationMatrix);
-                            highlightCombinations(variationMatrix);
-                            additionalPoints = getTotalPoints(variationMatrix);
-                            points += additionalPoints;
-                        } while (additionalPoints !== 0)
-
                         const variant = {
                             cell1: {
                                 r,
                                 c
                             },
                             cell2: {
-                                r: r + variant.rowInc,
-                                c: c + variant.colInc
+                                r: r + changeVariant.rowInc,
+                                c: c + changeVariant.colInc
                             },
                             points: points
                         }
@@ -285,12 +284,6 @@ export function getExistedVariants(grid) {
     }
 
     return variants;
-}
-
-function highlight(grid) {
-    highlightVLines(grid, findVLines(grid))
-    highlightHLines(grid, findHLines(grid))
-    highlightSquare(grid, findSquare(grid))
 }
 
 export function resetMatrix(matrix) {
@@ -425,11 +418,8 @@ export function markDeletedForOrdinaryLines(matrix, hLines, vLines) {
 export function markDeletedForSun(matrix) {
     const sunCentersCoords = findSunCenter(matrix)
 
-    console.log(sunCentersCoords)
-
     sunCentersCoords.forEach(sunCenterCoords => {
         const sunRays = findSunRays(matrix, sunCenterCoords)
-        console.log(sunRays)
         markCellAsDeleted(matrix, sunCenterCoords)
 
         if (sunRays.r && !sunRays.l) {

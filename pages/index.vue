@@ -143,7 +143,6 @@ export default {
             resetMatrix(this.grid)
         },
 
-
         getVariants() {
             this.existedVariants = getExistedVariants(this.grid);
         },
