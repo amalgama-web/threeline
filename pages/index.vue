@@ -49,6 +49,7 @@
                     :type="cell.type"
                     :selector-type="selectorType"
                     :highlighted="cell.highlighted"
+                    :deleted="cell.deleted"
                     @type-selected="setCellType($event, rowIndex, cellIndex)"
                 )
         .game__selectors
@@ -64,6 +65,10 @@
 
 <script>
 import CellComponent from '/components/cell.vue'
+// todo типа данных для координат и для ячейки
+// coords = {r: num, c: num}
+// line = {coords: coords, length: num}
+
 import {
     gridWidth,
     gridHeight,
@@ -80,7 +85,12 @@ import {
     gridGetDown,
     typeColors,
     colorTypePairs,
-    findCrosses,
+    markDeletedForSun,
+    markHLinesInMatrix,
+    markVLinesInMatrix,
+    highlightCells,
+    disableCrossedLines,
+    markDeletedForOrdinaryLines
 } from '~/logic/find-figures';
 
 
@@ -120,15 +130,34 @@ export default {
         highlight() {
             const hLines = findHLines(this.grid)
             const vLines = findVLines(this.grid)
-            const squares = findSquare(this.grid)
+            // todo squares
+            // const squares = findSquare(this.grid)
 
-            // console.log(hLines)
-            // console.log(vLines)
-            // console.log(squares)
-            console.log(findCrosses(hLines, vLines))
+            markHLinesInMatrix(this.grid ,hLines)
+            markVLinesInMatrix(this.grid, vLines)
+
+
+            disableCrossedLines(this.grid, hLines, vLines)
+
+            // highlight all cells in lines
+            highlightCells(this.grid)
+
+            markDeletedForOrdinaryLines(this.grid, hLines, vLines)
+            markDeletedForSun(this.grid)
+
+        },
+        makeFullStep() {
             highlightHLines(this.grid, findHLines(this.grid))
             highlightVLines(this.grid, findVLines(this.grid))
             highlightSquare(this.grid, findSquare(this.grid))
+
+            setTimeout(() => {
+                removeHighlighted(this.grid)
+                setTimeout(() => {
+                    gridGetDown(this.grid)
+                }, 200);
+            }, 200);
+
         },
         unHighlight() {
             this.grid.forEach(row => {
@@ -180,25 +209,15 @@ export default {
         getDown() {
             gridGetDown(this.grid)
         },
-        makeFullStep() {
-            highlightHLines(this.grid, findHLines(this.grid))
-            highlightVLines(this.grid, findVLines(this.grid))
-            highlightSquare(this.grid, findSquare(this.grid))
 
-            setTimeout(() => {
-                removeHighlighted(this.grid)
-                setTimeout(() => {
-                    gridGetDown(this.grid)
-                }, 200);
-            }, 200);
-
-        },
         fillFromText() {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
             this.grid = this.grid.map(row => row.map(cell => ({
                 type: colorTypePairs[clearedText[i++]],
                 highlighted: false,
+                deleted: false,
+                booster: false
             })))
         },
         clearFillText() {
@@ -220,6 +239,10 @@ export default {
         this.grid = this.grid.map(row => row.map(cell => ({
             type: undefined,
             highlighted: false,
+            deleted: false,
+            vLine: null,
+            hLine: null,
+            square: null,
         })))
 
         let LSKeys = Object.keys(localStorage).filter(item => item.includes('grid')).map(item => item.replace('grid',''));

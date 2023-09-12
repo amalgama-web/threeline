@@ -1,6 +1,6 @@
 <template lang="pug">
 .cell(
-    :class="{'cell_highlighted': highlighted}"
+    :class="{'cell_highlighted': highlighted, 'cell_deleted': deleted}"
     @click="cellClick()"
 )
     .cell__inner(v-if="type !== undefined" :style="cellStyle")
@@ -48,6 +48,10 @@ export default {
             type: Boolean,
             default: false
         },
+        deleted: {
+            type: Boolean,
+            default: false
+        },
         isSelector: {
             type: Boolean,
             default: false,
@@ -68,7 +72,7 @@ export default {
             } : {
                 backgroundColor: typeColors[this.type],
                 width: '40%',
-                height: '40%'
+                height: '40%',
             }
         }
     },
@@ -89,7 +93,7 @@ export default {
             return {
                 marginTop: 30 * Math.sin(radPerSection * index) + '%',
                 marginLeft: 30 * Math.cos(radPerSection * index) + '%',
-                backgroundColor: typeColors[index]
+                backgroundColor: typeColors[index],
             }
         },
         selectItemClick(index) {
