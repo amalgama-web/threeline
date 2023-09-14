@@ -1,6 +1,6 @@
 <template lang="pug">
 .cell(
-    :class="{'cell_highlighted': highlighted, 'cell_deleted': deleted}"
+    :class="{'cell_highlighted': highlighted, 'cell_deleted': deleted, 'cell_booster': booster}"
     @click="cellClick()"
 )
     .cell__inner(v-if="type !== undefined" :style="cellStyle")
@@ -49,6 +49,10 @@ export default {
             default: false
         },
         deleted: {
+            type: Boolean,
+            default: false
+        },
+        booster: {
             type: Boolean,
             default: false
         },

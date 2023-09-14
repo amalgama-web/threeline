@@ -28,30 +28,63 @@ export const imageTypePairs = {
     4: 'hourglass',
 }
 
-export function highlightCombinations(matrix) {
+export function highlightCombinations(matrix, initialCombination) {
     const hLines = findHLines(matrix)
     const vLines = findVLines(matrix)
-    // todo squares
-    // const squares = findSquare(matrix)
+    const squares = findSquare(matrix)
 
+    // mark figures in matrix
     markHLinesInMatrix(matrix ,hLines)
     markVLinesInMatrix(matrix, vLines)
+    markSquaresInMatrix(matrix, squares)
+    // markStepInitialCells(matrix, initialCombination)
 
+    // merge different figures (ordinary lines, squares and sun lines)
+    mergeLinesAndSun(matrix, hLines, vLines)
+    mergeLinesAndSquares(matrix, hLines, vLines, squares)
 
-    disableCrossedLines(matrix, hLines, vLines)
-
-    // highlight all cells in lines
+    // highlight all cells in all figures
     highlightCells(matrix)
 
     markDeletedForOrdinaryLines(matrix, hLines, vLines)
     markDeletedForSun(matrix)
+    markDeletedForSquares(matrix, squares)
+}
+
+function markStepInitialCells(matrix, stepInitialCells) {
+    console.log(stepInitialCells)
+}
+
+function mergeLinesAndSquares(matrix, hLines, vLines, squares) {
+    matrix.forEach(row => {
+        row.forEach(cell => {
+            if (cell.hLine && cell.square) {
+                if (hLines[cell.hLine]['length'] >= 4) {
+                    squares[cell.square]['disabled'] = true
+                } else {
+                    hLines[cell.hLine]['disabled'] = true
+                }
+            }
+            if (cell.vLine && cell.square) {
+                if (vLines[cell.vLine]['length'] >= 4) {
+                    squares[cell.square]['disabled'] = true
+                } else {
+                    vLines[cell.vLine]['disabled'] = true
+                }
+            }
+        })
+    })
 }
 
 export function applyCombinations(matrix) {
     matrix.forEach(row => {
         row.forEach(cell => {
-            if (cell.deleted === true) {
+            if (cell.deletedtrue) {
                 cell.type = null;
+            }
+            if (cell.booster) {
+                // todo прописать поточнее типы для ячеек
+                cell.type = 6;
             }
         })
     })
@@ -59,7 +92,7 @@ export function applyCombinations(matrix) {
 
 
 export function findHLines(grid) {
-    let findLines = {};
+    let foundLines = {};
     let currentLine = 1;
 
     for (let r = 0; r < gridHeight; r++) {
@@ -105,14 +138,14 @@ export function findHLines(grid) {
     }
 
     function addLine(lineConfig) {
-        findLines[`hLine${currentLine++}`] = lineConfig;
+        foundLines[`hLine${currentLine++}`] = lineConfig;
     }
 
-    return findLines;
+    return foundLines;
 }
 
 export function findVLines(grid) {
-    let findLines = {};
+    let foundLines = {};
 
     let currentLine = 1;
 
@@ -158,31 +191,38 @@ export function findVLines(grid) {
     }
 
     function addLine(lineConfig) {
-        findLines[`vLine${currentLine++}`] = lineConfig;
+        foundLines[`vLine${currentLine++}`] = lineConfig;
     }
 
-    return findLines;
+    return foundLines;
 
 }
 
-export function findSquare(grid) {
-    let findSquares = [];
+export function findSquare(matrix) {
+    let foundSquares = {};
+    let currentSquare = 1;
 
     for (let r = 0; r < gridHeight - 1; r++) {
         for (let c = 0; c < gridWidth - 1; c++) {
-            const currentType = grid[r][c].type;
+            const currentType = matrix[r][c].type;
 
             if (currentType !== undefined &&
-                grid[r + 1][c].type === currentType &&
-                grid[r][c + 1].type === currentType &&
-                grid[r + 1][c + 1].type === currentType
+                matrix[r + 1][c].type === currentType &&
+                matrix[r][c + 1].type === currentType &&
+                matrix[r + 1][c + 1].type === currentType
             ) {
-                findSquares.push([r, c])
+                foundSquares[`square${currentSquare++}`] = {
+                    coords: {
+                        r,
+                        c
+                    },
+                    disabled: false
+                }
             }
         }
     }
 
-    return findSquares;
+    return foundSquares;
 }
 
 
@@ -208,13 +248,14 @@ export function highlightVLines(grid, linesConfigs, propName = 'highlighted') {
 }
 
 
-export function highlightSquare(grid, squareConfigs) {
-    squareConfigs.forEach(config => {
-        grid[config[0]][config[1]].highlighted = true;
-        grid[config[0] + 1][config[1]].highlighted = true;
-        grid[config[0]][config[1] + 1].highlighted = true;
-        grid[config[0] + 1][config[1] + 1].highlighted = true;
-    })
+export function markSquaresInMatrix(matrix, squareConfigs) {
+    for (let key in squareConfigs) {
+        matrix[squareConfigs[key].coords.r][squareConfigs[key].coords.c].square = key;
+        matrix[squareConfigs[key].coords.r + 1][squareConfigs[key].coords.c].square = key;
+        matrix[squareConfigs[key].coords.r][squareConfigs[key].coords.c + 1].square = key;
+        matrix[squareConfigs[key].coords.r + 1][squareConfigs[key].coords.c + 1].square = key;
+    }
+
 }
 
 export function getExistedVariants(grid) {
@@ -227,7 +268,7 @@ export function getExistedVariants(grid) {
         for (let c = 0; c < gridWidth; c++) {
 
             // vertical and horizontal swaps
-            const changeVariants = [
+            const orientationVariants = [
                 {
                     condition: c < gridWidth - 1,
                     rowInc: 0,
@@ -239,26 +280,41 @@ export function getExistedVariants(grid) {
                     colInc: 0
                 }
             ]
+            
 
-            changeVariants.forEach(changeVariant => {
-                if (changeVariant.condition) {
+            orientationVariants.forEach(orientationVariant => {
+                
+                
+                if (orientationVariant.condition) {
                     applyVariant(variationMatrix, {
                         cell1: {r: r, c: c},
-                        cell2: {r: r + changeVariant.rowInc, c: c + changeVariant.colInc}
+                        cell2: {r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc}
                     })
-
 
                     let points = 0;
                     let additionalPoints = 0;
+                    let isInitialCombination = true;
+                    const initialCombination = [
+                        {
+                            r,
+                            c
+                        },
+                        {
+                            r: r + orientationVariant.rowInc,
+                            c: c + orientationVariant.colInc
+                        }
+                    ]
 
                     do {
                         additionalPoints = 0;
-                        highlightCombinations(variationMatrix);
+                        highlightCombinations(variationMatrix, isInitialCombination ? initialCombination : null);
                         additionalPoints = getTotalPoints(variationMatrix);
                         applyCombinations(variationMatrix)
                         resetMatrix(variationMatrix);
                         gridGetDown(variationMatrix);
                         points += additionalPoints;
+                        isInitialCombination = false;
+                        console.log('test')
                     } while (additionalPoints !== 0)
 
                     if (points) {
@@ -268,11 +324,12 @@ export function getExistedVariants(grid) {
                                 c
                             },
                             cell2: {
-                                r: r + changeVariant.rowInc,
-                                c: c + changeVariant.colInc
+                                r: r + orientationVariant.rowInc,
+                                c: c + orientationVariant.colInc
                             },
                             points: points
                         }
+                        
                         variants.push(variant);
                     }
 
@@ -392,10 +449,11 @@ export function markVLinesInMatrix(matrix, hLines) {
     }
 }
 
-export function disableCrossedLines(matrix, hLines, vLines) {
+export function mergeLinesAndSun(matrix, hLines, vLines) {
     matrix.forEach(row => {
         row.forEach(cell => {
             if (cell.hLine && cell.vLine) {
+                // todo проработать появление в линиях солнца квадрата
                 hLines[cell.hLine]['disabled'] = true
                 vLines[cell.vLine]['disabled'] = true
             }
@@ -414,6 +472,15 @@ export function markDeletedForOrdinaryLines(matrix, hLines, vLines) {
     })
 }
 
+function markDeletedForSquares(matrix, squares) {
+    matrix.forEach(row => {
+        row.forEach(cell => {
+            if (cell.square && !squares[cell.square]['disabled']) {
+                cell.deleted = true;
+            }
+        })
+    })
+}
 
 export function markDeletedForSun(matrix) {
     const sunCentersCoords = findSunCenter(matrix)
@@ -421,6 +488,7 @@ export function markDeletedForSun(matrix) {
     sunCentersCoords.forEach(sunCenterCoords => {
         const sunRays = findSunRays(matrix, sunCenterCoords)
         markCellAsDeleted(matrix, sunCenterCoords)
+        markCellAsBooster(matrix, sunCenterCoords)
 
         if (sunRays.r && !sunRays.l) {
             markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 1})

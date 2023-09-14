@@ -27,6 +27,18 @@
             border: 2px solid red;
         }
     }
+    &.cell_booster {
+        &:after {
+            position: absolute;
+            content: '';
+            $pos: 5px;
+            left: $pos;
+            top: $pos;
+            right: $pos;
+            bottom: $pos;
+            border: 3px solid black;
+        }
+    }
 
     &__inner {
         width: 80%;

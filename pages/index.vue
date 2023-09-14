@@ -48,6 +48,7 @@
                     :selector-type="selectorType"
                     :highlighted="cell.highlighted"
                     :deleted="cell.deleted"
+                    :booster="cell.booster"
                     @type-selected="setCellType($event, rowIndex, cellIndex)"
                 )
         .game__selectors
@@ -103,6 +104,9 @@ export default {
             stepAction: null,
             stepChain: '_',
             customLinkName: '',
+
+            // applies
+            initialCombination: null
         }
     },
     computed: {
@@ -119,7 +123,8 @@ export default {
 
         //  combinations
         highlightCombinations() {
-            highlightCombinations(this.grid)
+            highlightCombinations(this.grid, this.initialCombination)
+            this.initialCombination = null;
         },
         applyCombinations() {
             applyCombinations(this.grid)
@@ -129,7 +134,8 @@ export default {
             gridGetDown(this.grid)
         },
         makeFullStep() {
-            highlightCombinations(this.grid)
+            highlightCombinations(this.grid, this.initialCombination)
+            this.initialCombination = null;
 
             setTimeout(() => {
                 applyCombinations(this.grid)
@@ -147,6 +153,16 @@ export default {
             this.existedVariants = getExistedVariants(this.grid);
         },
         applyVariant(variant) {
+            this.initialCombination = [
+                {
+                    r: variant.cell1.r,
+                    c: variant.cell1.c
+                },
+                {
+                    r: variant.cell2.r,
+                    c: variant.cell2.c
+                }
+            ];
             this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
             applyVariant(this.grid, variant);
         },
@@ -162,7 +178,6 @@ export default {
                 }
             }
             this.customLinkName = '';
-
 
 
             const stampName = `grid${this.stepChain}`;
@@ -199,6 +214,7 @@ export default {
                 type: getRandomInt(5),
                 highlighted: false,
             })))
+
             function getRandomInt(max) {
                 return Math.floor(Math.random() * max);
             }
@@ -216,7 +232,7 @@ export default {
             square: null,
         })))
 
-        let LSKeys = Object.keys(localStorage).filter(item => item.includes('grid')).map(item => item.replace('grid',''));
+        let LSKeys = Object.keys(localStorage).filter(item => item.includes('grid')).map(item => item.replace('grid', ''));
         LSKeys = LSKeys.sort((item1, item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
         this.steps = LSKeys.map(item => ({stepChain: item}))
     },
