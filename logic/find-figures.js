@@ -38,9 +38,9 @@ export function highlightCombinations(matrix, stepSwapCells) {
     createBoostersForVLines(vLines, stepSwapCells)
 
     // mark figures in matrix
-    markHLinesInMatrix(matrix, hLines, stepSwapCells)
-    markVLinesInMatrix(matrix, vLines, stepSwapCells)
-    markSquaresInMatrix(matrix, squares, stepSwapCells)
+    markHLinesInMatrix(matrix, hLines)
+    markVLinesInMatrix(matrix, vLines)
+    markSquaresInMatrix(matrix, squares)
 
     // merge different figures and disable figures with less weight (ordinary lines, squares and sun lines)
     mergeLinesAndSun(matrix, hLines, vLines)
@@ -60,20 +60,19 @@ export function highlightCombinations(matrix, stepSwapCells) {
 function markBoostersInMatrix(matrix, hLines, vLines, squares) {
     for (let hLineID in hLines) {
         if (!hLines[hLineID].disabled && hLines[hLineID].booster) {
-            matrix[hLines[hLineID].booster.coords.r][hLines[hLineID].booster.c]['type'] = 5;
+            matrix[hLines[hLineID].booster.coords.r][hLines[hLineID].booster.coords.c]['booster'] = hLines[hLineID].booster;
         }
     }
     for (let vLineID in vLines) {
         if (!vLines[vLineID].disabled && vLines[vLineID].booster) {
-            matrix[vLines[vLineID].booster.coords.r][vLines[vLineID].booster.c]['type'] = 5;
+            matrix[vLines[vLineID].booster.coords.r][vLines[vLineID].booster.coords.c]['booster'] = vLines[vLineID].booster;
         }
     }
     for (let squareID in squares) {
         if (!squares[squareID].disabled && squares[squareID].booster) {
-            matrix[squares[squareID].booster.coords.r][squares[squareID].booster.c]['type'] = 5;
+            matrix[squares[squareID].booster.coords.r][squares[squareID].booster.coords.c]['booster'] = squares[squareID].booster;
         }
     }
-
 }
 
 function createBoostersForHLines(hLines, stepSwapCells) {
@@ -89,9 +88,9 @@ function createBoostersForHLines(hLines, stepSwapCells) {
             }
         }
         if (booster) {
-            if (checkCellInHLine(stepSwapCells[0], hLines[hLineID])) {
+            if (stepSwapCells && checkCellInHLine(stepSwapCells[0], hLines[hLineID])) {
                 booster.coords = stepSwapCells[0]
-            } else if (checkCellInHLine(stepSwapCells[1], hLines[hLineID])) {
+            } else if (stepSwapCells && checkCellInHLine(stepSwapCells[1], hLines[hLineID])) {
                 booster.coords = stepSwapCells[1]
             } else {
                 booster.coords = {
@@ -99,6 +98,7 @@ function createBoostersForHLines(hLines, stepSwapCells) {
                     c: hLines[hLineID].coords.c - hLines[hLineID].length + 1
                 }
             }
+            hLines[hLineID].booster = booster
         }
     }
 }
@@ -115,9 +115,9 @@ function createBoostersForVLines(vLines, stepSwapCells) {
             }
         }
         if (booster) {
-            if (checkCellInVLine(stepSwapCells[0], vLines[vLineID])) {
+            if (stepSwapCells && checkCellInVLine(stepSwapCells[0], vLines[vLineID])) {
                 booster.coords = stepSwapCells[0]
-            } else if (checkCellInVLine(stepSwapCells[1], vLines[vLineID])) {
+            } else if (stepSwapCells && checkCellInVLine(stepSwapCells[1], vLines[vLineID])) {
                 booster.coords = stepSwapCells[1]
             } else {
                 booster.coords = {
@@ -125,6 +125,7 @@ function createBoostersForVLines(vLines, stepSwapCells) {
                     c: vLines[vLineID].coords.c
                 }
             }
+            vLines[vLineID].booster = booster
         }
     }
 }
@@ -281,7 +282,7 @@ export function findSquare(matrix) {
         for (let c = 0; c < gridWidth - 1; c++) {
             const currentType = matrix[r][c].type;
 
-            if (currentType !== undefined &&
+            if (currentType !== null &&
                 matrix[r + 1][c].type === currentType &&
                 matrix[r][c + 1].type === currentType &&
                 matrix[r + 1][c + 1].type === currentType
@@ -333,7 +334,7 @@ export function markSquaresInMatrix(matrix, squareConfigs) {
 
 }
 
-export function getExistedVariants(grid) {
+export function getExistedVariants(grid, stepSwapCells) {
     const variants = [];
 
     const initialMatrix = JSON.parse(JSON.stringify(grid))
@@ -358,8 +359,7 @@ export function getExistedVariants(grid) {
             
 
             orientationVariants.forEach(orientationVariant => {
-                
-                
+
                 if (orientationVariant.condition) {
                     applyVariant(variationMatrix, {
                         cell1: {r: r, c: c},
@@ -389,7 +389,6 @@ export function getExistedVariants(grid) {
                         gridGetDown(variationMatrix);
                         points += additionalPoints;
                         isInitialCombination = false;
-                        console.log('test')
                     } while (additionalPoints !== 0)
 
                     if (points) {
@@ -452,7 +451,7 @@ function downColumn(grid, row, col) {
     for (let r = row; r > 0; r--) {
         grid[r][col].type = grid[r - 1][col].type;
     }
-    grid[0][col].type = undefined
+    grid[0][col].type = null
 }
 
 
@@ -509,7 +508,7 @@ function checkCellAndType(matrix, coords, type) {
     return !!(matrix[coords.r] && matrix[coords.r][coords.c] && (matrix[coords.r][coords.c].type === type))
 }
 
-export function markHLinesInMatrix(matrix, hLines, stepSwapCells) {
+export function markHLinesInMatrix(matrix, hLines) {
     // перебираем все горизонтальные линии
     for (let key in hLines) {
         for (let c = hLines[key].coords.c; c > hLines[key].coords.c - hLines[key].length; c--) {

@@ -150,7 +150,7 @@ export default {
         },
 
         getVariants() {
-            this.existedVariants = getExistedVariants(this.grid);
+            this.existedVariants = getExistedVariants(this.grid, this.initialCombination);
         },
         applyVariant(variant) {
             this.initialCombination = [
