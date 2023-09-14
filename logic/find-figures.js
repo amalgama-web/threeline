@@ -36,6 +36,7 @@ export function highlightCombinations(matrix, stepSwapCells) {
     // create booster for every line with length >=4 and squares
     createBoostersForHLines(hLines, stepSwapCells)
     createBoostersForVLines(vLines, stepSwapCells)
+    createBoostersForSquares(squares, stepSwapCells)
 
     // mark figures in matrix
     markHLinesInMatrix(matrix, hLines)
@@ -130,6 +131,27 @@ function createBoostersForVLines(vLines, stepSwapCells) {
     }
 }
 
+function createBoostersForSquares(squares, stepSwapCells) {
+    for (let squareID in squares) {
+        const booster = {
+            type: 'snowflake',
+            coords: null
+        }
+
+        if (stepSwapCells && checkCellInSquare(stepSwapCells[0], squares[squareID])) {
+            booster.coords = stepSwapCells[0]
+        } else if (stepSwapCells && checkCellInSquare(stepSwapCells[1], squares[squareID])) {
+            booster.coords = stepSwapCells[1]
+        } else {
+            booster.coords = {
+                r: squares[squareID].coords.r - 1,
+                c: squares[squareID].coords.c - 1
+            }
+        }
+        squares[squareID].booster = booster
+    }
+
+}
 
 function mergeLinesAndSquares(matrix, hLines, vLines, squares) {
     matrix.forEach(row => {
@@ -524,6 +546,13 @@ function checkCellInHLine(cellCoords, line) {
 }
 function checkCellInVLine(cellCoords, line) {
     return cellCoords.c === line.coords.c && cellCoords.r <= line.coords.r && cellCoords.r > line.coords.r - line.length;
+}
+
+function checkCellInSquare(cellCoords, square) {
+    return cellCoords.r >= square.coords.r &&
+        cellCoords.r < square.coords.r + 2 &&
+        cellCoords.c >= square.coords.c &&
+        cellCoords.c < square.coords.c + 2
 }
 
 export function markVLinesInMatrix(matrix, hLines) {
