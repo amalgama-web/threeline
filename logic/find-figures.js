@@ -28,20 +28,26 @@ export const imageTypePairs = {
     4: 'hourglass',
 }
 
-export function highlightCombinations(matrix, initialCombination) {
+export function highlightCombinations(matrix, stepSwapCells) {
     const hLines = findHLines(matrix)
     const vLines = findVLines(matrix)
     const squares = findSquare(matrix)
 
-    // mark figures in matrix
-    markHLinesInMatrix(matrix ,hLines)
-    markVLinesInMatrix(matrix, vLines)
-    markSquaresInMatrix(matrix, squares)
-    // markStepInitialCells(matrix, initialCombination)
+    // create booster for every line with length >=4 and squares
+    createBoostersForHLines(hLines, stepSwapCells)
+    createBoostersForVLines(vLines, stepSwapCells)
 
-    // merge different figures (ordinary lines, squares and sun lines)
+    // mark figures in matrix
+    markHLinesInMatrix(matrix, hLines, stepSwapCells)
+    markVLinesInMatrix(matrix, vLines, stepSwapCells)
+    markSquaresInMatrix(matrix, squares, stepSwapCells)
+
+    // merge different figures and disable figures with less weight (ordinary lines, squares and sun lines)
     mergeLinesAndSun(matrix, hLines, vLines)
     mergeLinesAndSquares(matrix, hLines, vLines, squares)
+
+    // apply boosters from enabled figures and mark it on matrix
+    markBoostersInMatrix(matrix, hLines, vLines, squares)
 
     // highlight all cells in all figures
     highlightCells(matrix)
@@ -51,9 +57,78 @@ export function highlightCombinations(matrix, initialCombination) {
     markDeletedForSquares(matrix, squares)
 }
 
-function markStepInitialCells(matrix, stepInitialCells) {
-    console.log(stepInitialCells)
+function markBoostersInMatrix(matrix, hLines, vLines, squares) {
+    for (let hLineID in hLines) {
+        if (!hLines[hLineID].disabled && hLines[hLineID].booster) {
+            matrix[hLines[hLineID].booster.coords.r][hLines[hLineID].booster.c]['type'] = 5;
+        }
+    }
+    for (let vLineID in vLines) {
+        if (!vLines[vLineID].disabled && vLines[vLineID].booster) {
+            matrix[vLines[vLineID].booster.coords.r][vLines[vLineID].booster.c]['type'] = 5;
+        }
+    }
+    for (let squareID in squares) {
+        if (!squares[squareID].disabled && squares[squareID].booster) {
+            matrix[squares[squareID].booster.coords.r][squares[squareID].booster.c]['type'] = 5;
+        }
+    }
+
 }
+
+function createBoostersForHLines(hLines, stepSwapCells) {
+    for (let hLineID in hLines) {
+        let booster = null;
+        if (hLines[hLineID].length >= 4) {
+            booster = {
+                type: 'hRocket',
+                coords: null
+            }
+            if (hLines[hLineID].length > 4) {
+                booster.type = 'sun'
+            }
+        }
+        if (booster) {
+            if (checkCellInHLine(stepSwapCells[0], hLines[hLineID])) {
+                booster.coords = stepSwapCells[0]
+            } else if (checkCellInHLine(stepSwapCells[1], hLines[hLineID])) {
+                booster.coords = stepSwapCells[1]
+            } else {
+                booster.coords = {
+                    r: hLines[hLineID].coords.r,
+                    c: hLines[hLineID].coords.c - hLines[hLineID].length + 1
+                }
+            }
+        }
+    }
+}
+function createBoostersForVLines(vLines, stepSwapCells) {
+    for (let vLineID in vLines) {
+        let booster = null;
+        if (vLines[vLineID].length >= 4) {
+            booster = {
+                type: 'hRocket',
+                coords: null
+            }
+            if (vLines[vLineID].length > 4) {
+                booster.type = 'sun'
+            }
+        }
+        if (booster) {
+            if (checkCellInVLine(stepSwapCells[0], vLines[vLineID])) {
+                booster.coords = stepSwapCells[0]
+            } else if (checkCellInVLine(stepSwapCells[1], vLines[vLineID])) {
+                booster.coords = stepSwapCells[1]
+            } else {
+                booster.coords = {
+                    r: vLines[vLineID].coords.r - vLines[vLineID].length + 1,
+                    c: vLines[vLineID].coords.c
+                }
+            }
+        }
+    }
+}
+
 
 function mergeLinesAndSquares(matrix, hLines, vLines, squares) {
     matrix.forEach(row => {
@@ -79,12 +154,12 @@ function mergeLinesAndSquares(matrix, hLines, vLines, squares) {
 export function applyCombinations(matrix) {
     matrix.forEach(row => {
         row.forEach(cell => {
-            if (cell.deletedtrue) {
+            if (cell.deleted === true) {
                 cell.type = null;
             }
             if (cell.booster) {
                 // todo прописать поточнее типы для ячеек
-                cell.type = 6;
+                cell.type = 5;
             }
         })
     })
@@ -93,24 +168,24 @@ export function applyCombinations(matrix) {
 
 export function findHLines(grid) {
     let foundLines = {};
-    let currentLine = 1;
+    let currentLineId = 1;
 
     for (let r = 0; r < gridHeight; r++) {
 
         let currentType = null;
         let lineLength = 1;
-        let findLine = null;
+        let foundLine = null;
 
         for (let c = 0; c < gridWidth; c++) {
 
             if (currentType === grid[r][c].type &&
-                currentType !== undefined &&
+                currentType !== null &&
                 currentType !== 5) {
 
                 lineLength++;
 
                 if (lineLength >= 3) {
-                    findLine = {
+                    foundLine = {
                         coords: {
                             r,
                             c
@@ -121,24 +196,24 @@ export function findHLines(grid) {
             } else {
                 lineLength = 1;
 
-                if (findLine !== null) {
-                    addLine(findLine)
-                    findLine = null;
+                if (foundLine !== null) {
+                    addLine(foundLine)
+                    foundLine = null;
                 }
             }
 
             currentType = grid[r][c].type;
 
             // save line if line exist and it is last cell in row
-            if (findLine !== null && c === gridWidth - 1) {
-                addLine(findLine)
+            if (foundLine !== null && c === gridWidth - 1) {
+                addLine(foundLine)
             }
 
         }
     }
 
     function addLine(lineConfig) {
-        foundLines[`hLine${currentLine++}`] = lineConfig;
+        foundLines[`hLine${currentLineId++}`] = lineConfig;
     }
 
     return foundLines;
@@ -147,23 +222,23 @@ export function findHLines(grid) {
 export function findVLines(grid) {
     let foundLines = {};
 
-    let currentLine = 1;
+    let currentLineId = 1;
 
     for (let c = 0; c < gridWidth; c++) {
         let currentType = null;
         let lineLength = 1;
 
-        let findLine = null;
+        let foundLine = null;
 
         for (let r = 0; r < gridHeight; r++) {
             if (currentType === grid[r][c].type &&
-                currentType !== undefined &&
+                currentType !== null &&
                 currentType !== 5) {
 
                 lineLength++;
 
                 if (lineLength >= 3) {
-                    findLine = {
+                    foundLine = {
                         coords: {
                             r,
                             c
@@ -174,24 +249,24 @@ export function findVLines(grid) {
             } else {
                 lineLength = 1;
 
-                if (findLine !== null) {
-                    addLine(findLine)
-                    findLine = null;
+                if (foundLine !== null) {
+                    addLine(foundLine)
+                    foundLine = null;
                 }
             }
 
             currentType = grid[r][c].type;
 
             // save line if line exist and it is last cell in column
-            if (findLine !== null && r === gridHeight - 1) {
-                addLine(findLine)
+            if (foundLine !== null && r === gridHeight - 1) {
+                addLine(foundLine)
             }
 
         }
     }
 
     function addLine(lineConfig) {
-        foundLines[`vLine${currentLine++}`] = lineConfig;
+        foundLines[`vLine${currentLineId++}`] = lineConfig;
     }
 
     return foundLines;
@@ -351,6 +426,7 @@ export function resetMatrix(matrix) {
             cell.hLine = null;
             cell.vLine = null;
             cell.square = null;
+            cell.booster = null;
         })
     })
 }
@@ -433,12 +509,22 @@ function checkCellAndType(matrix, coords, type) {
     return !!(matrix[coords.r] && matrix[coords.r][coords.c] && (matrix[coords.r][coords.c].type === type))
 }
 
-export function markHLinesInMatrix(matrix, hLines) {
+export function markHLinesInMatrix(matrix, hLines, stepSwapCells) {
+    // перебираем все горизонтальные линии
     for (let key in hLines) {
-        for (let i = hLines[key].coords.c; i > hLines[key].coords.c - hLines[key].length; i--) {
-            matrix[hLines[key].coords.r][i]['hLine'] = key;
+        for (let c = hLines[key].coords.c; c > hLines[key].coords.c - hLines[key].length; c--) {
+            matrix[hLines[key].coords.r][c]['hLine'] = key;
         }
     }
+}
+function checkSameCells(cellCoords1, cellCoords2) {
+
+}
+function checkCellInHLine(cellCoords, line) {
+    return cellCoords.r === line.coords.r && cellCoords.c <= line.coords.c && cellCoords.c > line.coords.c - line.length;
+}
+function checkCellInVLine(cellCoords, line) {
+    return cellCoords.c === line.coords.c && cellCoords.r <= line.coords.r && cellCoords.r > line.coords.r - line.length;
 }
 
 export function markVLinesInMatrix(matrix, hLines) {
@@ -462,11 +548,12 @@ export function mergeLinesAndSun(matrix, hLines, vLines) {
 }
 
 export function markDeletedForOrdinaryLines(matrix, hLines, vLines) {
-    matrix.forEach(row => {
-        row.forEach(cell => {
+    matrix.forEach((row, rIndex) => {
+        row.forEach((cell, cIndex) => {
             if ( cell.hLine && !hLines[cell.hLine]['disabled'] ||
                  cell.vLine && !vLines[cell.vLine]['disabled']) {
                 cell.deleted = true;
+
             }
         })
     })
