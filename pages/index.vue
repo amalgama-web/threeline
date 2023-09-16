@@ -53,11 +53,17 @@
                 )
         .game__selectors
             CellComponent(
-                v-for="(item, index) in Array(cellsTypesCount + 2)"
+                v-for="(item, index) in Array(cellsTypesCount + 1)"
                 :type="index"
                 :is-selector="true"
-                @activate-selector="selectorType = selectorType === index ? null : index"
+                @activate-selector="selectorType = $event"
                 :highlighted="index === selectorType"
+            )
+            CellComponent(
+                :type="null"
+                :is-selector="true"
+                @activate-selector="selectorType = $event"
+                :highlighted="undefined === selectorType"
             )
 </template>
 
@@ -95,8 +101,7 @@ export default {
 
             existedVariants: [],
             cellsTypesCount: cellsTypesCount,
-            selectorType: null,
-            postfix: '',
+            selectorType: undefined,
             fillText: '',
 
             //steps
@@ -129,6 +134,7 @@ export default {
         applyCombinations() {
             applyCombinations(this.grid)
             resetMatrix(this.grid)
+            this.initialCombination = null;
         },
         getDown() {
             gridGetDown(this.grid)

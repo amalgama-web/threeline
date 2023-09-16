@@ -8,7 +8,6 @@ export const typeColors = [
     '#ef77ff',
     '#8500b6',
     '#000',
-    '#ffffff',
 ]
 
 export const colorTypePairs = {
@@ -45,6 +44,8 @@ export function highlightCombinations(matrix, stepSwapCells) {
 
     // merge different figures and disable figures with less weight (ordinary lines, squares and sun lines)
     mergeLinesAndSun(matrix, hLines, vLines)
+    // todo продумать мердж солнца и квадратов
+    mergeSquaresAndSun(matrix, squares, vLines)
     mergeLinesAndSquares(matrix, hLines, vLines, squares)
 
     // apply boosters from enabled figures and mark it on matrix
@@ -144,8 +145,8 @@ function createBoostersForSquares(squares, stepSwapCells) {
             booster.coords = stepSwapCells[1]
         } else {
             booster.coords = {
-                r: squares[squareID].coords.r - 1,
-                c: squares[squareID].coords.c - 1
+                r: squares[squareID].coords.r,
+                c: squares[squareID].coords.c
             }
         }
         squares[squareID].booster = booster
@@ -573,6 +574,10 @@ export function mergeLinesAndSun(matrix, hLines, vLines) {
             }
         })
     })
+}
+
+function mergeSquaresAndSun() {
+
 }
 
 export function markDeletedForOrdinaryLines(matrix, hLines, vLines) {

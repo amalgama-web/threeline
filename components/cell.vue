@@ -3,7 +3,7 @@
     :class="{'cell_highlighted': highlighted, 'cell_deleted': deleted, 'cell_booster': booster}"
     @click="cellClick()"
 )
-    .cell__inner(v-if="type !== undefined" :style="cellStyle")
+    .cell__inner(v-if="type !== null" :style="cellStyle")
 
     .cell__select(v-if="selectIsVisible")
         .cell__select-item(
@@ -61,7 +61,7 @@ export default {
             default: false,
         },
         selectorType: {
-            type: [Number, null],
+            type: [Number, undefined],
             default: null,
         }
     },
@@ -85,7 +85,7 @@ export default {
             if (this.isSelector) {
                 this.$emit('activate-selector', this.type)
             } else {
-                if (this.selectorType !== null) {
+                if (this.selectorType !== undefined) {
                     this.$emit('typeSelected', this.selectorType);
                 } else {
                     this.selectIsVisible = true;
@@ -102,7 +102,7 @@ export default {
         },
         selectItemClick(index) {
             if (index === 6) {
-                index = undefined
+                index = null
             }
             this.$emit('typeSelected', index);
             setTimeout(() => {
