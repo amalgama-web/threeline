@@ -14,8 +14,9 @@
         .gap-15.mb-24
             div
                 button.btn.mr-8(@click="fillFromText") Заполнить
-                button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
-                button.btn.mr-8(@click="fillRandom") Рандом
+                button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
+                //button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
+                //button.btn.mr-8(@click="fillRandom") Рандом
             input.game__buttons-input(v-model="fillText")
         .mb-24
             button.btn.mr-8(@click="highlightCombinations") Пдсв
@@ -33,6 +34,7 @@
             .game__variants-item(
                 v-for="variant in existedVariants"
                 @click="applyVariant(variant)"
+                :style="variantStyle(variant.points)"
             ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
 
     .game__grid
@@ -117,6 +119,11 @@ export default {
     computed: {
         points() {
             return getTotalPoints(this.grid)
+        },
+        currentSymbols() {
+            const symbols = []
+            this.grid.map(row => row.map(cell => symbols.push(cell.type)))
+            return symbols
         }
     },
 
@@ -193,10 +200,12 @@ export default {
             })
             this.stepAction = null;
             window.localStorage.setItem(stampName, JSON.stringify(this.grid))
+            this.getVariants();
         },
         loadStamp(chain) {
             this.grid = JSON.parse(window.localStorage.getItem(`grid${chain}`));
             this.stepChain = chain;
+            this.getVariants()
         },
         removeStamp(chain) {
             this.steps = this.steps.filter(item => item.stepChain !== chain)
@@ -205,12 +214,31 @@ export default {
         fillFromText() {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
-            this.grid = this.grid.map(row => row.map(cell => ({
-                type: colorTypePairs[clearedText[i++]],
-                highlighted: false,
-                deleted: false,
-                booster: false
-            })))
+            this.grid = this.grid.map(row => row.map(cell => {
+                const returned = {
+                    type: clearedText[i] ? colorTypePairs[clearedText[i]] : cell.type,
+                    highlighted: false,
+                    deleted: false,
+                    booster: false
+                }
+                i++
+                return returned
+            }))
+            this.fillText = ''
+        },
+        fillOnlyGaps() {
+            let i = 0;
+            const clearedText = this.fillText.replace(/ /g, '');
+            this.grid = this.grid.map(row => row.map(cell => {
+                const returned = {
+                    type: cell.type === null ? colorTypePairs[clearedText[i++]] : cell.type,
+                    highlighted: false,
+                    deleted: false,
+                    booster: false
+                }
+                return returned
+            }))
+            this.fillText = ''
         },
         clearFillText() {
             this.fillText = ''
@@ -224,6 +252,22 @@ export default {
             function getRandomInt(max) {
                 return Math.floor(Math.random() * max);
             }
+        },
+
+
+        variantStyle(points) {
+            if (points === 5 || points === 8) return {
+                color: '#ffff00'
+            }
+            if (points >= 9) {
+                return {
+                    color: 'red'
+                }
+            }
+            if (points === 6) return {
+                color: 'green'
+            }
+            return null;
         }
 
     },

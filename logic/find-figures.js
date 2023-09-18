@@ -306,6 +306,7 @@ export function findSquare(matrix) {
             const currentType = matrix[r][c].type;
 
             if (currentType !== null &&
+                currentType !== 5 &&
                 matrix[r + 1][c].type === currentType &&
                 matrix[r][c + 1].type === currentType &&
                 matrix[r + 1][c + 1].type === currentType
@@ -641,5 +642,7 @@ function markCellAsDeleted(matrix, coords) {
 }
 
 function markCellAsBooster(matrix, coords) {
-    matrix[coords.r][coords.c]['booster'] = true;
+    matrix[coords.r][coords.c]['booster'] = {
+        type: 'sun'
+    };
 }
