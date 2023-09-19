@@ -16,7 +16,7 @@
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
                 //button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
-                //button.btn.mr-8(@click="fillRandom") Рандом
+                button.btn.mr-8(@click="fillRandom") Рандом
                 button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
@@ -92,7 +92,7 @@ import {
     highlightCombinations,
     applyCombinations,
     resetMatrix,
-    gridGetDown, checkSnowflakes,
+    gridGetDown, checkSnowflakes, boosterTypePairs,
 } from '~/logic/find-figures';
 
 
@@ -226,34 +226,29 @@ export default {
             window.localStorage.removeItem(`grid${chain}`)
         },
         fillFromText() {
-            let i = 0;
-            const clearedText = this.fillText.replace(/ /g, '');
-            this.grid = this.grid.map(row => row.map(cell => {
-                const returned = {
-                    type: clearedText[i] ? colorTypePairs[clearedText[i]] : cell.type,
-                    highlighted: false,
-                    deleted: false,
-                    appliedBooster: null,
-                }
-                i++
-                return returned
-            }))
-            this.fillText = ''
+            this.fillMatrix()
         },
         fillOnlyGaps() {
+            this.fillMatrix(true)
+        },
+        fillMatrix(onlyGaps = false) {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
 
-            this.grid = this.grid.map(row => row.map(cell => {
-                const returned = {
-                    type: cell.type === null && colorTypePairs[clearedText[i]] !== undefined ? colorTypePairs[clearedText[i++]] : cell.type,
-                    booster: cell.booster,
-                    highlighted: false,
-                    deleted: false,
-                    appliedBooster: null
+            for (let r = 0; r < gridHeight && colorTypePairs[clearedText[i]] !== undefined; r++ ) {
+                for (let c = 0; c < gridWidth && colorTypePairs[clearedText[i]] !== undefined; c++ ) {
+                    if (!onlyGaps || this.grid[r][c]['type'] === null) {
+                        const newSymbol = clearedText[i]
+                        const newCellType = colorTypePairs[newSymbol]
+                        const newBooster = boosterTypePairs[newSymbol]
+                        this.grid[r][c]['type'] = newCellType
+                        if (newBooster !== undefined) {
+                            this.grid[r][c]['booster'] = newBooster
+                        }
+                        i++;
+                    }
                 }
-                return returned
-            }))
+            }
             this.fillText = ''
         },
         clearFillText() {
