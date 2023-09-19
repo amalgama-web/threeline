@@ -16,7 +16,7 @@
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
                 //button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
-                button.btn.mr-8(@click="fillRandom") Рандом
+                //button.btn.mr-8(@click="fillRandom") Рандом
                 button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
@@ -42,35 +42,44 @@
             | {{snow}}
 
     .game__grid
-        .grid.mr-8
-            .grid__row
-                CellComponent
-                CellComponent(v-for="(item, index) in Array(gridWidth)") {{index}}
-            .grid__row(v-for="(row, rowIndex) in grid")
-                CellComponent {{rowIndex}}
+        .game__grid-inner
+            .grid.mr-8
+                .grid__row
+                    CellComponent
+                    CellComponent(v-for="(item, index) in Array(gridWidth)") {{index}}
+                .grid__row(v-for="(row, rowIndex) in grid")
+                    CellComponent {{rowIndex}}
+                    CellComponent(
+                        v-for="(cell, cellIndex) in row"
+                        :type="cell.type"
+                        :selector-type="selectorType"
+                        :highlighted="cell.highlighted"
+                        :deleted="cell.deleted"
+                        :future-booster="cell.appliedBooster"
+                        :booster="cell.booster"
+                        @type-selected="setCellType($event, rowIndex, cellIndex)"
+                    )
+            .game__selectors
                 CellComponent(
-                    v-for="(cell, cellIndex) in row"
-                    :type="cell.type"
-                    :selector-type="selectorType"
-                    :highlighted="cell.highlighted"
-                    :deleted="cell.deleted"
-                    :future-booster="cell.appliedBooster"
-                    :booster="cell.booster"
-                    @type-selected="setCellType($event, rowIndex, cellIndex)"
+                    v-for="(item, index) in Array(cellsTypesNumber + 1)"
+                    :type="index"
+                    :is-selector="true"
+                    @activate-selector="selectorType = $event"
+                    :highlighted="index === selectorType"
+                ) {{typesCounter[index]}}
+                CellComponent(
+                    :type="null"
+                    :is-selector="true"
+                    @activate-selector="selectorType = $event"
+                    :highlighted="null === selectorType"
                 )
-        .game__selectors
+        .game__grid-info
+            | '{{currentSymbols}}'
+        .flex.flex_p-center.flex_s-center
+            span Rmv
             CellComponent(
-                v-for="(item, index) in Array(cellsTypesCount + 1)"
+                v-for="(item, index) in Array(cellsTypesNumber)"
                 :type="index"
-                :is-selector="true"
-                @activate-selector="selectorType = $event"
-                :highlighted="index === selectorType"
-            )
-            CellComponent(
-                :type="null"
-                :is-selector="true"
-                @activate-selector="selectorType = $event"
-                :highlighted="null === selectorType"
             )
 </template>
 
@@ -92,11 +101,11 @@ import {
     highlightCombinations,
     applyCombinations,
     resetMatrix,
-    gridGetDown, checkSnowflakes, boosterTypePairs,
+    gridGetDown, checkSnowflakes, boosterTypePairs, boosterTypePairsRevert, colorTypePairsRevert,
 } from '~/logic/find-figures';
 
 
-const cellsTypesCount = 5;
+const cellsTypesNumber = 5;
 
 export default {
     data() {
@@ -108,7 +117,7 @@ export default {
 
             existedVariants: [],
             snowflakeBoosters: null,
-            cellsTypesCount: cellsTypesCount,
+            cellsTypesNumber: cellsTypesNumber,
             selectorType: undefined,
             fillText: '',
 
@@ -128,8 +137,29 @@ export default {
         },
         currentSymbols() {
             const symbols = []
-            this.grid.map(row => row.map(cell => symbols.push(cell.type)))
-            return symbols
+            this.grid.map(row => row.map(cell => {
+                if (cell.type === 5) {
+                    symbols.push(boosterTypePairsRevert[cell.booster])
+                } else {
+                    symbols.push(colorTypePairsRevert[cell.type])
+                }
+            }))
+            return symbols.join('')
+        },
+        typesCounter() {
+            const counter = {
+                '0': 0,
+                '1': 0,
+                '2': 0,
+                '3': 0,
+                '4': 0,
+                '5': 0,
+            }
+            this.grid.map(row => row.map(cell => {
+                counter[cell.type]++
+            }))
+            return counter
+
         }
     },
 
@@ -244,6 +274,8 @@ export default {
                         this.grid[r][c]['type'] = newCellType
                         if (newBooster !== undefined) {
                             this.grid[r][c]['booster'] = newBooster
+                        } else {
+                            this.grid[r][c]['booster'] = null
                         }
                         i++;
                     }

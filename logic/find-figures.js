@@ -25,12 +25,25 @@ export const colorTypePairs = {
     '3': 5,
     '4': 5,
 }
+export const colorTypePairsRevert = {
+    0: 'ж',
+    1: 'к',
+    2: 'с',
+    3: 'р',
+    4: 'ф',
+    5: 'ч',
+}
 export const boosterTypePairs = {
     '1': 'vRocket',
     '2': 'hRocket',
     '3': 'snowflake',
     '4': 'sun',
-
+}
+export const boosterTypePairsRevert = {
+    'vRocket': '1',
+    'hRocket': '2',
+    'snowflake': '3',
+    'sun': '4',
 }
 
 export const imageTypePairs = {
