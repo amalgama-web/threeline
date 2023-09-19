@@ -399,11 +399,10 @@ export function markSquaresInMatrix(matrix, squareConfigs) {
 
 }
 
-export function getExistedVariants(grid, stepSwapCells) {
+export function getExistedVariants(matrix, terminalCalculation = false) {
     const variants = [];
 
-    const initialMatrix = JSON.parse(JSON.stringify(grid))
-    let variationMatrix = JSON.parse(JSON.stringify(grid))
+    let variationMatrix = JSON.parse(JSON.stringify(matrix))
 
     for (let r = 0; r < gridHeight; r++) {
         for (let c = 0; c < gridWidth; c++) {
@@ -466,13 +465,15 @@ export function getExistedVariants(grid, stepSwapCells) {
                                 r: r + orientationVariant.rowInc,
                                 c: c + orientationVariant.colInc
                             },
-                            points: points
+                            points: points,
+                            stepsAfter: terminalCalculation ? null : getExistedVariants(variationMatrix, true)
+
                         }
                         
                         variants.push(variant);
                     }
 
-                    variationMatrix = JSON.parse(JSON.stringify(initialMatrix))
+                    variationMatrix = JSON.parse(JSON.stringify(matrix))
                 }
 
             })

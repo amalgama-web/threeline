@@ -15,7 +15,7 @@
             div
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
-                //button.btn.mr-8(@click="fillRandom") Рандом
+                button.btn.mr-8(@click="fillRandom") Рандом
                 button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
@@ -31,11 +31,23 @@
             button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
         .game__variants
-            .game__variants-item(
-                v-for="variant in existedVariants"
-                @click="applyCellsSwap(variant)"
-                :style="variantStyle(variant.points)"
-            ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
+            // list item
+            div(v-for="variant in existedVariants")
+                .game__variants-list-item
+                    // link to current variant
+                    .game__variants-link(
+                        @click="applyCellsSwap(variant)"
+                        :style="variantStyle(variant.points)"
+                    ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
+
+                    // popup with inner variants
+                    .game__variants-popup
+                        .game__variants-list-item(
+                            v-for="innerVariant in variant.stepsAfter"
+                        )
+                            .game__variants-link.mr-8(:style="variantStyle(innerVariant.points)") {{innerVariant.points}}
+
+
         .game__variants(v-for="snow in snowflakeBoosters" )
             | {{snow}}
 
@@ -190,7 +202,6 @@ export default {
         },
         consoleMatrix() {
             console.log(this.grid)
-
         },
         makeFullStep() {
             highlightCombinations(this.grid, this.initialCombination)
@@ -209,7 +220,7 @@ export default {
         },
 
         getVariants() {
-            this.existedVariants = getExistedVariants(this.grid, this.initialCombination);
+            this.existedVariants = getExistedVariants(this.grid);
             this.snowflakeBoosters = checkSnowflakes(this.grid)
         },
         applyCellsSwap(variant) {

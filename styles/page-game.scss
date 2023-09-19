@@ -53,12 +53,33 @@
     &__variants {
         font-size: 15px;
     }
-    &__variants-item {
+    &__variants-list-item {
+        display: inline-block;
+        position: relative;
+        &:hover {
+            .game__variants-popup {
+                display: block;
+            }
+        }
+    }
+    &__variants-link {
         color: cornflowerblue;
         cursor: pointer;
         &:hover {
             opacity: .5;
         }
+    }
+    &__variants-popup {
+        display: none;
+        position: absolute;
+        left: 100%;
+        margin-left: 10px;
+        top: 0;
+        border: 1px solid #a9a9a9;
+        background-color: #e5e5e5;
+        border-radius: 2px;
+        padding: 7px 9px;
+        white-space: nowrap;
     }
 
     &__selectors {
