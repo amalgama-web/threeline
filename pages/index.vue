@@ -17,6 +17,7 @@
                 button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
                 //button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
                 //button.btn.mr-8(@click="fillRandom") Рандом
+                button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
             button.btn.mr-8(@click="highlightCombinations") Пдсв
@@ -24,6 +25,7 @@
             button.btn.mr-8(@click="applyCombinations") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
+            //button.btn.mr-8(@click="checkBoosters") Boosters
         .mb-24
             button.btn.mr-8.mr-8(@click="saveStep") Сохранить шаг
             input(v-model="customLinkName")
@@ -33,9 +35,11 @@
         .game__variants
             .game__variants-item(
                 v-for="variant in existedVariants"
-                @click="applyVariant(variant)"
+                @click="applyCellsSwap(variant)"
                 :style="variantStyle(variant.points)"
             ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
+        .game__variants(v-for="snow in snowflakeBoosters" )
+            | {{snow}}
 
     .game__grid
         .grid.mr-8
@@ -50,6 +54,7 @@
                     :selector-type="selectorType"
                     :highlighted="cell.highlighted"
                     :deleted="cell.deleted"
+                    :future-booster="cell.appliedBooster"
                     :booster="cell.booster"
                     @type-selected="setCellType($event, rowIndex, cellIndex)"
                 )
@@ -65,7 +70,7 @@
                 :type="null"
                 :is-selector="true"
                 @activate-selector="selectorType = $event"
-                :highlighted="undefined === selectorType"
+                :highlighted="null === selectorType"
             )
 </template>
 
@@ -81,13 +86,13 @@ import {
     gridHeight,
     getExistedVariants,
     getTotalPoints,
-    applyVariant,
+    applyCellsSwap,
     colorTypePairs,
 
     highlightCombinations,
     applyCombinations,
     resetMatrix,
-    gridGetDown,
+    gridGetDown, checkSnowflakes,
 } from '~/logic/find-figures';
 
 
@@ -102,6 +107,7 @@ export default {
             gridWidth: gridWidth,
 
             existedVariants: [],
+            snowflakeBoosters: null,
             cellsTypesCount: cellsTypesCount,
             selectorType: undefined,
             fillText: '',
@@ -128,6 +134,9 @@ export default {
     },
 
     methods: {
+        checkBoosters() {
+            checkBoosters(this.grid);
+        },
         // cell defines and loads
         setCellType(type, rowIndex, cellIndex) {
             this.grid[rowIndex][cellIndex].type = type;
@@ -145,6 +154,10 @@ export default {
         },
         getDown() {
             gridGetDown(this.grid)
+        },
+        consoleMatrix() {
+            console.log(this.grid)
+
         },
         makeFullStep() {
             highlightCombinations(this.grid, this.initialCombination)
@@ -164,8 +177,9 @@ export default {
 
         getVariants() {
             this.existedVariants = getExistedVariants(this.grid, this.initialCombination);
+            this.snowflakeBoosters = checkSnowflakes(this.grid)
         },
-        applyVariant(variant) {
+        applyCellsSwap(variant) {
             this.initialCombination = [
                 {
                     r: variant.cell1.r,
@@ -177,7 +191,7 @@ export default {
                 }
             ];
             this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
-            applyVariant(this.grid, variant);
+            applyCellsSwap(this.grid, variant);
         },
 
         // stamps
@@ -219,7 +233,7 @@ export default {
                     type: clearedText[i] ? colorTypePairs[clearedText[i]] : cell.type,
                     highlighted: false,
                     deleted: false,
-                    booster: false
+                    appliedBooster: null,
                 }
                 i++
                 return returned
@@ -229,12 +243,14 @@ export default {
         fillOnlyGaps() {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
+
             this.grid = this.grid.map(row => row.map(cell => {
                 const returned = {
-                    type: cell.type === null ? colorTypePairs[clearedText[i++]] : cell.type,
+                    type: cell.type === null && colorTypePairs[clearedText[i]] !== undefined ? colorTypePairs[clearedText[i++]] : cell.type,
+                    booster: cell.booster,
                     highlighted: false,
                     deleted: false,
-                    booster: false
+                    appliedBooster: null
                 }
                 return returned
             }))

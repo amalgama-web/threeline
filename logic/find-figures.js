@@ -1,6 +1,9 @@
 export const gridHeight = 7;
 export const gridWidth = 6;
 
+const gridLastRowIndex = gridHeight - 1
+const gridLastColIndex = gridWidth - 1
+
 export const typeColors = [
     '#eabd29',
     '#ce1f1f',
@@ -17,6 +20,17 @@ export const colorTypePairs = {
     'р': 3,
     'ф': 4,
     'ч': 5,
+    '1': 5,
+    '2': 5,
+    '3': 5,
+    '4': 5,
+}
+export const boosterTypePairs = {
+    '1': 'vRocket',
+    '2': 'hRocket',
+    '3': 'snowflake',
+    '4': 'sun',
+
 }
 
 export const imageTypePairs = {
@@ -62,17 +76,17 @@ export function highlightCombinations(matrix, stepSwapCells) {
 function markBoostersInMatrix(matrix, hLines, vLines, squares) {
     for (let hLineID in hLines) {
         if (!hLines[hLineID].disabled && hLines[hLineID].booster) {
-            matrix[hLines[hLineID].booster.coords.r][hLines[hLineID].booster.coords.c]['booster'] = hLines[hLineID].booster;
+            matrix[hLines[hLineID].booster.coords.r][hLines[hLineID].booster.coords.c]['appliedBooster'] = hLines[hLineID].booster;
         }
     }
     for (let vLineID in vLines) {
         if (!vLines[vLineID].disabled && vLines[vLineID].booster) {
-            matrix[vLines[vLineID].booster.coords.r][vLines[vLineID].booster.coords.c]['booster'] = vLines[vLineID].booster;
+            matrix[vLines[vLineID].booster.coords.r][vLines[vLineID].booster.coords.c]['appliedBooster'] = vLines[vLineID].booster;
         }
     }
     for (let squareID in squares) {
         if (!squares[squareID].disabled && squares[squareID].booster) {
-            matrix[squares[squareID].booster.coords.r][squares[squareID].booster.coords.c]['booster'] = squares[squareID].booster;
+            matrix[squares[squareID].booster.coords.r][squares[squareID].booster.coords.c]['appliedBooster'] = squares[squareID].booster;
         }
     }
 }
@@ -109,7 +123,7 @@ function createBoostersForVLines(vLines, stepSwapCells) {
         let booster = null;
         if (vLines[vLineID].length >= 4) {
             booster = {
-                type: 'hRocket',
+                type: 'vRocket',
                 coords: null
             }
             if (vLines[vLineID].length > 4) {
@@ -181,9 +195,10 @@ export function applyCombinations(matrix) {
             if (cell.deleted === true) {
                 cell.type = null;
             }
-            if (cell.booster) {
+            if (cell.appliedBooster) {
                 // todo прописать поточнее типы для ячеек
                 cell.type = 5;
+                cell.booster = cell.appliedBooster.type
             }
         })
     })
@@ -385,7 +400,7 @@ export function getExistedVariants(grid, stepSwapCells) {
             orientationVariants.forEach(orientationVariant => {
 
                 if (orientationVariant.condition) {
-                    applyVariant(variationMatrix, {
+                    applyCellsSwap(variationMatrix, {
                         cell1: {r: r, c: c},
                         cell2: {r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc}
                     })
@@ -449,16 +464,16 @@ export function resetMatrix(matrix) {
             cell.hLine = null;
             cell.vLine = null;
             cell.square = null;
-            cell.booster = null;
+            cell.appliedBooster = null;
         })
     })
 }
 
 
-export function applyVariant(grid, variant) {
-    let tmpType = grid[variant.cell1.r][variant.cell1.c].type
-    grid[variant.cell1.r][variant.cell1.c].type = grid[variant.cell2.r][variant.cell2.c].type
-    grid[variant.cell2.r][variant.cell2.c].type = tmpType
+export function applyCellsSwap(grid, variant) {
+    let tmpCell = grid[variant.cell1.r][variant.cell1.c]
+    grid[variant.cell1.r][variant.cell1.c] = grid[variant.cell2.r][variant.cell2.c]
+    grid[variant.cell2.r][variant.cell2.c] = tmpCell
 }
 
 export function gridGetDown(grid) {
@@ -474,8 +489,10 @@ export function gridGetDown(grid) {
 function downColumn(grid, row, col) {
     for (let r = row; r > 0; r--) {
         grid[r][col].type = grid[r - 1][col].type;
+        grid[r][col].booster = grid[r - 1][col].booster;
     }
     grid[0][col].type = null
+    grid[0][col].booster = null
 }
 
 
@@ -642,7 +659,129 @@ function markCellAsDeleted(matrix, coords) {
 }
 
 function markCellAsBooster(matrix, coords) {
-    matrix[coords.r][coords.c]['booster'] = {
+    matrix[coords.r][coords.c]['appliedBooster'] = {
         type: 'sun'
     };
+}
+
+export function checkSnowflakes(matrix) {
+    const boosterVariants = []
+
+    for (let r = 0; r < gridHeight; r++) {
+        for (let c = 0; c < gridWidth; c++) {
+            if (matrix[r][c]['booster'] && matrix[r][c]['booster'] === 'snowflake') {
+                boosterVariants.push(calcSnowflake(matrix, {r, c}))
+            }
+        }
+    }
+    return boosterVariants
+
+}
+
+function copyMatrix(matrix) {
+    return JSON.parse(JSON.stringify(matrix))
+}
+
+function checkCellExisting(matrix, coords) {
+    return matrix[coords.r][coords.c]
+}
+
+function calcSnowflake(matrix, coords) {
+
+    const directions = [
+        true,
+        coords.r > 0,
+        coords.c < gridLastColIndex,
+        coords.r < gridLastRowIndex,
+        coords.c > 0
+    ]
+
+    const directionsCoordsInc = [
+        {
+            r: 0,
+            c: 0
+        },
+        {
+            r: -1,
+            c: 0
+        },
+        {
+            r: 0,
+            c: 1
+        },
+        {
+            r: 1,
+            c: 0
+        },
+        {
+            r: 0,
+            c: -1
+        }
+    ]
+
+    let matrices = directions.map((directionExist, index) => {
+        return directionExist ? JSON.parse(JSON.stringify(matrix)) : null
+    })
+
+    const points = matrices.map( (variationMatrix, index) => {
+        if (variationMatrix) {
+            applyCellsSwap(variationMatrix, {
+                cell1: {r: coords.r, c: coords.c},
+                cell2: {r: coords.r + directionsCoordsInc[index].r, c: coords.c + directionsCoordsInc[index].c}
+            })
+            return calcSnowflakeVariant(variationMatrix, {
+                r: coords.r + directionsCoordsInc[index].r,
+                c: coords.c + directionsCoordsInc[index].c
+            })
+        }
+        return null
+    })
+
+
+    return {
+        'd': points[0],
+        't': points[1],
+        'r': points[2],
+        'b': points[3],
+        'l': points[4],
+    }
+
+}
+function calcSnowflakeVariant(matrix, coords) {
+    let points = 0;
+
+    matrix[coords.r][coords.c].type = null
+    matrix[coords.r][coords.c].booster = null
+
+    if (coords.r > 0) markCellDeleted(matrix[coords.r - 1][coords.c])
+    if (coords.r < gridLastRowIndex) markCellDeleted(matrix[coords.r + 1][coords.c])
+    if (coords.c > 0) markCellDeleted(matrix[coords.r][coords.c - 1])
+    if (coords.c < gridLastColIndex) markCellDeleted(matrix[coords.r][coords.c + 1])
+
+
+    points = getTotalPoints(matrix)
+    applyCombinations(matrix)
+    resetMatrix(matrix)
+    gridGetDown(matrix)
+
+    let additionalPoints = 0;
+
+    do {
+        additionalPoints = 0
+        highlightCombinations(matrix);
+        additionalPoints = getTotalPoints(matrix);
+        applyCombinations(matrix)
+        resetMatrix(matrix)
+        gridGetDown(matrix)
+        points += additionalPoints;
+    } while(additionalPoints > 0)
+
+    return points
+
+}
+
+function markCellDeleted(cell) {
+    if (cell) {
+        cell.deleted = true;
+    }
 }

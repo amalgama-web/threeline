@@ -1,9 +1,9 @@
 <template lang="pug">
 .cell(
-    :class="{'cell_highlighted': highlighted, 'cell_deleted': deleted, 'cell_booster': booster}"
+    :class="cellClasses"
     @click="cellClick()"
 )
-    .cell__inner(v-if="type !== null" :style="cellStyle")
+    .cell__inner(:style="cellStyle")
 
     .cell__select(v-if="selectIsVisible")
         .cell__select-item(
@@ -23,6 +23,10 @@ import icon_case from 'assets/case.png'
 import icon_wallet from 'assets/wallet.png'
 import icon_hourglass from 'assets/hourglass.png'
 import icon_pig from 'assets/pig.png'
+import icon_snow from 'assets/icon-snow.png'
+import icon_hRocket from 'assets/icon-hrocket.png'
+import icon_vRocket from 'assets/icon-vrocket.png'
+import icon_sun from 'assets/icon-sun.png'
 
 const bgs = [
     `url(${icon_coin})`,
@@ -31,8 +35,15 @@ const bgs = [
     `url(${icon_pig})`,
     `url(${icon_hourglass})`,
 ]
+const boostersBgs = {
+    'hRocket': `url(${icon_hRocket})`,
+    'vRocket': `url(${icon_vRocket})`,
+    'snowflake': `url(${icon_snow})`,
+    'sun': `url(${icon_sun})`,
+}
 
-import { typeColors, imageTypePairs } from '~/logic/find-figures';
+import {typeColors, imageTypePairs} from '~/logic/find-figures';
+
 export default {
     data() {
         return {
@@ -42,7 +53,7 @@ export default {
     },
     props: {
         type: {
-            type: [Number, undefined],
+            type: [Number, null],
         },
         highlighted: {
             type: Boolean,
@@ -52,9 +63,13 @@ export default {
             type: Boolean,
             default: false
         },
-        booster: {
+        futureBooster: {
             type: Boolean,
             default: false
+        },
+        booster: {
+            type: String,
+            default: null,
         },
         isSelector: {
             type: Boolean,
@@ -68,7 +83,17 @@ export default {
     computed: {
         cellStyle() {
             if (this.type === null) {
-                return null;
+                return null
+            }
+
+            if (this.type === 5) {
+                return this.booster ?
+                    {backgroundImage: boostersBgs[this.booster]} :
+                    {
+                        backgroundColor: typeColors[this.type],
+                        width: '40%',
+                        height: '40%',
+                    }
             }
 
             return bgs[this.type] ? {
@@ -78,6 +103,16 @@ export default {
                 width: '40%',
                 height: '40%',
             }
+        },
+        cellClasses() {
+            return [
+                {
+                    'cell_highlighted': this.highlighted,
+                    'cell_deleted': this.deleted,
+                    'cell_future-booster': this.futureBooster,
+                },
+                this.booster ? `cell_booster-${this.booster}` : null
+            ]
         }
     },
     methods: {
