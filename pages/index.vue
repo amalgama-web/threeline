@@ -13,9 +13,9 @@
     .game__buttons
         .gap-15.mb-24
             div
-                button.btn.mr-8(@click="fillFromText") Заполнить
-                button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
-                button.btn.mr-8(@click="fillRandom") Рандом
+                button.btn.mr-8(@click="fillFromText") Зап
+                button.btn.mr-8(@click="fillOnlyGaps") Зап проп
+                button.btn.mr-8(@click="fillRandom") Rand
                 button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
@@ -56,9 +56,9 @@
             .grid.mr-8
                 .grid__row
                     CellComponent
-                    CellComponent(v-for="(item, index) in Array(gridWidth)") {{index}}
+                    CellComponent(v-for="(item, index) in Array(gridWidth)" @cell-click="removeCol(index)") {{index}}
                 .grid__row(v-for="(row, rowIndex) in grid")
-                    CellComponent {{rowIndex}}
+                    CellComponent(@cell-click="removeRow(rowIndex)") {{rowIndex}}
                     CellComponent(
                         v-for="(cell, cellIndex) in row"
                         :type="cell.type"
@@ -172,6 +172,18 @@ export default {
     },
 
     methods: {
+        removeCol(c) {
+            for (let r = 0; r < gridHeight; r++ ) {
+                this.grid[r][c] = getZeroCell();
+            }
+        },
+
+        removeRow(r) {
+            for (let c = 0; c < gridWidth; c++ ) {
+                this.grid[r][c] = getZeroCell();
+            }
+        },
+
         fullyRemoveType(removedType) {
             for (let r = 0; r < gridHeight; r++ ) {
                 for (let c = 0; c < gridWidth; c++ ) {
