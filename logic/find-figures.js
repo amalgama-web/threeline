@@ -2,8 +2,21 @@ export const gridHeight = 7;
 export const gridWidth = 6;
 
 const gridLastRowIndex = gridHeight - 1
-const gridLastColIndex = gridWidth - 1
+const gridLastColIndex = gridWidth - 1;
 
+export const zeroCell = {
+    type: null,
+    highlighted: false,
+    deleted: false,
+    vLine: null,
+    hLine: null,
+    square: null,
+    appliedBooster: null,
+    booster: null,
+}
+export function getZeroCell() {
+    return JSON.parse(JSON.stringify(zeroCell))
+}
 export const typeColors = [
     '#eabd29',
     '#ce1f1f',

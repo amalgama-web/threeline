@@ -15,17 +15,15 @@
             div
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Заполнить пропуски
-                //button.btn.btn_err.mr-8(@click="clearFillText") Очистить текст
                 //button.btn.mr-8(@click="fillRandom") Рандом
                 button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
             button.btn.mr-8(@click="highlightCombinations") Пдсв
-            button.btn.mr-8(@click="resetMatrix") Убр пдсв
+            //button.btn.mr-8(@click="resetMatrix") Убр пдсв
             button.btn.mr-8(@click="applyCombinations") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
-            //button.btn.mr-8(@click="checkBoosters") Boosters
         .mb-24
             button.btn.mr-8.mr-8(@click="saveStep") Сохранить шаг
             input(v-model="customLinkName")
@@ -52,25 +50,22 @@
                     CellComponent(
                         v-for="(cell, cellIndex) in row"
                         :type="cell.type"
-                        :selector-type="selectorType"
                         :highlighted="cell.highlighted"
                         :deleted="cell.deleted"
                         :future-booster="cell.appliedBooster"
                         :booster="cell.booster"
-                        @type-selected="setCellType($event, rowIndex, cellIndex)"
+                        @cell-click="setCellType(rowIndex, cellIndex)"
                     )
             .game__selectors
                 CellComponent(
                     v-for="(item, index) in Array(cellsTypesNumber + 1)"
                     :type="index"
-                    :is-selector="true"
-                    @activate-selector="selectorType = $event"
+                    @cell-click="selectorType = $event"
                     :highlighted="index === selectorType"
                 ) {{typesCounter[index]}}
                 CellComponent(
                     :type="null"
-                    :is-selector="true"
-                    @activate-selector="selectorType = $event"
+                    @cell-click="selectorType = $event"
                     :highlighted="null === selectorType"
                 )
         .game__grid-info
@@ -80,6 +75,7 @@
             CellComponent(
                 v-for="(item, index) in Array(cellsTypesNumber)"
                 :type="index"
+                @cell-click="fullyRemoveType($event)"
             )
 </template>
 
@@ -101,7 +97,7 @@ import {
     highlightCombinations,
     applyCombinations,
     resetMatrix,
-    gridGetDown, checkSnowflakes, boosterTypePairs, boosterTypePairsRevert, colorTypePairsRevert,
+    gridGetDown, checkSnowflakes, boosterTypePairs, boosterTypePairsRevert, colorTypePairsRevert, zeroCell, getZeroCell,
 } from '~/logic/find-figures';
 
 
@@ -118,7 +114,7 @@ export default {
             existedVariants: [],
             snowflakeBoosters: null,
             cellsTypesNumber: cellsTypesNumber,
-            selectorType: undefined,
+            selectorType: null,
             fillText: '',
 
             //steps
@@ -164,12 +160,19 @@ export default {
     },
 
     methods: {
-        checkBoosters() {
-            checkBoosters(this.grid);
+        fullyRemoveType(removedType) {
+            for (let r = 0; r < gridHeight; r++ ) {
+                for (let c = 0; c < gridWidth; c++ ) {
+                    if (this.grid[r][c]['type'] === removedType) {
+                        this.grid[r][c] = getZeroCell();
+                    }
+                }
+            }
         },
+
         // cell defines and loads
-        setCellType(type, rowIndex, cellIndex) {
-            this.grid[rowIndex][cellIndex].type = type;
+        setCellType(rowIndex, cellIndex) {
+            this.grid[rowIndex][cellIndex].type = this.selectorType;
         },
 
         //  combinations
@@ -283,9 +286,6 @@ export default {
             }
             this.fillText = ''
         },
-        clearFillText() {
-            this.fillText = ''
-        },
         fillRandom() {
             this.grid = this.grid.map(row => row.map(cell => ({
                 type: getRandomInt(5),
@@ -316,14 +316,7 @@ export default {
     },
 
     mounted() {
-        this.grid = this.grid.map(row => row.map(cell => ({
-            type: null,
-            highlighted: false,
-            deleted: false,
-            vLine: null,
-            hLine: null,
-            square: null,
-        })))
+        this.grid = this.grid.map(row => row.map(cell => JSON.parse(JSON.stringify(zeroCell))))
 
         let LSKeys = Object.keys(localStorage).filter(item => item.includes('grid')).map(item => item.replace('grid', ''));
         LSKeys = LSKeys.sort((item1, item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)

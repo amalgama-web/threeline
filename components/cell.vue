@@ -71,14 +71,6 @@ export default {
             type: String,
             default: null,
         },
-        isSelector: {
-            type: Boolean,
-            default: false,
-        },
-        selectorType: {
-            type: [Number, undefined],
-            default: null,
-        }
     },
     computed: {
         cellStyle() {
@@ -117,15 +109,7 @@ export default {
     },
     methods: {
         cellClick() {
-            if (this.isSelector) {
-                this.$emit('activate-selector', this.type)
-            } else {
-                if (this.selectorType !== undefined) {
-                    this.$emit('typeSelected', this.selectorType);
-                } else {
-                    this.selectIsVisible = true;
-                }
-            }
+            this.$emit('cell-click', this.type)
         },
         calcStyles(index) {
             const radPerSection = 2 * Math.PI / 7;
