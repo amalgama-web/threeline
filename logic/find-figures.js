@@ -1,8 +1,8 @@
 export const gridHeight = 7;
 export const gridWidth = 6;
 
-const gridLastRowIndex = gridHeight - 1
-const gridLastColIndex = gridWidth - 1;
+export const gridLastRowIndex = gridHeight - 1
+export const gridLastColIndex = gridWidth - 1;
 
 export const zeroCell = {
     type: null,

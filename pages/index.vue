@@ -13,14 +13,14 @@
     .game__buttons
         .gap-15.mb-24
             div
-                button.btn.mr-8(@click="fillFromText") Зап
-                button.btn.mr-8(@click="fillOnlyGaps") Зап проп
-                button.btn.mr-8(@click="fillRandom") Rand
-                button.btn.mr-8(@click="consoleMatrix") Console
+                button.btn.mr-8(@click="fillFromText") Заполнить
+                button.btn.mr-8(@click="fillOnlyGaps") Запполнить пропуски
+                //button.btn.mr-8(@click="fillRandom") Rand
+                //button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
             button.btn.mr-8(@click="highlightCombinations") Пдсв
-            //button.btn.mr-8(@click="resetMatrix") Убр пдсв
+            button.btn.mr-8(@click="resetMatrix") Убр пдсв
             button.btn.mr-8(@click="applyCombinations") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
@@ -66,7 +66,7 @@
                         :deleted="cell.deleted"
                         :future-booster="cell.appliedBooster"
                         :booster="cell.booster"
-                        @cell-click="setCellType(rowIndex, cellIndex)"
+                        @cell-click="gridCellClick(rowIndex, cellIndex)"
                     )
             .game__selectors
                 CellComponent(
@@ -89,6 +89,14 @@
                 :type="index"
                 @cell-click="fullyRemoveType($event)"
             )
+        .flex.flex_p-center.flex_s-center
+            span Snow
+            CellComponent(
+                :type="5"
+                :booster="'snowflake'"
+                :highlighted="snowflakeClickActive"
+                @cell-click="snowflakeClickActive = !snowflakeClickActive"
+            )
 </template>
 
 
@@ -109,7 +117,14 @@ import {
     highlightCombinations,
     applyCombinations,
     resetMatrix,
-    gridGetDown, checkSnowflakes, boosterTypePairs, boosterTypePairsRevert, colorTypePairsRevert, zeroCell, getZeroCell,
+    gridGetDown,
+    checkSnowflakes,
+    boosterTypePairs,
+    boosterTypePairsRevert,
+    colorTypePairsRevert,
+    zeroCell,
+    getZeroCell,
+    gridLastRowIndex, gridLastColIndex,
 } from '~/logic/find-figures';
 
 
@@ -128,6 +143,9 @@ export default {
             cellsTypesNumber: cellsTypesNumber,
             selectorType: null,
             fillText: '',
+
+            // snowflake
+            snowflakeClickActive: false,
 
             //steps
             steps: [],
@@ -172,6 +190,18 @@ export default {
     },
 
     methods: {
+
+        gridCellClick(r, c) {
+            if (!this.snowflakeClickActive) {
+                this.setCellType(r, c)
+            } else {
+                this.grid[r][c] = getZeroCell()
+                if (r > 0) this.grid[r - 1][c] = getZeroCell()
+                if (r < gridLastRowIndex) this.grid[r + 1][c] = getZeroCell()
+                if (c > 0) this.grid[r][c - 1] = getZeroCell()
+                if (c < gridLastColIndex) this.grid[r][c + 1] = getZeroCell()
+            }
+        },
         removeCol(c) {
             for (let r = 0; r < gridHeight; r++ ) {
                 this.grid[r][c] = getZeroCell();
