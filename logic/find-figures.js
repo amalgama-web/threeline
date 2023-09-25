@@ -85,7 +85,7 @@ export function highlightCombinations(matrix, stepSwapCells) {
     // merge different figures and disable figures with less weight (ordinary lines, squares and sun lines)
     mergeLinesAndSun(matrix, hLines, vLines)
     // todo продумать мердж солнца и квадратов
-    mergeSquaresAndSun(matrix, squares, vLines)
+    mergeSquaresAndSun(matrix, squares, vLines, hLines)
     mergeLinesAndSquares(matrix, hLines, vLines, squares)
 
     // apply boosters from enabled figures and mark it on matrix
@@ -399,7 +399,7 @@ export function markSquaresInMatrix(matrix, squareConfigs) {
 
 }
 
-export function getExistedVariants(matrix, terminalCalculation = false) {
+export function getExistedVariants(matrix, getNextStep = 0) {
     const variants = [];
 
     let variationMatrix = JSON.parse(JSON.stringify(matrix))
@@ -424,11 +424,19 @@ export function getExistedVariants(matrix, terminalCalculation = false) {
 
             orientationVariants.forEach(orientationVariant => {
 
+                let isBoosters = false;
+
                 if (orientationVariant.condition) {
                     applyCellsSwap(variationMatrix, {
                         cell1: {r: r, c: c},
                         cell2: {r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc}
                     })
+
+                    // prevent boosters swap
+                    if (variationMatrix[r][c]['type'] === 5 ||
+                        variationMatrix[r + orientationVariant.rowInc][c + orientationVariant.colInc]['type'] === 5) {
+                        isBoosters = true;
+                    }
 
                     let points = 0;
                     let additionalPoints = 0;
@@ -455,7 +463,9 @@ export function getExistedVariants(matrix, terminalCalculation = false) {
                         isInitialCombination = false;
                     } while (additionalPoints !== 0)
 
-                    if (points) {
+
+
+                    if (points && !isBoosters) {
                         const variant = {
                             cell1: {
                                 r,
@@ -466,7 +476,7 @@ export function getExistedVariants(matrix, terminalCalculation = false) {
                                 c: c + orientationVariant.colInc
                             },
                             points: points,
-                            stepsAfter: terminalCalculation ? null : getExistedVariants(variationMatrix, true)
+                            stepsAfter: getNextStep === 0 ? null : getExistedVariants(variationMatrix, getNextStep - 1)
 
                         }
                         
@@ -480,7 +490,25 @@ export function getExistedVariants(matrix, terminalCalculation = false) {
         }
     }
 
+
     return variants;
+}
+
+export function showVariantsWithSun(variants) {
+    variants.forEach(variant => {
+        variant.hasSun = findSun(variant)
+    })
+
+}
+function findSun(variant) {
+    return (variant.points === 5 || variant.points === 8)  || (variant.stepsAfter ? findSunInArr(variant.stepsAfter) : false)
+}
+
+function findSunInArr(variantsArr) {
+    variantsArr.forEach(variant => {
+        variant.hasSun = findSun(variant)
+    })
+    return variantsArr.some(variant => variant.hasSun)
 }
 
 export function resetMatrix(matrix) {
@@ -616,13 +644,22 @@ export function mergeLinesAndSun(matrix, hLines, vLines) {
                 // todo проработать появление в линиях солнца квадрата
                 hLines[cell.hLine]['disabled'] = true
                 vLines[cell.vLine]['disabled'] = true
+                hLines[cell.hLine]['sunPart'] = true
+                vLines[cell.vLine]['sunPart'] = true
             }
         })
     })
 }
 
-function mergeSquaresAndSun() {
-
+function mergeSquaresAndSun(matrix, squares, vLines, hLines) {
+    matrix.forEach(row => {
+        row.forEach(cell => {
+            if (cell.hLine && cell.square && hLines[cell.hLine].sunPart ||
+                cell.vLine && cell.square && vLines[cell.vLine].sunPart) {
+                squares[cell.square]['disabled'] = true
+            }
+        })
+    })
 }
 
 export function markDeletedForOrdinaryLines(matrix, hLines, vLines) {

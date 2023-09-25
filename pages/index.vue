@@ -37,15 +37,42 @@
                     // link to current variant
                     .game__variants-link(
                         @click="applyCellsSwap(variant)"
-                        :style="variantStyle(variant.points)"
+                        :style="variantStyle(variant)"
+                        :class="{'has-sun':  variant.hasSun}"
                     ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
 
-                    // popup with inner variants
-                    .game__variants-popup
-                        .game__variants-list-item(
-                            v-for="innerVariant in variant.stepsAfter"
+                    // popup
+                    .game__variants-popup(v-if="variant.stepsAfter")
+                        div(
+                            v-for="variant in variant.stepsAfter"
                         )
-                            .game__variants-link.mr-8(:style="variantStyle(innerVariant.points)") {{innerVariant.points}}
+                            .game__variants-list-item
+                                .game__variants-link.mr-8(
+                                    :style="variantStyle(variant)"
+                                    :class="{'has-sun':  variant.hasSun}"
+                                ) Points: {{variant.points}}
+
+                                // popup
+                                .game__variants-popup(v-if="variant.stepsAfter")
+                                    div(
+                                        v-for="variant in variant.stepsAfter"
+                                    )
+                                        .game__variants-list-item
+                                            .game__variants-link.mr-8(
+                                                :style="variantStyle(variant)"
+                                                :class="{'has-sun':  variant.hasSun}"
+                                            ) Points: {{variant.points}}
+
+                                            // popup
+                                            .game__variants-popup(v-if="variant.stepsAfter")
+                                                div(
+                                                    v-for="variant in variant.stepsAfter"
+                                                )
+                                                    .game__variants-list-item
+                                                        .game__variants-link.mr-8(
+                                                            :style="variantStyle(variant)"
+                                                            :class="{'has-sun':  variant.hasSun}"
+                                                        ) Points: {{variant.points}}
 
 
         .game__variants(v-for="snow in snowflakeBoosters" )
@@ -124,7 +151,7 @@ import {
     colorTypePairsRevert,
     zeroCell,
     getZeroCell,
-    gridLastRowIndex, gridLastColIndex,
+    gridLastRowIndex, gridLastColIndex, showVariantsWithSun,
 } from '~/logic/find-figures';
 
 
@@ -262,7 +289,9 @@ export default {
         },
 
         getVariants() {
-            this.existedVariants = getExistedVariants(this.grid);
+            this.existedVariants = getExistedVariants(this.grid, 3);
+            showVariantsWithSun(this.existedVariants)
+
             this.snowflakeBoosters = checkSnowflakes(this.grid)
         },
         applyCellsSwap(variant) {
@@ -351,7 +380,7 @@ export default {
         },
 
 
-        variantStyle(points) {
+        variantStyle({points}) {
             if (points === 5 || points === 8) return {
                 color: '#ffff00'
             }
