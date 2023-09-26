@@ -402,6 +402,8 @@ export function markSquaresInMatrix(matrix, squareConfigs) {
 export function getExistedVariants(matrix, getNextStep = 0) {
     const variants = [];
 
+    const initialSunCount = countSun(matrix);
+
     let variationMatrix = JSON.parse(JSON.stringify(matrix))
 
     for (let r = 0; r < gridHeight; r++) {
@@ -463,7 +465,7 @@ export function getExistedVariants(matrix, getNextStep = 0) {
                         isInitialCombination = false;
                     } while (additionalPoints !== 0)
 
-
+                    const newSunCount = countSun(variationMatrix);
 
                     if (points && !isBoosters) {
                         const variant = {
@@ -476,6 +478,7 @@ export function getExistedVariants(matrix, getNextStep = 0) {
                                 c: c + orientationVariant.colInc
                             },
                             points: points,
+                            variantHasSun: initialSunCount < newSunCount,
                             stepsAfter: getNextStep === 0 ? null : getExistedVariants(variationMatrix, getNextStep - 1)
 
                         }
@@ -501,7 +504,7 @@ export function showVariantsWithSun(variants) {
 
 }
 function findSun(variant) {
-    return (variant.points === 5 || variant.points === 8)  || (variant.stepsAfter ? findSunInArr(variant.stepsAfter) : false)
+    return variant.variantHasSun || (variant.stepsAfter ? findSunInArr(variant.stepsAfter) : false)
 }
 
 function findSunInArr(variantsArr) {
@@ -611,9 +614,6 @@ export function markHLinesInMatrix(matrix, hLines) {
             matrix[hLines[key].coords.r][c]['hLine'] = key;
         }
     }
-}
-function checkSameCells(cellCoords1, cellCoords2) {
-
 }
 function checkCellInHLine(cellCoords, line) {
     return cellCoords.r === line.coords.r && cellCoords.c <= line.coords.c && cellCoords.c > line.coords.c - line.length;
@@ -842,6 +842,13 @@ function calcSnowflakeVariant(matrix, coords) {
 
     return points
 
+}
+
+function countSun(matrix) {
+    return matrix.reduce((sum, row) => sum + row.reduce((sum, cell) => {
+        if (cell.booster === 'sun') return sum + 1;
+        return sum
+    }, 0), 0)
 }
 
 function markCellDeleted(cell) {
