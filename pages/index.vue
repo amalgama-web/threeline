@@ -1,16 +1,20 @@
 <template lang="pug">
 .game
     .game__history
+        .mb-24
+            .btn.btn_err.mr-8(@click="newGame") New game
+            | Game number {{gameNumber}}
         .step-list
             .step-item(v-for="step in steps")
                 div
                     span.step-item__right.link.link_red(@click="removeStamp(step.stepChain)") Rmv
-                    span.step-item__left  {{step.stepChain}}
+                    span.step-item__left {{step.stepChain}}
                 div
                     span.step-item__right.link(@click="loadStamp(step.stepChain)") Load
 
 
     .game__buttons
+
         .gap-15.mb-24
             div
                 button.btn.mr-8(@click="fillFromText") Заполнить
@@ -160,6 +164,8 @@ const cellsTypesNumber = 5;
 export default {
     data() {
         return {
+
+
             grid: Array(gridHeight).fill(Array(gridWidth).fill(0, 0), 0),
 
             gridHeight: gridHeight,
@@ -181,7 +187,10 @@ export default {
             customLinkName: '',
 
             // applies
-            initialCombination: null
+            initialCombination: null,
+
+            // game numeration
+            gameNumber: 0
         }
     },
     computed: {
@@ -217,6 +226,11 @@ export default {
     },
 
     methods: {
+
+        newGame() {
+            this.gameNumber = +this.gameNumber + 1;
+            window.localStorage.setItem('gameNumber', this.gameNumber)
+        },
 
         gridCellClick(r, c) {
             if (!this.snowflakeClickActive) {
@@ -315,30 +329,32 @@ export default {
                 this.stepChain += `${this.customLinkName}_`;
             } else {
                 if (this.stepAction !== null) {
-
                     this.stepChain += `${this.stepAction}_`;
                 }
             }
             this.customLinkName = '';
 
 
-            const stampName = `grid${this.stepChain}`;
-
             this.steps.push({
                 stepChain: this.stepChain
             })
             this.stepAction = null;
-            window.localStorage.setItem(stampName, JSON.stringify(this.grid))
+            window.localStorage.setItem(this.getChainNameForLS(this.stepChain), JSON.stringify(this.grid))
             this.getVariants();
         },
+
+        getChainNameForLS(chain) {
+            return `game${this.gameNumber}${chain}`
+        },
+
         loadStamp(chain) {
-            this.grid = JSON.parse(window.localStorage.getItem(`grid${chain}`));
+            this.grid = JSON.parse(window.localStorage.getItem(this.getChainNameForLS(chain)));
             this.stepChain = chain;
             this.getVariants()
         },
         removeStamp(chain) {
             this.steps = this.steps.filter(item => item.stepChain !== chain)
-            window.localStorage.removeItem(`grid${chain}`)
+            window.localStorage.removeItem(this.getChainNameForLS(chain))
         },
         fillFromText() {
             this.fillMatrix()
@@ -398,9 +414,14 @@ export default {
     },
 
     mounted() {
-        this.grid = this.grid.map(row => row.map(cell => JSON.parse(JSON.stringify(zeroCell))))
+        const LSGameNumber = window.localStorage.getItem(`gameNumber`);
+        this.gameNumber = LSGameNumber ? LSGameNumber : 0;
 
-        let LSKeys = Object.keys(localStorage).filter(item => item.includes('grid')).map(item => item.replace('grid', ''));
+        this.grid = this.grid.map(row => row.map(cell => getZeroCell()))
+
+        let LSKeys = Object.keys(localStorage)
+            .filter(item => item.includes(`game${this.gameNumber}`))
+            .map(item => item.replace(`game${this.gameNumber}`, ''));
         LSKeys = LSKeys.sort((item1, item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
         this.steps = LSKeys.map(item => ({stepChain: item}))
     },
