@@ -37,6 +37,12 @@ export const colorTypePairs = {
     '2': 5,
     '3': 5,
     '4': 5,
+    ';': 0,
+    'r': 1,
+    'c': 2,
+    'h': 3,
+    'a': 4,
+    'x': 5,
 }
 export const colorTypePairsRevert = {
     0: 'ж',
