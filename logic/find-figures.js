@@ -508,6 +508,7 @@ export function showVariantsWithSun(variants) {
         variant.hasSun = findSun(variant)
     })
 
+    return variants;
 }
 function findSun(variant) {
     return variant.variantHasSun || (variant.stepsAfter ? findSunInArr(variant.stepsAfter) : false)
@@ -739,7 +740,7 @@ export function checkSnowflakes(matrix) {
 
     for (let r = 0; r < gridHeight; r++) {
         for (let c = 0; c < gridWidth; c++) {
-            if (matrix[r][c]['booster'] && matrix[r][c]['booster'] === 'snowflake') {
+            if (matrix[r][c]['booster'] === 'snowflake') {
                 boosterVariants.push(calcSnowflake(matrix, {r, c}))
             }
         }
@@ -793,27 +794,31 @@ function calcSnowflake(matrix, coords) {
         return directionExist ? JSON.parse(JSON.stringify(matrix)) : null
     })
 
-    const points = matrices.map( (variationMatrix, index) => {
+    const variants = matrices.map( (variationMatrix, index) => {
         if (variationMatrix) {
             applyCellsSwap(variationMatrix, {
                 cell1: {r: coords.r, c: coords.c},
                 cell2: {r: coords.r + directionsCoordsInc[index].r, c: coords.c + directionsCoordsInc[index].c}
             })
-            return calcSnowflakeVariant(variationMatrix, {
-                r: coords.r + directionsCoordsInc[index].r,
-                c: coords.c + directionsCoordsInc[index].c
-            })
+            return {
+                points: calcSnowflakeVariant(variationMatrix, {
+                    r: coords.r + directionsCoordsInc[index].r,
+                    c: coords.c + directionsCoordsInc[index].c
+                }),
+                stepsAfter: showVariantsWithSun(getExistedVariants(variationMatrix, 2))
+            }
+
         }
         return null
     })
 
 
     return {
-        'd': points[0],
-        't': points[1],
-        'r': points[2],
-        'b': points[3],
-        'l': points[4],
+        'd': variants[0],
+        't': variants[1],
+        'r': variants[2],
+        'b': variants[3],
+        'l': variants[4],
     }
 
 }

@@ -80,7 +80,47 @@
 
 
         .game__variants(v-for="snow in snowflakeBoosters" )
-            | {{snow}}
+            div(v-for="(directionConfig, directionName) in snow")
+                .game__variants-list-item
+                    // link to current variant
+                    .game__variants-link(
+                    ) {{`${directionName}:`}} {{directionConfig?.points}}
+
+                    // popup
+                    .game__variants-popup(v-if="directionConfig && directionConfig.stepsAfter")
+                        div(
+                            v-for="variant in directionConfig.stepsAfter"
+                        )
+                            .game__variants-list-item
+                                .game__variants-link.mr-8(
+                                    :style="variantStyle(variant)"
+                                    :class="{'has-sun':  variant.hasSun}"
+                                ) Points: {{variant.points}}
+
+                                // popup
+                                .game__variants-popup(v-if="variant.stepsAfter")
+                                    div(
+                                        v-for="variant in variant.stepsAfter"
+                                    )
+                                        .game__variants-list-item
+                                            .game__variants-link.mr-8(
+                                                :style="variantStyle(variant)"
+                                                :class="{'has-sun':  variant.hasSun}"
+                                            ) Points: {{variant.points}}
+
+                                            // popup
+                                            .game__variants-popup(v-if="variant.stepsAfter")
+                                                div(
+                                                    v-for="variant in variant.stepsAfter"
+                                                )
+                                                    .game__variants-list-item
+                                                        .game__variants-link.mr-8(
+                                                            :style="variantStyle(variant)"
+                                                            :class="{'has-sun':  variant.hasSun}"
+                                                        ) Points: {{variant.points}}
+
+
+
 
     .game__grid
         .game__grid-inner
