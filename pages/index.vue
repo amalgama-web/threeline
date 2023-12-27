@@ -127,8 +127,8 @@
             .grid.mr-8
                 .grid__row
                     CellComponent
-                    CellComponent(v-for="(item, index) in Array(gridWidth)" @cell-click="removeCol(index)") {{index}}
-                .grid__row(v-for="(row, rowIndex) in grid")
+                    CellComponent(v-for="(item, index) in Array(MATRIX_WIDTH)" @cell-click="removeCol(index)") {{index}}
+                .grid__row(v-for="(row, rowIndex) in matrix")
                     CellComponent(@cell-click="removeRow(rowIndex)") {{rowIndex}}
                     CellComponent(
                         v-for="(cell, cellIndex) in row"
@@ -173,30 +173,26 @@
 
 <script>
 import CellComponent from '/components/cell.vue'
-// todo типа данных для координат и для ячейки
-// coords = {r: num, c: num}
-// line = {coords: coords, length: num}
+import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 
 import {
-    gridWidth,
-    gridHeight,
     getExistedVariants,
     getTotalPoints,
     applyCellsSwap,
     colorTypePairs,
+
 
     highlightCombinations,
     applyCombinations,
     resetMatrix,
     gridGetDown,
     checkSnowflakes,
-    boosterTypePairs,
-    boosterTypePairsRevert,
     colorTypePairsRevert,
     zeroCell,
     getZeroCell,
     gridLastRowIndex, gridLastColIndex, showVariantsWithSun,
 } from '~/logic/find-figures';
+import { BoosterTypes } from '~/logic/types';
 
 
 const cellsTypesNumber = 5;
@@ -206,10 +202,10 @@ export default {
         return {
 
 
-            grid: Array(gridHeight).fill(Array(gridWidth).fill(0, 0), 0),
+            matrix: Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(0, 0), 0),
 
-            gridHeight: gridHeight,
-            gridWidth: gridWidth,
+            MATRIX_HEIGHT: MATRIX_HEIGHT,
+            MATRIX_WIDTH: MATRIX_WIDTH,
 
             existedVariants: [],
             snowflakeBoosters: null,
@@ -235,13 +231,13 @@ export default {
     },
     computed: {
         points() {
-            return getTotalPoints(this.grid)
+            return getTotalPoints(this.matrix)
         },
         currentSymbols() {
             const symbols = []
-            this.grid.map(row => row.map(cell => {
+            this.matrix.map(row => row.map(cell => {
                 if (cell.type === 5) {
-                    symbols.push(boosterTypePairsRevert[cell.booster])
+                    symbols.push(cell.booster)
                 } else {
                     symbols.push(colorTypePairsRevert[cell.type])
                 }
@@ -257,7 +253,7 @@ export default {
                 '4': 0,
                 '5': 0,
             }
-            this.grid.map(row => row.map(cell => {
+            this.matrix.map(row => row.map(cell => {
                 counter[cell.type]++
             }))
             return counter
@@ -276,30 +272,30 @@ export default {
             if (!this.snowflakeClickActive) {
                 this.setCellType(r, c)
             } else {
-                this.grid[r][c] = getZeroCell()
-                if (r > 0) this.grid[r - 1][c] = getZeroCell()
-                if (r < gridLastRowIndex) this.grid[r + 1][c] = getZeroCell()
-                if (c > 0) this.grid[r][c - 1] = getZeroCell()
-                if (c < gridLastColIndex) this.grid[r][c + 1] = getZeroCell()
+                this.matrix[r][c] = getZeroCell()
+                if (r > 0) this.matrix[r - 1][c] = getZeroCell()
+                if (r < gridLastRowIndex) this.matrix[r + 1][c] = getZeroCell()
+                if (c > 0) this.matrix[r][c - 1] = getZeroCell()
+                if (c < gridLastColIndex) this.matrix[r][c + 1] = getZeroCell()
             }
         },
         removeCol(c) {
-            for (let r = 0; r < gridHeight; r++ ) {
-                this.grid[r][c] = getZeroCell();
+            for (let r = 0; r < MATRIX_HEIGHT; r++ ) {
+                this.matrix[r][c] = getZeroCell();
             }
         },
 
         removeRow(r) {
-            for (let c = 0; c < gridWidth; c++ ) {
-                this.grid[r][c] = getZeroCell();
+            for (let c = 0; c < MATRIX_WIDTH; c++ ) {
+                this.matrix[r][c] = getZeroCell();
             }
         },
 
         fullyRemoveType(removedType) {
-            for (let r = 0; r < gridHeight; r++ ) {
-                for (let c = 0; c < gridWidth; c++ ) {
-                    if (this.grid[r][c]['type'] === removedType) {
-                        this.grid[r][c] = getZeroCell();
+            for (let r = 0; r < MATRIX_HEIGHT; r++ ) {
+                for (let c = 0; c < MATRIX_WIDTH; c++ ) {
+                    if (this.matrix[r][c]['type'] === removedType) {
+                        this.matrix[r][c] = getZeroCell();
                     }
                 }
             }
@@ -307,46 +303,46 @@ export default {
 
         // cell defines and loads
         setCellType(rowIndex, cellIndex) {
-            this.grid[rowIndex][cellIndex].type = this.selectorType;
+            this.matrix[rowIndex][cellIndex].type = this.selectorType;
         },
 
         //  combinations
         highlightCombinations() {
-            highlightCombinations(this.grid, this.initialCombination)
+            highlightCombinations(this.matrix, this.initialCombination)
             this.initialCombination = null;
         },
         applyCombinations() {
-            applyCombinations(this.grid)
-            resetMatrix(this.grid)
+            applyCombinations(this.matrix)
+            resetMatrix(this.matrix)
             this.initialCombination = null;
         },
         getDown() {
-            gridGetDown(this.grid)
+            gridGetDown(this.matrix)
         },
         consoleMatrix() {
-            console.log(this.grid)
+            console.log(this.matrix)
         },
         makeFullStep() {
-            highlightCombinations(this.grid, this.initialCombination)
+            highlightCombinations(this.matrix, this.initialCombination)
             this.initialCombination = null;
 
             setTimeout(() => {
-                applyCombinations(this.grid)
-                resetMatrix(this.grid)
+                applyCombinations(this.matrix)
+                resetMatrix(this.matrix)
                 setTimeout(() => {
-                    gridGetDown(this.grid)
+                    gridGetDown(this.matrix)
                 }, 200);
             }, 200);
         },
         resetMatrix() {
-            resetMatrix(this.grid)
+            resetMatrix(this.matrix)
         },
 
         getVariants() {
-            this.existedVariants = getExistedVariants(this.grid, 3);
+            this.existedVariants = getExistedVariants(this.matrix, 3);
             showVariantsWithSun(this.existedVariants)
 
-            this.snowflakeBoosters = checkSnowflakes(this.grid)
+            this.snowflakeBoosters = checkSnowflakes(this.matrix)
         },
         applyCellsSwap(variant) {
             this.initialCombination = [
@@ -360,7 +356,7 @@ export default {
                 }
             ];
             this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
-            applyCellsSwap(this.grid, variant);
+            applyCellsSwap(this.matrix, variant);
         },
 
         // stamps
@@ -379,7 +375,7 @@ export default {
                 stepChain: this.stepChain
             })
             this.stepAction = null;
-            window.localStorage.setItem(this.getChainNameForLS(this.stepChain), JSON.stringify(this.grid))
+            window.localStorage.setItem(this.getChainNameForLS(this.stepChain), JSON.stringify(this.matrix))
             this.getVariants();
         },
 
@@ -388,7 +384,7 @@ export default {
         },
 
         loadStamp(chain) {
-            this.grid = JSON.parse(window.localStorage.getItem(this.getChainNameForLS(chain)));
+            this.matrix = JSON.parse(window.localStorage.getItem(this.getChainNameForLS(chain)));
             this.stepChain = chain;
             this.getVariants()
         },
@@ -406,17 +402,18 @@ export default {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
 
-            for (let r = 0; r < gridHeight && colorTypePairs[clearedText[i]] !== undefined; r++ ) {
-                for (let c = 0; c < gridWidth && colorTypePairs[clearedText[i]] !== undefined; c++ ) {
-                    if (!onlyGaps || this.grid[r][c]['type'] === null) {
+            for (let r = 0; r < MATRIX_HEIGHT && colorTypePairs[clearedText[i]] !== undefined; r++ ) {
+                for (let c = 0; c < MATRIX_WIDTH && colorTypePairs[clearedText[i]] !== undefined; c++ ) {
+                    if (!onlyGaps || this.matrix[r][c]['type'] === null) {
                         const newSymbol = clearedText[i]
                         const newCellType = colorTypePairs[newSymbol]
-                        const newBooster = boosterTypePairs[newSymbol]
-                        this.grid[r][c]['type'] = newCellType
+                        const newBooster = BoosterTypes[newSymbol]
+                        this.matrix[r][c]['type'] = newCellType
+                        console.log(newSymbol)
                         if (newBooster !== undefined) {
-                            this.grid[r][c]['booster'] = newBooster
+                            this.matrix[r][c]['booster'] = newSymbol
                         } else {
-                            this.grid[r][c]['booster'] = null
+                            this.matrix[r][c]['booster'] = null
                         }
                         i++;
                     }
@@ -425,7 +422,7 @@ export default {
             this.fillText = ''
         },
         fillRandom() {
-            this.grid = this.grid.map(row => row.map(cell => ({
+            this.matrix = this.matrix.map(row => row.map(cell => ({
                 type: getRandomInt(5),
                 highlighted: false,
             })))
@@ -457,7 +454,7 @@ export default {
         const LSGameNumber = window.localStorage.getItem(`gameNumber`);
         this.gameNumber = LSGameNumber ? LSGameNumber : 0;
 
-        this.grid = this.grid.map(row => row.map(cell => getZeroCell()))
+        this.matrix = this.matrix.map(row => row.map(cell => getZeroCell()))
 
         let LSKeys = Object.keys(localStorage)
             .filter(item => item.includes(`game${this.gameNumber}`))

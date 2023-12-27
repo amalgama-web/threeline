@@ -44,6 +44,8 @@ const boostersBgs = {
 
 import {typeColors, imageTypePairs} from '~/logic/find-figures';
 
+import { BoosterTypes } from '~/logic/types';
+
 export default {
     data() {
         return {
@@ -80,7 +82,7 @@ export default {
 
             if (this.type === 5) {
                 return this.booster ?
-                    {backgroundImage: boostersBgs[this.booster]} :
+                    {backgroundImage: boostersBgs[BoosterTypes[this.booster]]} :
                     {
                         backgroundColor: typeColors[this.type],
                         width: '40%',
@@ -103,7 +105,7 @@ export default {
                     'cell_deleted': this.deleted,
                     'cell_future-booster': this.futureBooster,
                 },
-                this.booster ? `cell_booster-${this.booster}` : null
+                this.booster ? `cell_booster-${BoosterTypes[this.booster]}` : null
             ]
         }
     },
