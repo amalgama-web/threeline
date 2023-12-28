@@ -28,6 +28,8 @@ import icon_hRocket from 'assets/icon-hrocket.png'
 import icon_vRocket from 'assets/icon-vrocket.png'
 import icon_sun from 'assets/icon-sun.png'
 
+import { CellTypes } from '~/logic/types';
+
 const bgs = [
     `url(${icon_coin})`,
     `url(${icon_case})`,
@@ -61,7 +63,7 @@ export default {
             type: Boolean,
             default: false
         },
-        deleted: {
+        forRemoving: {
             type: Boolean,
             default: false
         },
@@ -80,7 +82,7 @@ export default {
                 return null
             }
 
-            if (this.type === 5) {
+            if (this.type === CellTypes.booster) {
                 return this.booster ?
                     {backgroundImage: boostersBgs[BoosterTypes[this.booster]]} :
                     {
@@ -102,7 +104,7 @@ export default {
             return [
                 {
                     'cell_highlighted': this.highlighted,
-                    'cell_deleted': this.deleted,
+                    'cell_deleted': this.forRemoving,
                     'cell_future-booster': this.futureBooster,
                 },
                 this.booster ? `cell_booster-${BoosterTypes[this.booster]}` : null

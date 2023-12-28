@@ -1,7 +1,7 @@
 import { Booster, BoosterTypes, Coords, Line, Lines, SwapCells } from "~/logic/types";
 
 
-export function createBoostersForHLines(hLines: Lines, stepSwapCells: SwapCells) {
+export function createBoostersForHLines(hLines: Lines, stepSwapCells: SwapCells | null) {
     for (let hLineID in hLines) {
 
         let booster: Booster | null = null;
@@ -9,7 +9,7 @@ export function createBoostersForHLines(hLines: Lines, stepSwapCells: SwapCells)
         if (hLines[hLineID].length >= 4) {
             booster = {
                 type: BoosterTypes.hRocket,
-                coords: null
+                coords: { r: 0, c: 0 }
             }
             if (hLines[hLineID].length > 4) {
                 booster.type = BoosterTypes.sun
@@ -32,13 +32,15 @@ export function createBoostersForHLines(hLines: Lines, stepSwapCells: SwapCells)
     }
 }
 
-export function createBoostersForVLines(vLines: Lines, stepSwapCells: SwapCells) {
+export function createBoostersForVLines(vLines: Lines, stepSwapCells: SwapCells | null) {
     for (let vLineID in vLines) {
+
         let booster: Booster | null = null;
+
         if (vLines[vLineID].length >= 4) {
             booster = {
                 type: BoosterTypes.vRocket,
-                coords: null
+                coords: { r: 0, c: 0 }
             }
             if (vLines[vLineID].length > 4) {
                 booster.type = BoosterTypes.sun

@@ -1,5 +1,4 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
-
 import { Matrix, Line, Lines, CellTypes } from "~/logic/types";
 
 export function findHLines(matrix: Matrix): Lines {
@@ -17,7 +16,7 @@ export function findHLines(matrix: Matrix): Lines {
 
             if (currentType === matrix[r][c].type &&
                 currentType !== null &&
-                currentType !== CellTypes.Booster) {
+                currentType !== CellTypes.booster) {
 
                 lineLength++;
 
@@ -73,7 +72,7 @@ export function findVLines(matrix: Matrix): Lines {
             // todo подумать как удалить дублирование
             if (currentType === matrix[r][c].type &&
                 currentType !== null &&
-                currentType !== CellTypes.Booster) {
+                currentType !== CellTypes.booster) {
 
                 lineLength++;
 
@@ -84,7 +83,8 @@ export function findVLines(matrix: Matrix): Lines {
                             c
                         },
                         length: lineLength,
-                        disabled: false
+                        disabled: false,
+
                     }
                 }
             } else {

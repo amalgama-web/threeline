@@ -1,13 +1,16 @@
 export interface Cell {
-    type: CellTypes | null,
+    type: CellTypes,
     highlighted: boolean,
-    deleted: boolean,
-    vLine: [],
-    hLine: [],
-    square: [],
-    appliedBooster: [],
-    booster: [],
+    forRemoving: boolean,
+    vLine: string,
+    hLine: string,
+    square: string,
+    emergingBooster?: Booster | null,
+    booster?: BoosterTypes | null,
 }
+
+// todo class NewCell
+
 
 export type Matrix = Cell[][];
 
@@ -24,7 +27,8 @@ export interface Line {
     coords: Coords,
     length: number,
     disabled: boolean,
-    booster?: Booster
+    booster?: Booster | null,
+    sunPart?: boolean,
 }
 
 export interface Squares {
@@ -33,16 +37,18 @@ export interface Squares {
 
 export interface Square {
     coords: Coords,
-    disabled: boolean
+    disabled: boolean,
+    booster: Booster | null
 }
 
 export enum CellTypes {
-    Yellow,
-    Red,
-    Blue,
-    Pink,
-    Purple,
-    Booster
+    empty,
+    yellow,
+    red,
+    blue,
+    pink,
+    purple,
+    booster,
 }
 
 export enum BoosterTypes {
@@ -54,10 +60,17 @@ export enum BoosterTypes {
 
 export interface Booster {
     type: BoosterTypes,
-    coords: Coords | null
+    coords: Coords
 }
 
 export type SwapCells = [
     Coords,
     Coords
 ]
+
+export interface Variant {
+    swap: SwapCells,
+    points: number,
+    variantHasSun: boolean,
+    stepsAfter: Variant[] | null
+}

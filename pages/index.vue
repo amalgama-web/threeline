@@ -20,10 +20,10 @@
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Запполнить пропуски
                 //button.btn.mr-8(@click="fillRandom") Rand
-                //button.btn.mr-8(@click="consoleMatrix") Console
+                button.btn.mr-8(@click="consoleMatrix") Console
             input.game__buttons-input(v-model="fillText")
         .mb-24
-            button.btn.mr-8(@click="highlightCombinations") Пдсв
+            button.btn.mr-8(@click="highlightFigures") Пдсв
             button.btn.mr-8(@click="resetMatrix") Убр пдсв
             button.btn.mr-8(@click="applyCombinations") Прим
             button.btn.mr-8(@click="getDown") Свиг
@@ -43,7 +43,7 @@
                         @click="applyCellsSwap(variant)"
                         :style="variantStyle(variant)"
                         :class="{'has-sun':  variant.hasSun}"
-                    ) {{`${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c} Points: ${variant.points}`}}
+                    ) {{`${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c} Points: ${variant.points}`}}
 
                     // popup
                     .game__variants-popup(v-if="variant.stepsAfter")
@@ -134,8 +134,8 @@
                         v-for="(cell, cellIndex) in row"
                         :type="cell.type"
                         :highlighted="cell.highlighted"
-                        :deleted="cell.deleted"
-                        :future-booster="cell.appliedBooster"
+                        :for-removing="cell.forRemoving"
+                        :future-booster="cell.emergingBooster"
                         :booster="cell.booster"
                         @cell-click="gridCellClick(rowIndex, cellIndex)"
                     )
@@ -174,25 +174,23 @@
 <script>
 import CellComponent from '/components/cell.vue'
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
-
+import { CellTypes } from '~/logic/types';
 import {
-    getExistedVariants,
-    getTotalPoints,
     applyCellsSwap,
     colorTypePairs,
-
-
-    highlightCombinations,
     applyCombinations,
     resetMatrix,
     gridGetDown,
-    checkSnowflakes,
     colorTypePairsRevert,
     zeroCell,
     getZeroCell,
-    gridLastRowIndex, gridLastColIndex, showVariantsWithSun,
+    showVariantsWithSun,
 } from '~/logic/find-figures';
 import { BoosterTypes } from '~/logic/types';
+import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
+import { checkSnowflakes } from '~/logic/snowflake-variants';
+import { highlightFigures } from '~/logic/highlighting/highlighting';
+import { getTotalPoints, getCombinations } from '~/logic/combinations/combinations';
 
 
 const cellsTypesNumber = 5;
@@ -200,8 +198,6 @@ const cellsTypesNumber = 5;
 export default {
     data() {
         return {
-
-
             matrix: Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(0, 0), 0),
 
             MATRIX_HEIGHT: MATRIX_HEIGHT,
@@ -236,7 +232,7 @@ export default {
         currentSymbols() {
             const symbols = []
             this.matrix.map(row => row.map(cell => {
-                if (cell.type === 5) {
+                if (cell.type === CellTypes.booster) {
                     symbols.push(cell.booster)
                 } else {
                     symbols.push(colorTypePairsRevert[cell.type])
@@ -274,26 +270,26 @@ export default {
             } else {
                 this.matrix[r][c] = getZeroCell()
                 if (r > 0) this.matrix[r - 1][c] = getZeroCell()
-                if (r < gridLastRowIndex) this.matrix[r + 1][c] = getZeroCell()
+                if (r < MATRIX_LAST_ROW) this.matrix[r + 1][c] = getZeroCell()
                 if (c > 0) this.matrix[r][c - 1] = getZeroCell()
-                if (c < gridLastColIndex) this.matrix[r][c + 1] = getZeroCell()
+                if (c < MATRIX_LAST_COL) this.matrix[r][c + 1] = getZeroCell()
             }
         },
         removeCol(c) {
-            for (let r = 0; r < MATRIX_HEIGHT; r++ ) {
+            for (let r = 0; r < MATRIX_HEIGHT; r++) {
                 this.matrix[r][c] = getZeroCell();
             }
         },
 
         removeRow(r) {
-            for (let c = 0; c < MATRIX_WIDTH; c++ ) {
+            for (let c = 0; c < MATRIX_WIDTH; c++) {
                 this.matrix[r][c] = getZeroCell();
             }
         },
 
         fullyRemoveType(removedType) {
-            for (let r = 0; r < MATRIX_HEIGHT; r++ ) {
-                for (let c = 0; c < MATRIX_WIDTH; c++ ) {
+            for (let r = 0; r < MATRIX_HEIGHT; r++) {
+                for (let c = 0; c < MATRIX_WIDTH; c++) {
                     if (this.matrix[r][c]['type'] === removedType) {
                         this.matrix[r][c] = getZeroCell();
                     }
@@ -307,8 +303,8 @@ export default {
         },
 
         //  combinations
-        highlightCombinations() {
-            highlightCombinations(this.matrix, this.initialCombination)
+        highlightFigures() {
+            highlightFigures(this.matrix, this.initialCombination)
             this.initialCombination = null;
         },
         applyCombinations() {
@@ -323,7 +319,7 @@ export default {
             console.log(this.matrix)
         },
         makeFullStep() {
-            highlightCombinations(this.matrix, this.initialCombination)
+            highlightFigures(this.matrix, this.initialCombination)
             this.initialCombination = null;
 
             setTimeout(() => {
@@ -339,7 +335,7 @@ export default {
         },
 
         getVariants() {
-            this.existedVariants = getExistedVariants(this.matrix, 3);
+            this.existedVariants = getCombinations(this.matrix, 3);
             showVariantsWithSun(this.existedVariants)
 
             this.snowflakeBoosters = checkSnowflakes(this.matrix)
@@ -347,16 +343,16 @@ export default {
         applyCellsSwap(variant) {
             this.initialCombination = [
                 {
-                    r: variant.cell1.r,
-                    c: variant.cell1.c
+                    r: variant.swap[0].r,
+                    c: variant.swap[0].c
                 },
                 {
-                    r: variant.cell2.r,
-                    c: variant.cell2.c
+                    r: variant.swap[1].r,
+                    c: variant.swap[1].c
                 }
             ];
-            this.stepAction = `${variant.cell1.r}${variant.cell1.c}:${variant.cell2.r}${variant.cell2.c}`;
-            applyCellsSwap(this.matrix, variant);
+            this.stepAction = `${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c}`;
+            applyCellsSwap(this.matrix, variant.swap);
         },
 
         // stamps
@@ -402,8 +398,8 @@ export default {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
 
-            for (let r = 0; r < MATRIX_HEIGHT && colorTypePairs[clearedText[i]] !== undefined; r++ ) {
-                for (let c = 0; c < MATRIX_WIDTH && colorTypePairs[clearedText[i]] !== undefined; c++ ) {
+            for (let r = 0; r < MATRIX_HEIGHT && colorTypePairs[clearedText[i]] !== undefined; r++) {
+                for (let c = 0; c < MATRIX_WIDTH && colorTypePairs[clearedText[i]] !== undefined; c++) {
                     if (!onlyGaps || this.matrix[r][c]['type'] === null) {
                         const newSymbol = clearedText[i]
                         const newCellType = colorTypePairs[newSymbol]
@@ -459,7 +455,8 @@ export default {
         let LSKeys = Object.keys(localStorage)
             .filter(item => item.includes(`game${this.gameNumber}`))
             .map(item => item.replace(`game${this.gameNumber}`, ''));
-        LSKeys = LSKeys.sort((item1, item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
+        LSKeys = LSKeys.sort((item1,
+                              item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
         this.steps = LSKeys.map(item => ({stepChain: item}))
     },
 

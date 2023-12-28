@@ -1,7 +1,5 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
-
-import { CellTypes, Matrix, Squares } from "@/logic/types";
-
+import { CellTypes, Matrix, Squares } from "~/logic/types";
 
 export function findSquare(matrix: Matrix) {
     let foundSquares: Squares = {};
@@ -12,7 +10,7 @@ export function findSquare(matrix: Matrix) {
             const currentType = matrix[r][c].type;
 
             if (currentType !== null &&
-                currentType !== CellTypes.Booster &&
+                currentType !== CellTypes.booster &&
                 matrix[r + 1][c].type === currentType &&
                 matrix[r][c + 1].type === currentType &&
                 matrix[r + 1][c + 1].type === currentType
@@ -22,7 +20,8 @@ export function findSquare(matrix: Matrix) {
                         r,
                         c
                     },
-                    disabled: false
+                    disabled: false,
+                    booster: null,
                 }
             }
         }
