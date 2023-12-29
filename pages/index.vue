@@ -57,8 +57,8 @@
                     CellComponent(
                         v-for="(cell, cellIndex) in row"
                         :type="cell.type"
-                        :highlighted="cell.highlighted"
-                        :for-removing="cell.forRemoving"
+                        :highlighted="cell.isCellInFigure"
+                        :is-cell-for-removing="cell.isCellForRemoving"
                         :future-booster="cell.emergingBooster"
                         :booster="cell.booster"
                         @cell-click="gridCellClick(rowIndex, cellIndex)"
@@ -94,15 +94,14 @@
 import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
-import { CellTypes } from '~/logic/types';
+import { CellTypes, ZeroCell } from '~/logic/types';
 import { colorTypePairs, colorTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import {
     applyCellsSwap,
-    resetMatrix,
     matrixGetDown,
-    getZeroCell,
 } from '~/logic/find-figures';
+import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
@@ -186,22 +185,22 @@ export default {
             if (!this.snowflakeClickActive) {
                 this.setCellType(r, c)
             } else {
-                this.matrix[r][c] = getZeroCell()
-                if (r > 0) this.matrix[r - 1][c] = getZeroCell()
-                if (r < MATRIX_LAST_ROW) this.matrix[r + 1][c] = getZeroCell()
-                if (c > 0) this.matrix[r][c - 1] = getZeroCell()
-                if (c < MATRIX_LAST_COL) this.matrix[r][c + 1] = getZeroCell()
+                this.matrix[r][c] = new ZeroCell()
+                if (r > 0) this.matrix[r - 1][c] = new ZeroCell()
+                if (r < MATRIX_LAST_ROW) this.matrix[r + 1][c] = new ZeroCell()
+                if (c > 0) this.matrix[r][c - 1] = new ZeroCell()
+                if (c < MATRIX_LAST_COL) this.matrix[r][c + 1] = new ZeroCell()
             }
         },
         removeCol(c) {
             for (let r = 0; r < MATRIX_HEIGHT; r++) {
-                this.matrix[r][c] = getZeroCell();
+                this.matrix[r][c] = new ZeroCell();
             }
         },
 
         removeRow(r) {
             for (let c = 0; c < MATRIX_WIDTH; c++) {
-                this.matrix[r][c] = getZeroCell();
+                this.matrix[r][c] = new ZeroCell();
             }
         },
 
@@ -209,7 +208,7 @@ export default {
             for (let r = 0; r < MATRIX_HEIGHT; r++) {
                 for (let c = 0; c < MATRIX_WIDTH; c++) {
                     if (this.matrix[r][c]['type'] === removedType) {
-                        this.matrix[r][c] = getZeroCell();
+                        this.matrix[r][c] = new ZeroCell();
                     }
                 }
             }
@@ -257,9 +256,11 @@ export default {
 
         getVariants() {
             this.existedVariants = getSwapVariants(this.matrix, 3);
+            // todo в этой функции мы помечаем только не находим
             findSunInVariantsTree(this.existedVariants)
-
             this.snowflakeBoosters = checkSnowflakes(this.matrix);
+
+            console.log(this.existedVariants)
             console.log(this.snowflakeBoosters)
         },
         applyCellsSwap(variant) {
@@ -341,7 +342,7 @@ export default {
         fillRandom() {
             this.matrix = this.matrix.map(row => row.map(cell => ({
                 type: getRandomInt(5),
-                highlighted: false,
+                isCellInFigure: false,
             })))
 
             function getRandomInt(max) {
@@ -371,7 +372,7 @@ export default {
         const LSGameNumber = window.localStorage.getItem(`gameNumber`);
         this.gameNumber = LSGameNumber ? LSGameNumber : 0;
 
-        this.matrix = this.matrix.map(row => row.map(cell => getZeroCell()))
+        this.matrix = this.matrix.map(row => row.map(cell => new ZeroCell()))
 
         let LSKeys = Object.keys(localStorage)
             .filter(item => item.includes(`game${this.gameNumber}`))

@@ -2,8 +2,8 @@ import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from '~
 import {
     applyCellsSwap,
     matrixGetDown,
-    resetMatrix,
 } from '~/logic/find-figures';
+import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
@@ -124,6 +124,6 @@ function calcSnowflakeVariant(matrix, coords) {
 
 function markCellDeleted(cell) {
     if (cell) {
-        cell.forRemoving = true;
+        cell.isCellForRemoving = true;
     }
 }

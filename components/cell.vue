@@ -70,7 +70,7 @@ export default {
             type: Boolean,
             default: false
         },
-        forRemoving: {
+        isCellForRemoving: {
             type: Boolean,
             default: false
         },
@@ -101,7 +101,7 @@ export default {
             return [
                 {
                     'cell_highlighted': this.highlighted,
-                    'cell_deleted': this.forRemoving,
+                    'cell_deleted': this.isCellForRemoving,
                     'cell_future-booster': this.futureBooster,
                 },
                 this.booster ? `cell_booster-${BoosterTypes[this.booster]}` : null

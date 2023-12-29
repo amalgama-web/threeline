@@ -2,41 +2,14 @@ import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes } from '~/logic/types';
 
 
-export const zeroCell = {
-    type: null,
-    highlighted: false,
-    forRemoving: false,
-    vLine: null,
-    hLine: null,
-    square: null,
-    emergingBooster: null,
-    booster: null,
-}
-
-export function getZeroCell() {
-    return JSON.parse(JSON.stringify(zeroCell))
-}
-
-export function resetMatrix(matrix) {
-    matrix.forEach(row => {
-        row.forEach(cell => {
-            cell.highlighted = false;
-            cell.forRemoving = false;
-            cell.hLine = null;
-            cell.vLine = null;
-            cell.square = null;
-            cell.emergingBooster = null;
-        })
-    })
-}
-
-
 export function applyCellsSwap(matrix, swap) {
     let tmpCell = matrix[swap[0].r][swap[0].c]
     matrix[swap[0].r][swap[0].c] = matrix[swap[1].r][swap[1].c]
     matrix[swap[1].r][swap[1].c] = tmpCell
 }
 
+
+// todo вынести в шаг getDown
 export function matrixGetDown(matrix) {
     for (let r = 0; r < MATRIX_HEIGHT; r++) {
         for (let c = 0; c < MATRIX_WIDTH; c++) {

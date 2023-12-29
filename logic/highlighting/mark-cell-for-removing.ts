@@ -6,7 +6,7 @@ export function markDeletedForOrdinaryLines(matrix: Matrix, hLines: Lines, vLine
         row.forEach((cell: Cell) => {
             if (cell.hLine && !hLines[cell.hLine]['disabled'] ||
                 cell.vLine && !vLines[cell.vLine]['disabled']) {
-                cell.forRemoving = true;
+                cell.isCellForRemoving = true;
             }
         })
     })
@@ -16,7 +16,7 @@ export function markDeletedForSquares(matrix: Matrix, squares: Squares) {
     matrix.forEach((row: Cell[]) => {
         row.forEach((cell: Cell) => {
             if (cell.square && !squares[cell.square]['disabled']) {
-                cell.forRemoving = true;
+                cell.isCellForRemoving = true;
             }
         })
     })
@@ -56,7 +56,7 @@ export function markDeletedForSun(matrix: Matrix) {
 }
 
 function markCellAsDeleted(matrix: Matrix, coords: Coords) {
-    matrix[coords.r][coords.c]['forRemoving'] = true;
+    matrix[coords.r][coords.c]['isCellForRemoving'] = true;
 }
 
 function markCellAsBooster(matrix: Matrix, coords: Coords) {

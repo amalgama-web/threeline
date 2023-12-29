@@ -47,7 +47,7 @@ function highlightCells(matrix: Matrix) {
     matrix.forEach((row: Cell[]) => {
         row.forEach((cell: Cell) => {
             if (cell.vLine || cell.hLine || cell.square) {
-                cell.highlighted = true;
+                cell.isCellInFigure = true;
             }
         })
     })

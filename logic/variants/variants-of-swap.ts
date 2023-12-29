@@ -1,7 +1,8 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 import { BoosterTypes, Cell, CellTypes, Coords, Matrix, SwapCells, Variant } from "~/logic/types";
 import { highlightFigures } from "~/logic/highlighting/highlighting";
-import { applyCellsSwap, matrixGetDown, resetMatrix } from "~/logic/find-figures";
+import { applyCellsSwap, matrixGetDown } from "~/logic/find-figures";
+import { resetMatrix } from "~/logic/reset-matrix/reset-matrix";
 import { cutFiguresAndSetBoosters } from "~/logic/cut/cut-figures";
 
 export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
@@ -41,6 +42,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                     { r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc }
                 ])
 
+                // todo вынести проверку бустера в начало
                 // prevent boosters swap
                 if (variationMatrix[r][c]['type'] === CellTypes.booster ||
                     variationMatrix[r + orientationVariant.rowInc][c + orientationVariant.colInc]['type'] === CellTypes.booster) {
@@ -117,7 +119,7 @@ export function getTotalPoints(matrix: Matrix) {
     return matrix.reduce(
         (sum: number, row: Cell[]) => {
             return sum + row.reduce((sum: number, cell: Cell) => {
-                return sum + +cell.forRemoving
+                return sum + +cell.isCellForRemoving
             }, 0)
         }, 0
     )

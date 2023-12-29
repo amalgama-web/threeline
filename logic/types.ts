@@ -1,15 +1,24 @@
 export interface Cell {
     type: CellTypes,
-    highlighted: boolean,
-    forRemoving: boolean,
-    vLine: string,
-    hLine: string,
-    square: string,
+    isCellForRemoving: boolean,
+    isCellInFigure: boolean,
+    vLine: string | null,
+    hLine: string | null,
+    square: string | null,
     emergingBooster?: Booster | null,
     booster?: BoosterTypes | null,
 }
 
-// todo class NewCell implements Cell
+export class ZeroCell implements Cell {
+    type = CellTypes.empty;
+    isCellForRemoving = false;
+    isCellInFigure = false;
+    vLine = null;
+    hLine = null;
+    square = null;
+    emergingBooster = null;
+    booster = null;
+}
 
 
 export type Matrix = Cell[][];

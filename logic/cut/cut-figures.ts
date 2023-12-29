@@ -3,7 +3,7 @@ import { Cell, CellTypes, Matrix } from "~/logic/types";
 export function cutFiguresAndSetBoosters(matrix: Matrix) {
     matrix.forEach((row: Cell[]) => {
         row.forEach((cell: Cell) => {
-            if (cell.forRemoving === true) {
+            if (cell.isCellForRemoving) {
                 cell.type = CellTypes.empty;
             }
             if (cell.emergingBooster) {
