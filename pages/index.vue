@@ -40,13 +40,13 @@
 
 
         .variants(v-for="snowflake in snowflakeBoosters" )
-            div(v-for="(directionConfig, directionName) in snowflake")
+            div(v-for="(directionVariants, directionId) in snowflake")
                 .variants__list-item
                     .variants__link(
-                    ) {{`${directionName}:`}} {{directionConfig?.points}}
+                    ) {{`${SnowflakeMoveDirections[directionId]}:`}} {{directionVariants?.points}}
 
-                    .variants__popup(v-if="directionConfig && directionConfig.childVariants")
-                        variants(:variants="directionConfig.childVariants" @variant-click="applyCellsSwap($event)")
+                    .variants__popup(v-if="directionVariants && directionVariants.childVariants")
+                        variants(:variants="directionVariants.childVariants" @variant-click="applyCellsSwap($event)")
 
     .game__grid
         .game__grid-inner
@@ -96,7 +96,7 @@
 import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
-import { CellTypes, ZeroCell } from '~/logic/types';
+import { CellTypes, SnowflakeMoveDirections, ZeroCell } from '~/logic/types';
 import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import {
@@ -107,7 +107,7 @@ import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
-import { checkSnowflakes } from '~/logic/snowflake-variants';
+import { getSnowflakesVariants } from '~/logic/snowflake-variants';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 
@@ -144,6 +144,9 @@ export default {
         }
     },
     computed: {
+        SnowflakeMoveDirections() {
+            return SnowflakeMoveDirections
+        },
         points() {
             return getTotalPoints(this.matrix)
         },
@@ -260,7 +263,7 @@ export default {
 
             // todo в этой функции мы помечаем только не находим
             findSunInVariantsTree(this.existedVariants)
-            this.snowflakeBoosters = checkSnowflakes(this.matrix);
+            this.snowflakeBoosters = getSnowflakesVariants(this.matrix);
         },
         applyCellsSwap(variant) {
             this.initialCombination = [

@@ -63,6 +63,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                     }
                 ]
 
+                // todo заменить на рекурсию
                 do {
                     additionalPoints = 0;
                     highlightFigures(variationMatrix, isInitialCombination ? initialCombination : null);

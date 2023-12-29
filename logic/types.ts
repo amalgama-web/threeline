@@ -1,3 +1,5 @@
+import Variants from "~/components/variants.vue";
+
 export interface Cell {
     type: CellTypes,
     isCellForRemoving: boolean,
@@ -83,3 +85,20 @@ export type SwapCells = [
     Coords,
     Coords
 ]
+
+export enum SnowflakeMoveDirections {
+    default,
+    top,
+    right,
+    bottom,
+    left
+}
+
+export interface SnowflakeVariant {
+    points: number,
+    childVariants: Variant[]
+}
+
+export type SnowflakeMovingVariants = {
+    [key in SnowflakeMoveDirections]: SnowflakeVariant | null
+}

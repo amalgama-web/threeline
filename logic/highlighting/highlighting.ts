@@ -9,7 +9,7 @@ import { markDeletedForOrdinaryLines, markDeletedForSquares, markDeletedForSun }
 import { Lines, Matrix, SwapCells, Squares, Cell } from "~/logic/types";
 
 
-export function highlightFigures(matrix: Matrix, stepSwapCells: SwapCells | null) {
+export function highlightFigures(matrix: Matrix, stepSwapCells: SwapCells | null = null) {
     // находим фигуры (линии и квадраты) из ячеек одного типа
     const hLines: Lines = findHLines(matrix)
     const vLines: Lines = findVLines(matrix)
