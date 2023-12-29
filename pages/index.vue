@@ -35,92 +35,16 @@
         div
             button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
-        .game__variants
-            div(v-for="variant in existedVariants")
-                .game__variants-list-item
-                    // link to current variant
-                    .game__variants-link(
-                        @click="applyCellsSwap(variant)"
-                        :style="variantStyle(variant)"
-                        :class="{'has-sun':  variant.variantHasSun}"
-                    ) {{`${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c} Points: ${variant.points}`}}
+        variants(:variants="existedVariants" @variant-click="applyCellsSwap($event)")
 
-                    // popup
-                    .game__variants-popup(v-if="variant.childVariants")
-                        div(
-                            v-for="variant in variant.childVariants"
-                        )
-                            .game__variants-list-item
-                                .game__variants-link.mr-8(
-                                    :style="variantStyle(variant)"
-                                    :class="{'has-sun':  variant.variantHasSun}"
-                                ) Points: {{variant.points}}
-
-                                // popup
-                                .game__variants-popup(v-if="variant.childVariants")
-                                    div(
-                                        v-for="variant in variant.childVariants"
-                                    )
-                                        .game__variants-list-item
-                                            .game__variants-link.mr-8(
-                                                :style="variantStyle(variant)"
-                                                :class="{'has-sun':  variant.variantHasSun}"
-                                            ) Points: {{variant.points}}
-
-                                            // popup
-                                            .game__variants-popup(v-if="variant.childVariants")
-                                                div(
-                                                    v-for="variant in variant.childVariants"
-                                                )
-                                                    .game__variants-list-item
-                                                        .game__variants-link.mr-8(
-                                                            :style="variantStyle(variant)"
-                                                            :class="{'has-sun':  variant.variantHasSun}"
-                                                        ) Points: {{variant.points}}
-
-
-        .game__variants(v-for="snow in snowflakeBoosters" )
-            div(v-for="(directionConfig, directionName) in snow")
-                .game__variants-list-item
-                    // link to current variant
-                    .game__variants-link(
+        .variants(v-for="snowflake in snowflakeBoosters" )
+            div(v-for="(directionConfig, directionName) in snowflake")
+                .variants__list-item
+                    .variants__link(
                     ) {{`${directionName}:`}} {{directionConfig?.points}}
 
-                    // popup
-                    .game__variants-popup(v-if="directionConfig && directionConfig.childVariants")
-                        div(
-                            v-for="variant in directionConfig.childVariants"
-                        )
-                            .game__variants-list-item
-                                .game__variants-link.mr-8(
-                                    :style="variantStyle(variant)"
-                                    :class="{'has-sun':  variant.variantDescendantHasSun}"
-                                ) Points: {{variant.points}}
-
-                                // popup
-                                .game__variants-popup(v-if="variant.childVariants")
-                                    div(
-                                        v-for="variant in variant.childVariants"
-                                    )
-                                        .game__variants-list-item
-                                            .game__variants-link.mr-8(
-                                                :style="variantStyle(variant)"
-                                                :class="{'has-sun':  variant.variantHasSun}"
-                                            ) Points: {{variant.points}}
-
-                                            // popup
-                                            .game__variants-popup(v-if="variant.childVariants")
-                                                div(
-                                                    v-for="variant in variant.childVariants"
-                                                )
-                                                    .game__variants-list-item
-                                                        .game__variants-link.mr-8(
-                                                            :style="variantStyle(variant)"
-                                                            :class="{'has-sun':  variant.variantHasSun}"
-                                                        ) Points: {{variant.points}}
-
-
-
+                    .variants__popup(v-if="directionConfig && directionConfig.childVariants")
+                        variants(:variants="directionConfig.childVariants" @variant-click="applyCellsSwap($event)")
 
     .game__grid
         .game__grid-inner
@@ -168,7 +92,7 @@
 
 <script>
 import CellComponent from '/components/cell.vue'
-import Variant from '~/components/variant.vue';
+import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes } from '~/logic/types';
 import { colorTypePairs, colorTypePairsRevert } from '~/logic/matrix-manual-input';
@@ -335,7 +259,8 @@ export default {
             this.existedVariants = getSwapVariants(this.matrix, 3);
             findSunInVariantsTree(this.existedVariants)
 
-            this.snowflakeBoosters = checkSnowflakes(this.matrix)
+            this.snowflakeBoosters = checkSnowflakes(this.matrix);
+            console.log(this.snowflakeBoosters)
         },
         applyCellsSwap(variant) {
             this.initialCombination = [
@@ -458,7 +383,7 @@ export default {
 
     components: {
         CellComponent,
-        Variant
+        Variants
     }
 }
 

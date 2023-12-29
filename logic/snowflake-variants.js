@@ -1,19 +1,20 @@
 import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from '~/logic/constant-params';
 import {
     applyCellsSwap,
-    matrixGetDown, resetMatrix,
+    matrixGetDown,
+    resetMatrix,
 } from '~/logic/find-figures';
-import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
+import { BoosterTypes } from '~/logic/types';
 
 export function checkSnowflakes(matrix) {
     const boosterVariants = []
 
     for (let r = 0; r < MATRIX_HEIGHT; r++) {
         for (let c = 0; c < MATRIX_WIDTH; c++) {
-            if (matrix[r][c]['booster'] === 'snowflake') {
+            if (matrix[r][c]['booster'] === BoosterTypes.snowflake) {
                 boosterVariants.push(calcSnowflake(matrix, {r, c}))
             }
         }
@@ -123,6 +124,6 @@ function calcSnowflakeVariant(matrix, coords) {
 
 function markCellDeleted(cell) {
     if (cell) {
-        cell.deleted = true;
+        cell.forRemoving = true;
     }
 }
