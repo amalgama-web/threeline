@@ -35,7 +35,9 @@
         div
             button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
+
         variants(:variants="existedVariants" @variant-click="applyCellsSwap($event)")
+
 
         .variants(v-for="snowflake in snowflakeBoosters" )
             div(v-for="(directionConfig, directionName) in snowflake")
