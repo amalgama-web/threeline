@@ -87,7 +87,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                             },
                         ],
                         points: points,
-                        variantHasSunBooster: initialSunBoosterCount < newSunBoosterCount,
+                        variantHasSun: initialSunBoosterCount < newSunBoosterCount,
                         childVariants: nextStepDepth === 0 ? null : getSwapVariants(variationMatrix, nextStepDepth - 1)
 
                     }

@@ -63,15 +63,11 @@ export interface Booster {
     coords: Coords
 }
 
-
-
 export interface Variant {
     swap: SwapCells,
     points: number,
-    // todo переименовать
-    variantHasSunBooster: boolean,
-    // todo переименовать
-    hasSun?: boolean,
+    variantHasSun: boolean,
+    variantDescendantHasSun?: boolean,
     childVariants: Variant[] | null,
 }
 export type SwapCells = [

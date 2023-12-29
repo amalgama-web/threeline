@@ -35,6 +35,7 @@
             button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
         .game__variants
+            // todo рекурсивный компонент сделать
             // list item
             div(v-for="variant in existedVariants")
                 .game__variants-list-item
@@ -42,7 +43,7 @@
                     .game__variants-link(
                         @click="applyCellsSwap(variant)"
                         :style="variantStyle(variant)"
-                        :class="{'has-sun':  variant.hasSun}"
+                        :class="{'has-sun':  variant.variantDescendantHasSun}"
                     ) {{`${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c} Points: ${variant.points}`}}
 
                     // popup
@@ -53,7 +54,7 @@
                             .game__variants-list-item
                                 .game__variants-link.mr-8(
                                     :style="variantStyle(variant)"
-                                    :class="{'has-sun':  variant.hasSun}"
+                                    :class="{'has-sun':  variant.variantDescendantHasSun}"
                                 ) Points: {{variant.points}}
 
                                 // popup
@@ -64,7 +65,7 @@
                                         .game__variants-list-item
                                             .game__variants-link.mr-8(
                                                 :style="variantStyle(variant)"
-                                                :class="{'has-sun':  variant.hasSun}"
+                                                :class="{'has-sun':  variant.variantDescendantHasSun}"
                                             ) Points: {{variant.points}}
 
                                             // popup
@@ -75,7 +76,7 @@
                                                     .game__variants-list-item
                                                         .game__variants-link.mr-8(
                                                             :style="variantStyle(variant)"
-                                                            :class="{'has-sun':  variant.hasSun}"
+                                                            :class="{'has-sun':  variant.variantDescendantHasSun}"
                                                         ) Points: {{variant.points}}
 
 
@@ -94,7 +95,7 @@
                             .game__variants-list-item
                                 .game__variants-link.mr-8(
                                     :style="variantStyle(variant)"
-                                    :class="{'has-sun':  variant.hasSun}"
+                                    :class="{'has-sun':  variant.variantDescendantHasSun}"
                                 ) Points: {{variant.points}}
 
                                 // popup
@@ -105,7 +106,7 @@
                                         .game__variants-list-item
                                             .game__variants-link.mr-8(
                                                 :style="variantStyle(variant)"
-                                                :class="{'has-sun':  variant.hasSun}"
+                                                :class="{'has-sun':  variant.variantDescendantHasSun}"
                                             ) Points: {{variant.points}}
 
                                             // popup
@@ -116,7 +117,7 @@
                                                     .game__variants-list-item
                                                         .game__variants-link.mr-8(
                                                             :style="variantStyle(variant)"
-                                                            :class="{'has-sun':  variant.hasSun}"
+                                                            :class="{'has-sun':  variant.variantDescendantHasSun}"
                                                         ) Points: {{variant.points}}
 
 
@@ -141,22 +142,17 @@
                     )
             .game__selectors
                 CellComponent(
-                    v-for="(item, index) in Array(cellsTypesNumber + 1)"
+                    v-for="(item, index) in cellTypesIDs"
                     :type="index"
                     @cell-click="selectorType = $event"
                     :highlighted="index === selectorType"
                 ) {{typesCounter[index]}}
-                CellComponent(
-                    :type="null"
-                    @cell-click="selectorType = $event"
-                    :highlighted="null === selectorType"
-                )
         .game__grid-info
             | '{{currentSymbols}}'
         .flex.flex_p-center.flex_s-center
             span Rmv
             CellComponent(
-                v-for="(item, index) in Array(cellsTypesNumber)"
+                v-for="(item, index) in cellTypesIDs"
                 :type="index"
                 @cell-click="fullyRemoveType($event)"
             )
@@ -191,7 +187,7 @@ import { highlightFigures } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 
 
-const cellsTypesNumber = 5;
+const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
 
 export default {
     data() {
@@ -203,7 +199,7 @@ export default {
 
             existedVariants: [],
             snowflakeBoosters: null,
-            cellsTypesNumber: cellsTypesNumber,
+            cellTypesIDs: cellTypesIDs,
             selectorType: null,
             fillText: '',
 
