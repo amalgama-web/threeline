@@ -20,7 +20,8 @@
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Запполнить пропуски
                 //button.btn.mr-8(@click="fillRandom") Rand
-                button.btn.mr-8(@click="consoleMatrix") Console
+                button.btn.mr-8(@click="consoleMatrix") Console Matrix
+                button.btn.mr-8(@click="consoleVariants") Console Variants
             input.game__buttons-input(v-model="fillText")
         .mb-24
             button.btn.mr-8(@click="highlightFigures") Пдсв
@@ -35,15 +36,13 @@
             button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
         .game__variants
-            // todo рекурсивный компонент сделать
-            // list item
             div(v-for="variant in existedVariants")
                 .game__variants-list-item
                     // link to current variant
                     .game__variants-link(
                         @click="applyCellsSwap(variant)"
                         :style="variantStyle(variant)"
-                        :class="{'has-sun':  variant.variantDescendantHasSun}"
+                        :class="{'has-sun':  variant.variantHasSun}"
                     ) {{`${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c} Points: ${variant.points}`}}
 
                     // popup
@@ -54,7 +53,7 @@
                             .game__variants-list-item
                                 .game__variants-link.mr-8(
                                     :style="variantStyle(variant)"
-                                    :class="{'has-sun':  variant.variantDescendantHasSun}"
+                                    :class="{'has-sun':  variant.variantHasSun}"
                                 ) Points: {{variant.points}}
 
                                 // popup
@@ -65,7 +64,7 @@
                                         .game__variants-list-item
                                             .game__variants-link.mr-8(
                                                 :style="variantStyle(variant)"
-                                                :class="{'has-sun':  variant.variantDescendantHasSun}"
+                                                :class="{'has-sun':  variant.variantHasSun}"
                                             ) Points: {{variant.points}}
 
                                             // popup
@@ -76,7 +75,7 @@
                                                     .game__variants-list-item
                                                         .game__variants-link.mr-8(
                                                             :style="variantStyle(variant)"
-                                                            :class="{'has-sun':  variant.variantDescendantHasSun}"
+                                                            :class="{'has-sun':  variant.variantHasSun}"
                                                         ) Points: {{variant.points}}
 
 
@@ -106,7 +105,7 @@
                                         .game__variants-list-item
                                             .game__variants-link.mr-8(
                                                 :style="variantStyle(variant)"
-                                                :class="{'has-sun':  variant.variantDescendantHasSun}"
+                                                :class="{'has-sun':  variant.variantHasSun}"
                                             ) Points: {{variant.points}}
 
                                             // popup
@@ -117,7 +116,7 @@
                                                     .game__variants-list-item
                                                         .game__variants-link.mr-8(
                                                             :style="variantStyle(variant)"
-                                                            :class="{'has-sun':  variant.variantDescendantHasSun}"
+                                                            :class="{'has-sun':  variant.variantHasSun}"
                                                         ) Points: {{variant.points}}
 
 
@@ -169,6 +168,7 @@
 
 <script>
 import CellComponent from '/components/cell.vue'
+import Variant from '~/components/variant.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes } from '~/logic/types';
 import { colorTypePairs, colorTypePairsRevert } from '~/logic/matrix-manual-input';
@@ -311,7 +311,9 @@ export default {
         },
         consoleMatrix() {
             console.log(this.matrix)
-            console.log()
+        },
+        consoleVariants() {
+            console.log(this.existedVariants)
         },
         makeFullStep() {
             highlightFigures(this.matrix, this.initialCombination)
@@ -455,7 +457,8 @@ export default {
     },
 
     components: {
-        CellComponent
+        CellComponent,
+        Variant
     }
 }
 

@@ -1,15 +1,13 @@
 import { Variant } from "~/logic/types";
 
 export function findSunInVariantsTree(variants: Variant[]) {
-    findSunInArr(variants);
-
+    checkSunInVariantDescendant(variants);
     return variants;
 }
 
-// todo сделать так чтобы у каждого шага был параметр
-function findSunInArr(variants: Variant[]) {
+function checkSunInVariantDescendant(variants: Variant[]) {
     variants.forEach(variant => {
-        variant.variantDescendantHasSun = variant.variantHasSun || (variant.childVariants ? findSunInArr(variant.childVariants) : false)
+        variant.variantDescendantHasSun = variant.childVariants ? checkSunInVariantDescendant(variant.childVariants) : false
     })
-    return variants.some(variant => variant.variantDescendantHasSun)
+    return variants.some(variant => variant.variantHasSun || variant.variantDescendantHasSun)
 }
