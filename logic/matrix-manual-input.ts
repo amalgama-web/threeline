@@ -1,6 +1,6 @@
 import { BoosterTypes, CellTypes } from "~/logic/types";
 
-export const colorTypePairs = {
+export const symbolTypePairs = {
     'ж': CellTypes.yellow,
     'к': CellTypes.red,
     'с': CellTypes.blue,
@@ -21,7 +21,7 @@ export const colorTypePairs = {
     '4': CellTypes.booster,
 
 }
-export const colorTypePairsRevert = {
+export const symbolTypePairsRevert = {
     [CellTypes.yellow]: 'ж',
     [CellTypes.red]: 'к',
     [CellTypes.blue]: 'с',

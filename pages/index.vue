@@ -97,7 +97,7 @@ import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes, ZeroCell } from '~/logic/types';
-import { colorTypePairs, colorTypePairsRevert } from '~/logic/matrix-manual-input';
+import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import {
     applyCellsSwap,
@@ -113,7 +113,6 @@ import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-sw
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
-
 export default {
     data() {
         return {
@@ -154,7 +153,7 @@ export default {
                 if (cell.type === CellTypes.booster) {
                     symbols.push(cell.booster)
                 } else {
-                    symbols.push(colorTypePairsRevert[cell.type])
+                    symbols.push(symbolTypePairsRevert[cell.type])
                 }
             }))
             return symbols.join('')
@@ -258,12 +257,10 @@ export default {
 
         getVariants() {
             this.existedVariants = getSwapVariants(this.matrix, 3);
+
             // todo в этой функции мы помечаем только не находим
             findSunInVariantsTree(this.existedVariants)
             this.snowflakeBoosters = checkSnowflakes(this.matrix);
-
-            console.log(this.existedVariants)
-            console.log(this.snowflakeBoosters)
         },
         applyCellsSwap(variant) {
             this.initialCombination = [
@@ -323,15 +320,15 @@ export default {
             let i = 0;
             const clearedText = this.fillText.replace(/ /g, '');
 
-            for (let r = 0; r < MATRIX_HEIGHT && colorTypePairs[clearedText[i]] !== undefined; r++) {
-                for (let c = 0; c < MATRIX_WIDTH && colorTypePairs[clearedText[i]] !== undefined; c++) {
+            for (let r = 0; r < MATRIX_HEIGHT && symbolTypePairs[clearedText[i]] !== undefined; r++) {
+                for (let c = 0; c < MATRIX_WIDTH && symbolTypePairs[clearedText[i]] !== undefined; c++) {
                     if (!onlyGaps || this.matrix[r][c]['type'] === null) {
                         const newSymbol = clearedText[i]
-                        const newCellType = colorTypePairs[newSymbol]
+                        const newCellType = symbolTypePairs[newSymbol]
                         const newBooster = BoosterTypes[newSymbol]
                         this.matrix[r][c]['type'] = newCellType
                         if (newBooster !== undefined) {
-                            this.matrix[r][c]['booster'] = newSymbol
+                            this.matrix[r][c]['booster'] = BoosterTypes[newBooster]
                         } else {
                             this.matrix[r][c]['booster'] = null
                         }
