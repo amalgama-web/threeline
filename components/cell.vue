@@ -29,22 +29,29 @@ import icon_vRocket from 'assets/icon-vrocket.png'
 import icon_sun from 'assets/icon-sun.png'
 
 import { CellTypes } from '~/logic/types';
-
-const bgs = [
-    `url(${icon_coin})`,
-    `url(${icon_case})`,
-    `url(${icon_wallet})`,
-    `url(${icon_pig})`,
-    `url(${icon_hourglass})`,
+const typeColors = [
+    '#eabd29',
+    '#ce1f1f',
+    '#4455ff',
+    '#ef77ff',
+    '#8500b6',
+    '#000',
 ]
-const boostersBgs = {
-    'hRocket': `url(${icon_hRocket})`,
-    'vRocket': `url(${icon_vRocket})`,
-    'snowflake': `url(${icon_snow})`,
-    'sun': `url(${icon_sun})`,
+
+const bgs = {
+    [CellTypes.yellow]: `url(${icon_coin})`,
+    [CellTypes.red]: `url(${icon_case})`,
+    [CellTypes.blue]: `url(${icon_wallet})`,
+    [CellTypes.pink]: `url(${icon_pig})`,
+    [CellTypes.purple]: `url(${icon_hourglass})`,
 }
 
-import {typeColors, imageTypePairs} from '~/logic/find-figures';
+const boostersBgs = {
+    [BoosterTypes.hRocket]: `url(${icon_hRocket})`,
+    [BoosterTypes.vRocket]: `url(${icon_vRocket})`,
+    [BoosterTypes.snowflake]: `url(${icon_snow})`,
+    [BoosterTypes.sun]: `url(${icon_sun})`,
+}
 
 import { BoosterTypes } from '~/logic/types';
 
@@ -78,26 +85,16 @@ export default {
     },
     computed: {
         cellStyle() {
-            if (this.type === null) {
+            if (this.type === CellTypes.empty) {
                 return null
             }
 
             if (this.type === CellTypes.booster) {
-                return this.booster ?
-                    {backgroundImage: boostersBgs[BoosterTypes[this.booster]]} :
-                    {
-                        backgroundColor: typeColors[this.type],
-                        width: '40%',
-                        height: '40%',
-                    }
+                return {backgroundImage: boostersBgs[this.booster]}
             }
 
-            return bgs[this.type] ? {
+            return {
                 backgroundImage: bgs[this.type]
-            } : {
-                backgroundColor: typeColors[this.type],
-                width: '40%',
-                height: '40%',
             }
         },
         cellClasses() {

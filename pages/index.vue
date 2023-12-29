@@ -25,7 +25,7 @@
         .mb-24
             button.btn.mr-8(@click="highlightFigures") Пдсв
             button.btn.mr-8(@click="resetMatrix") Убр пдсв
-            button.btn.mr-8(@click="applyCombinations") Прим
+            button.btn.mr-8(@click="apply") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
         .mb-24
@@ -46,9 +46,9 @@
                     ) {{`${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c} Points: ${variant.points}`}}
 
                     // popup
-                    .game__variants-popup(v-if="variant.stepsAfter")
+                    .game__variants-popup(v-if="variant.childVariants")
                         div(
-                            v-for="variant in variant.stepsAfter"
+                            v-for="variant in variant.childVariants"
                         )
                             .game__variants-list-item
                                 .game__variants-link.mr-8(
@@ -57,9 +57,9 @@
                                 ) Points: {{variant.points}}
 
                                 // popup
-                                .game__variants-popup(v-if="variant.stepsAfter")
+                                .game__variants-popup(v-if="variant.childVariants")
                                     div(
-                                        v-for="variant in variant.stepsAfter"
+                                        v-for="variant in variant.childVariants"
                                     )
                                         .game__variants-list-item
                                             .game__variants-link.mr-8(
@@ -68,9 +68,9 @@
                                             ) Points: {{variant.points}}
 
                                             // popup
-                                            .game__variants-popup(v-if="variant.stepsAfter")
+                                            .game__variants-popup(v-if="variant.childVariants")
                                                 div(
-                                                    v-for="variant in variant.stepsAfter"
+                                                    v-for="variant in variant.childVariants"
                                                 )
                                                     .game__variants-list-item
                                                         .game__variants-link.mr-8(
@@ -87,9 +87,9 @@
                     ) {{`${directionName}:`}} {{directionConfig?.points}}
 
                     // popup
-                    .game__variants-popup(v-if="directionConfig && directionConfig.stepsAfter")
+                    .game__variants-popup(v-if="directionConfig && directionConfig.childVariants")
                         div(
-                            v-for="variant in directionConfig.stepsAfter"
+                            v-for="variant in directionConfig.childVariants"
                         )
                             .game__variants-list-item
                                 .game__variants-link.mr-8(
@@ -98,9 +98,9 @@
                                 ) Points: {{variant.points}}
 
                                 // popup
-                                .game__variants-popup(v-if="variant.stepsAfter")
+                                .game__variants-popup(v-if="variant.childVariants")
                                     div(
-                                        v-for="variant in variant.stepsAfter"
+                                        v-for="variant in variant.childVariants"
                                     )
                                         .game__variants-list-item
                                             .game__variants-link.mr-8(
@@ -109,9 +109,9 @@
                                             ) Points: {{variant.points}}
 
                                             // popup
-                                            .game__variants-popup(v-if="variant.stepsAfter")
+                                            .game__variants-popup(v-if="variant.childVariants")
                                                 div(
-                                                    v-for="variant in variant.stepsAfter"
+                                                    v-for="variant in variant.childVariants"
                                                 )
                                                     .game__variants-list-item
                                                         .game__variants-link.mr-8(
@@ -175,22 +175,20 @@
 import CellComponent from '/components/cell.vue'
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes } from '~/logic/types';
+import { colorTypePairs, colorTypePairsRevert } from '~/logic/matrix-manual-input';
+import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import {
     applyCellsSwap,
-    colorTypePairs,
-    applyCombinations,
     resetMatrix,
-    gridGetDown,
-    colorTypePairsRevert,
-    zeroCell,
+    matrixGetDown,
     getZeroCell,
-    showVariantsWithSun,
 } from '~/logic/find-figures';
+import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
 import { checkSnowflakes } from '~/logic/snowflake-variants';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
-import { getTotalPoints, getCombinations } from '~/logic/combinations/combinations';
+import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 
 
 const cellsTypesNumber = 5;
@@ -307,26 +305,27 @@ export default {
             highlightFigures(this.matrix, this.initialCombination)
             this.initialCombination = null;
         },
-        applyCombinations() {
-            applyCombinations(this.matrix)
+        apply() {
+            cutFiguresAndSetBoosters(this.matrix)
             resetMatrix(this.matrix)
             this.initialCombination = null;
         },
         getDown() {
-            gridGetDown(this.matrix)
+            matrixGetDown(this.matrix)
         },
         consoleMatrix() {
             console.log(this.matrix)
+            console.log()
         },
         makeFullStep() {
             highlightFigures(this.matrix, this.initialCombination)
             this.initialCombination = null;
 
             setTimeout(() => {
-                applyCombinations(this.matrix)
+                cutFiguresAndSetBoosters(this.matrix)
                 resetMatrix(this.matrix)
                 setTimeout(() => {
-                    gridGetDown(this.matrix)
+                    matrixGetDown(this.matrix)
                 }, 200);
             }, 200);
         },
@@ -335,8 +334,8 @@ export default {
         },
 
         getVariants() {
-            this.existedVariants = getCombinations(this.matrix, 3);
-            showVariantsWithSun(this.existedVariants)
+            this.existedVariants = getSwapVariants(this.matrix, 3);
+            findSunInVariantsTree(this.existedVariants)
 
             this.snowflakeBoosters = checkSnowflakes(this.matrix)
         },
@@ -405,7 +404,6 @@ export default {
                         const newCellType = colorTypePairs[newSymbol]
                         const newBooster = BoosterTypes[newSymbol]
                         this.matrix[r][c]['type'] = newCellType
-                        console.log(newSymbol)
                         if (newBooster !== undefined) {
                             this.matrix[r][c]['booster'] = newSymbol
                         } else {

@@ -9,7 +9,7 @@ export interface Cell {
     booster?: BoosterTypes | null,
 }
 
-// todo class NewCell
+// todo class NewCell implements Cell
 
 
 export type Matrix = Cell[][];
@@ -63,14 +63,18 @@ export interface Booster {
     coords: Coords
 }
 
-export type SwapCells = [
-    Coords,
-    Coords
-]
+
 
 export interface Variant {
     swap: SwapCells,
     points: number,
-    variantHasSun: boolean,
-    stepsAfter: Variant[] | null
+    // todo переименовать
+    variantHasSunBooster: boolean,
+    // todo переименовать
+    hasSun?: boolean,
+    childVariants: Variant[] | null,
 }
+export type SwapCells = [
+    Coords,
+    Coords
+]

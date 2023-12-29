@@ -1,12 +1,13 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 import { BoosterTypes, Cell, CellTypes, Coords, Matrix, SwapCells, Variant } from "~/logic/types";
 import { highlightFigures } from "~/logic/highlighting/highlighting";
-import { applyCellsSwap, applyCombinations, gridGetDown, resetMatrix } from "~/logic/find-figures";
+import { applyCellsSwap, matrixGetDown, resetMatrix } from "~/logic/find-figures";
+import { cutFiguresAndSetBoosters } from "~/logic/cut/cut-figures";
 
-export function getCombinations(matrix: Matrix, getNextStep = 0): Variant[] {
+export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];
 
-    const initialSunCount = countSun(matrix);
+    const initialSunBoosterCount = countSun(matrix);
 
     let variationMatrix: Matrix = JSON.parse(JSON.stringify(matrix))
 
@@ -36,8 +37,8 @@ export function getCombinations(matrix: Matrix, getNextStep = 0): Variant[] {
                 if (!orientationVariant.condition) return;
 
                 applyCellsSwap(variationMatrix, [
-                    {r: r, c: c},
-                    {r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc}
+                    { r: r, c: c },
+                    { r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc }
                 ])
 
                 // prevent boosters swap
@@ -64,14 +65,14 @@ export function getCombinations(matrix: Matrix, getNextStep = 0): Variant[] {
                     additionalPoints = 0;
                     highlightFigures(variationMatrix, isInitialCombination ? initialCombination : null);
                     additionalPoints = getTotalPoints(variationMatrix);
-                    applyCombinations(variationMatrix)
+                    cutFiguresAndSetBoosters(variationMatrix)
                     resetMatrix(variationMatrix);
-                    gridGetDown(variationMatrix);
+                    matrixGetDown(variationMatrix);
                     points += additionalPoints;
                     isInitialCombination = false;
                 } while (additionalPoints !== 0)
 
-                const newSunCount = countSun(variationMatrix);
+                const newSunBoosterCount = countSun(variationMatrix);
 
                 if (points && !isBoosters) {
                     const variant: Variant = {
@@ -86,12 +87,13 @@ export function getCombinations(matrix: Matrix, getNextStep = 0): Variant[] {
                             },
                         ],
                         points: points,
-                        variantHasSun: initialSunCount < newSunCount,
-                        stepsAfter: getNextStep === 0 ? null : getCombinations(variationMatrix, getNextStep - 1)
+                        variantHasSunBooster: initialSunBoosterCount < newSunBoosterCount,
+                        childVariants: nextStepDepth === 0 ? null : getSwapVariants(variationMatrix, nextStepDepth - 1)
 
                     }
 
                     variants.push(variant);
+
                 }
 
                 variationMatrix = JSON.parse(JSON.stringify(matrix))

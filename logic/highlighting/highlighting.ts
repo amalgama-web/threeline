@@ -6,8 +6,7 @@ import { markHLinesInMatrix, markSquaresInMatrix, markVLinesInMatrix } from "~/l
 import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from "~/logic/highlighting/merge-figures";
 import { markEmergingBoostersInMatrix } from "~/logic/highlighting/mark-boosters-in-matrix";
 import { markDeletedForOrdinaryLines, markDeletedForSquares, markDeletedForSun } from "~/logic/highlighting/mark-cell-for-removing";
-import { highlightCells } from "~/logic/find-figures";
-import { Lines, Matrix, SwapCells, Squares } from "~/logic/types";
+import { Lines, Matrix, SwapCells, Squares, Cell } from "~/logic/types";
 
 
 export function highlightFigures(matrix: Matrix, stepSwapCells: SwapCells | null) {
@@ -42,4 +41,14 @@ export function highlightFigures(matrix: Matrix, stepSwapCells: SwapCells | null
     markDeletedForOrdinaryLines(matrix, hLines, vLines)
     markDeletedForSun(matrix)
     markDeletedForSquares(matrix, squares)
+}
+
+function highlightCells(matrix: Matrix) {
+    matrix.forEach((row: Cell[]) => {
+        row.forEach((cell: Cell) => {
+            if (cell.vLine || cell.hLine || cell.square) {
+                cell.highlighted = true;
+            }
+        })
+    })
 }

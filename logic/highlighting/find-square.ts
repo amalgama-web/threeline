@@ -9,7 +9,7 @@ export function findSquare(matrix: Matrix) {
         for (let c = 0; c < MATRIX_WIDTH - 1; c++) {
             const currentType = matrix[r][c].type;
 
-            if (currentType !== null &&
+            if (currentType !== CellTypes.empty &&
                 currentType !== CellTypes.booster &&
                 matrix[r + 1][c].type === currentType &&
                 matrix[r][c + 1].type === currentType &&

@@ -1,11 +1,11 @@
 import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from '~/logic/constant-params';
 import {
     applyCellsSwap,
-    applyCombinations,
-    gridGetDown, resetMatrix,
-    showVariantsWithSun
+    matrixGetDown, resetMatrix,
 } from '~/logic/find-figures';
-import { getTotalPoints, getCombinations } from '~/logic/combinations/combinations';
+import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
+import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
+import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
 
 export function checkSnowflakes(matrix) {
@@ -62,15 +62,15 @@ function calcSnowflake(matrix, coords) {
     const variants = matrices.map((variationMatrix, index) => {
         if (variationMatrix) {
             applyCellsSwap(variationMatrix, [
-                    {r: coords.r, c: coords.c},
-                    {r: coords.r + directionsCoordsInc[index].r, c: coords.c + directionsCoordsInc[index].c}
-                ])
+                {r: coords.r, c: coords.c},
+                {r: coords.r + directionsCoordsInc[index].r, c: coords.c + directionsCoordsInc[index].c}
+            ])
             return {
                 points: calcSnowflakeVariant(variationMatrix, {
                     r: coords.r + directionsCoordsInc[index].r,
                     c: coords.c + directionsCoordsInc[index].c
                 }),
-                stepsAfter: showVariantsWithSun(getCombinations(variationMatrix, 2))
+                childVariants: getSwapVariants(variationMatrix, 2)
             }
 
         }
@@ -101,9 +101,9 @@ function calcSnowflakeVariant(matrix, coords) {
 
 
     points = getTotalPoints(matrix)
-    applyCombinations(matrix)
+    cutFiguresAndSetBoosters(matrix)
     resetMatrix(matrix)
-    gridGetDown(matrix)
+    matrixGetDown(matrix)
 
     let additionalPoints = 0;
 
@@ -111,9 +111,9 @@ function calcSnowflakeVariant(matrix, coords) {
         additionalPoints = 0
         highlightFigures(matrix);
         additionalPoints = getTotalPoints(matrix);
-        applyCombinations(matrix)
+        cutFiguresAndSetBoosters(matrix)
         resetMatrix(matrix)
-        gridGetDown(matrix)
+        matrixGetDown(matrix)
         points += additionalPoints;
     } while (additionalPoints > 0)
 
