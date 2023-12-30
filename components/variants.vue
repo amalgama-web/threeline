@@ -1,11 +1,11 @@
 <template lang="pug">
-div.variants
+.variants
     div(v-for="variant in variants" )
         .variants__list-item
             .variants__link(
                 @click="variantClick(variant)"
                 :style="variantStyle(variant)"
-                :class="{'has-sun':  variant.variantHasSun}"
+                :class="variantClasses(variant)"
             ) {{`${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c} Points: ${variant.points}`}}
 
             .variants__popup(v-if="variant.childVariants")
@@ -22,15 +22,21 @@ export default {
             require: true,
         }
     },
-    emits: {
-
-    },
+    emits: {},
     data() {
-        return {
+        return {}
+    },
 
-        }
+    computed: {
     },
     methods: {
+        variantClasses(variant) {
+            return {
+                'has-sun': variant.variantHasSun,
+                'has-sun-in-descendant': variant.variantDescendantHasSun
+            }
+        },
+
         variantClick(variant) {
             this.$emit('variant-click', variant);
         },

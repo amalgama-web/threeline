@@ -1,5 +1,5 @@
 import { BoosterTypes, Cell, CellTypes, Coords, Lines, Matrix, Squares } from "~/logic/types";
-import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
+import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~/logic/constant-params";
 
 export function markDeletedForOrdinaryLines(matrix: Matrix, hLines: Lines, vLines: Lines) {
     matrix.forEach((row: Cell[]) => {
@@ -28,7 +28,8 @@ export function markDeletedForSun(matrix: Matrix) {
     sunCentersCoords.forEach(sunCenterCoords => {
         const sunRays = findSunRays(matrix, sunCenterCoords)
         markCellAsDeleted(matrix, sunCenterCoords)
-        markCellAsBooster(matrix, sunCenterCoords)
+        markCellAsEmergingSunBooster(matrix, sunCenterCoords)
+
 
         if (sunRays.r && !sunRays.l) {
             markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 1})
@@ -59,7 +60,7 @@ function markCellAsDeleted(matrix: Matrix, coords: Coords) {
     matrix[coords.r][coords.c]['isCellForRemoving'] = true;
 }
 
-function markCellAsBooster(matrix: Matrix, coords: Coords) {
+function markCellAsEmergingSunBooster(matrix: Matrix, coords: Coords) {
     matrix[coords.r][coords.c]['emergingBooster'] = {
         type: BoosterTypes.sun,
         coords: {r: coords.r, c: coords.c}
@@ -109,6 +110,6 @@ function checkCellAndType(matrix: Matrix, coords: Coords, type: CellTypes) {
 }
 
 function checkIsCellExist(coords: Coords) {
-    return coords.r > 0 && coords.r < MATRIX_HEIGHT &&
-           coords.c > 0 && coords.c < MATRIX_WIDTH
+    return coords.r >= 0 && coords.r <= MATRIX_LAST_ROW &&
+           coords.c >= 0 && coords.c <= MATRIX_LAST_COL
 }

@@ -34,6 +34,20 @@
                 margin-right: 2px;
             }
         }
+        &.has-sun-in-descendant {
+            &:after {
+                content: '';
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: indianred;
+                top: 50%;
+                margin-top: -3px;
+                right: 100%;
+                margin-right: 5px;
+            }
+        }
     }
     &__popup {
         z-index: 2;
