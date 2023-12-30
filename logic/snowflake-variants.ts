@@ -1,8 +1,8 @@
-import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from '~/logic/constant-params';
+import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
 import {
     applyCellsSwap,
-    matrixGetDown,
 } from '~/logic/find-figures';
+import { matrixGetDown } from "~/logic/matrix-get-down";
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';

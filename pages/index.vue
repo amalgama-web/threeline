@@ -101,8 +101,8 @@ import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-in
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import {
     applyCellsSwap,
-    matrixGetDown,
 } from '~/logic/find-figures';
+import { matrixGetDown } from '~/logic/matrix-get-down';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';

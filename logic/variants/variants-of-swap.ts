@@ -1,7 +1,8 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 import { BoosterTypes, Cell, CellTypes, Coords, Matrix, SwapCells, Variant } from "~/logic/types";
 import { highlightFigures } from "~/logic/highlighting/highlighting";
-import { applyCellsSwap, matrixGetDown } from "~/logic/find-figures";
+import { applyCellsSwap } from "~/logic/find-figures";
+import { matrixGetDown } from "~/logic/matrix-get-down";
 import { resetMatrix } from "~/logic/reset-matrix/reset-matrix";
 import { cutFiguresAndSetBoosters } from "~/logic/cut/cut-figures";
 
