@@ -108,6 +108,7 @@ import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
 import { getSnowflakesVariants } from '~/logic/snowflake-variants';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
+import { fillMatrix } from '~/logic/matrix-fill';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
@@ -340,14 +341,7 @@ export default {
             this.fillText = ''
         },
         fillRandom() {
-            this.matrix = this.matrix.map(row => row.map(cell => ({
-                type: getRandomInt(5),
-                isCellInFigure: false,
-            })))
-
-            function getRandomInt(max) {
-                return Math.floor(Math.random() * max);
-            }
+            fillMatrix(this.matrix);
         },
 
 
