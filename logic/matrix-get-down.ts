@@ -1,24 +1,46 @@
-// todo вынести в шаг getDown
-import { Coords, Matrix } from "~/logic/types";
-import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
-import { CellTypes } from "~/logic/types";
+import { Cell, CellTypes, Matrix, ZeroCell } from "~/logic/types";
+import { MATRIX_HEIGHT, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~/logic/constant-params";
 
 export function matrixGetDown(matrix: Matrix) {
-    for (let r = 0; r < MATRIX_HEIGHT; r++) {
-        for (let c = 0; c < MATRIX_WIDTH; c++) {
-            if (matrix[r][c].type === CellTypes.empty) {
-                columnGetDown(matrix, {r, c})
+    const colsWithEmptyCells = [];
+
+    // each column for
+    for (let c = 0; c < MATRIX_WIDTH; c++) {
+        let currentType = CellTypes.empty;
+        for (let r = 0, colHasEmptyCells = false;
+             r < MATRIX_HEIGHT && !colHasEmptyCells;
+             r++)
+        {
+            if (matrix[r][c].type === CellTypes.empty && currentType !== CellTypes.empty) {
+                colsWithEmptyCells.push(c);
+                colHasEmptyCells = true;
             }
+            currentType = matrix[r][c].type;
         }
     }
+
+    colsWithEmptyCells.forEach(col => {
+        columnGetDown(matrix, col)
+    })
 }
 
-// todo проработать тут вобще черте что
-function columnGetDown(matrix: Matrix, { r: row, c: col }: Coords) {
-    for (let r = row; r > 0; r--) {
-        matrix[r][col].type = matrix[r - 1][col].type;
-        matrix[r][col].booster = matrix[r - 1][col].booster;
+// todo ОК O(n) проход по столбцу один раз
+function columnGetDown(matrix: Matrix, col: number) {
+    /* Проходим один раз по колонке
+    *  Перемещаем непустые ячейки вниз в строку currentRowIndexForFilling
+    * */
+    let currentRowIndexForFilling = MATRIX_LAST_ROW;
+    let tmpCell: Cell | null = null;
+
+    for (let r = MATRIX_LAST_ROW; r >= 0; r--) {
+        if (matrix[r][col].type !== CellTypes.empty) {
+            if (r !== currentRowIndexForFilling) {
+                tmpCell = matrix[r][col];
+                matrix[r][col] = new ZeroCell();
+                matrix[currentRowIndexForFilling][col] = tmpCell;
+                tmpCell = null;
+            }
+            currentRowIndexForFilling--;
+        }
     }
-    matrix[0][col].type = CellTypes.empty
-    matrix[0][col].booster = null
 }
