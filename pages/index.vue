@@ -19,7 +19,7 @@
             div
                 button.btn.mr-8(@click="fillFromText") Заполнить
                 button.btn.mr-8(@click="fillOnlyGaps") Запполнить пропуски
-                //button.btn.mr-8(@click="fillRandom") Rand
+                button.btn.mr-8(@click="fillRandom") Rand
                 button.btn.mr-8(@click="consoleMatrix") Console Matrix
                 button.btn.mr-8(@click="consoleVariants") Console Variants
             input.game__buttons-input(v-model="fillText")
@@ -99,9 +99,7 @@ import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes, SnowflakeMoveDirections, ZeroCell } from '~/logic/types';
 import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
-import {
-    applyCellsSwap,
-} from '~/logic/find-figures';
+import { applyCellsSwap } from '~/logic/matrix-cell-swap';
 import { matrixGetDown } from '~/logic/matrix-get-down';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';

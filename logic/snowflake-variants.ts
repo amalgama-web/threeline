@@ -1,7 +1,5 @@
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
-import {
-    applyCellsSwap,
-} from '~/logic/find-figures';
+import { applyCellsSwap } from "~/logic/matrix-cell-swap";
 import { matrixGetDown } from "~/logic/matrix-get-down";
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
