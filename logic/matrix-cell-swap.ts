@@ -1,5 +1,6 @@
 import { Matrix, SwapCells } from "~/logic/types";
 
+// todo перенести в static метов для Matrix класса
 export function applyCellsSwap(matrix: Matrix, swap: SwapCells) {
     let tmpCell = matrix[swap[0].r][swap[0].c]
     matrix[swap[0].r][swap[0].c] = matrix[swap[1].r][swap[1].c]

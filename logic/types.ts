@@ -1,4 +1,5 @@
 import Variants from "~/components/variants.vue";
+import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~/logic/constant-params";
 
 export interface Cell {
     type: CellTypes,
@@ -24,6 +25,18 @@ export class ZeroCell implements Cell {
 
 
 export type Matrix = Cell[][];
+
+export class CMatrix {
+    constructor() {
+        return Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(new ZeroCell()))
+    }
+}
+export function createMatrix(): Matrix {
+    let newMatrix = Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(null));
+    newMatrix = newMatrix.map((row: []) => row.map((cell: Cell) => new ZeroCell()))
+    return newMatrix;
+}
+
 
 export interface Coords {
     r: number,

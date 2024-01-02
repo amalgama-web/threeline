@@ -74,21 +74,21 @@
                 ) {{typesCounter[index]}}
         .game__grid-info
             | '{{currentSymbols}}'
-        .flex.flex_p-center.flex_s-center
-            span Rmv
-            CellComponent(
-                v-for="(item, index) in cellTypesIDs"
-                :type="index"
-                @cell-click="fullyRemoveType($event)"
-            )
-        .flex.flex_p-center.flex_s-center
-            span Snow
-            CellComponent(
-                :type="5"
-                :booster="'snowflake'"
-                :highlighted="snowflakeClickActive"
-                @cell-click="snowflakeClickActive = !snowflakeClickActive"
-            )
+        //.flex.flex_p-center.flex_s-center
+        //    span Rmv
+        //    CellComponent(
+        //        v-for="(item, index) in cellTypesIDs"
+        //        :type="index"
+        //        @cell-click="fullyRemoveType($event)"
+        //    )
+        //.flex.flex_p-center.flex_s-center
+        //    span Snow
+        //    CellComponent(
+        //        :type="5"
+        //        :booster="'snowflake'"
+        //        :highlighted="snowflakeClickActive"
+        //        @cell-click="snowflakeClickActive = !snowflakeClickActive"
+        //    )
 </template>
 
 
