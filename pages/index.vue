@@ -109,6 +109,7 @@ import { getSnowflakesVariants } from '~/logic/snowflake-variants';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
+import {matrix} from '~/logic/classes';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
@@ -374,6 +375,9 @@ export default {
         LSKeys = LSKeys.sort((item1,
                               item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
         this.steps = LSKeys.map(item => ({stepChain: item}))
+
+
+        console.log(matrix);
     },
 
     components: {
