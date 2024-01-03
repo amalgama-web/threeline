@@ -38,6 +38,8 @@ export class Cell implements TCell {
 
 type TMatrix<T> = T[][];
 
+
+
 class Matrix extends Array {
     height: number = 0;
     width: number = 0;
@@ -46,7 +48,7 @@ class Matrix extends Array {
 
     transposed: TMatrix<CellPointer> | TMatrix<null> = [[null]];
 
-    eachRow(cb: (cell: CellPointer[]) => void) {
+    eachRow(cb: (row: CellPointer[]) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
             cb(this[r])
         }
@@ -54,7 +56,6 @@ class Matrix extends Array {
 
     eachCol(cb: (col: CellPointer[] | null[]) => void) {
         for (let c = 0; c <= this.lastCol; c++) {
-            // todo
             cb(this.transposed[c])
         }
     }
