@@ -69,6 +69,13 @@ export enum CellTypes {
     purple,
     booster,
 }
+export const TypesInFigures = [
+    CellTypes.yellow,
+    CellTypes.red,
+    CellTypes.blue,
+    CellTypes.pink,
+    CellTypes.purple
+]
 
 export enum BoosterTypes {
     vRocket = 1,

@@ -1,4 +1,4 @@
-import { Booster, BoosterTypes, CellTypes, Coords } from "~/logic/types";
+import { Booster, BoosterTypes, CellTypes, Coords, Line } from "~/logic/types";
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 
 export class CellPointer {
@@ -38,6 +38,9 @@ export class Cell implements TCell {
 
 type TMatrix<T> = T[][];
 
+export type TypesCounter = {
+    [type in CellTypes]: number
+}
 
 
 export class Matrix extends Array<CellPointer[]> {
@@ -46,7 +49,7 @@ export class Matrix extends Array<CellPointer[]> {
     readonly lastRow: number = 0;
     readonly lastCol: number = 0;
 
-    transposed: TMatrix<CellPointer> = [[new CellPointer({r: 0, c: 0})]];
+    readonly transposed: TMatrix<CellPointer>;
 
     constructor(mHeight: number = MATRIX_HEIGHT, mWidth: number = MATRIX_WIDTH) {
         let matrix: TMatrix<CellPointer> = Array(mHeight).fill(Array(mWidth).fill(null))
@@ -95,6 +98,22 @@ export class Matrix extends Array<CellPointer[]> {
             }
         }
     }
+
+    get counters() {
+        const typesCounter: TypesCounter = {
+            [CellTypes.empty]: 0,
+            [CellTypes.yellow]: 0,
+            [CellTypes.red]: 0,
+            [CellTypes.blue]: 0,
+            [CellTypes.pink]: 0,
+            [CellTypes.purple]: 0,
+            [CellTypes.booster]: 0,
+        }
+        this.eachCell(cellPointer => {
+            typesCounter[cellPointer.cell.type]++
+        });
+        return typesCounter;
+    }
 }
 
 function transposeMatrix(
@@ -103,6 +122,7 @@ function transposeMatrix(
     height: number
 ): TMatrix<CellPointer> {
     let transposedMatrix: TMatrix<CellPointer> = Array(width).fill(Array(height))
+    // todo поэкспериментировать с Array и созданием массивов
     transposedMatrix = transposedMatrix.map(
         (col: CellPointer[], colIndex) => col.map(
             (cell: CellPointer, rowIndex) => new CellPointer({r: rowIndex, c: colIndex})

@@ -161,21 +161,8 @@ export default {
             }))
             return symbols.join('')
         },
-        // todo счетчик вынести в геттеры матрицы
         typesCounter() {
-            const counter = {
-                '0': 0,
-                '1': 0,
-                '2': 0,
-                '3': 0,
-                '4': 0,
-                '5': 0,
-            }
-            this.matrix.map(row => row.map(cellPointer => {
-                counter[cellPointer.cell.type]++
-            }))
-            return counter
-
+            return this.matrix.counters
         }
     },
 
@@ -262,7 +249,7 @@ export default {
         getVariants() {
             this.existedVariants = getSwapVariants(this.matrix, 3);
 
-            // todo в этой функции мы помечаем только, не находим
+            // todo в этой функции мы только помечаем, не находим, само солнце находится в getSwapVariants
             findSunInVariantsTree(this.existedVariants)
             this.snowflakeBoosters = getSnowflakesVariants(this.matrix);
         },
