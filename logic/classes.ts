@@ -41,7 +41,6 @@ type TMatrix<T> = T[][];
 
 
 class Matrix extends Array<CellPointer[]> {
-    // todo readonly
     readonly height: number = 0;
     readonly width: number = 0;
     readonly lastRow: number = 0;
