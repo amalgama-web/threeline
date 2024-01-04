@@ -26,11 +26,6 @@ export class ZeroCell implements Cell {
 
 export type Matrix = Cell[][];
 
-export class CMatrix {
-    constructor() {
-        return Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(new ZeroCell()))
-    }
-}
 export function createMatrix(): Matrix {
     let newMatrix = Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(null));
     newMatrix = newMatrix.map((row: []) => row.map((cell: Cell) => new ZeroCell()))

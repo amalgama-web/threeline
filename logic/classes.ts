@@ -1,7 +1,7 @@
 import { Booster, BoosterTypes, CellTypes, Coords } from "~/logic/types";
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 
-class CellPointer {
+export class CellPointer {
     cell: Cell = new Cell();
     coords: Coords = {
         r: 0,
@@ -40,7 +40,7 @@ type TMatrix<T> = T[][];
 
 
 
-class Matrix extends Array<CellPointer[]> {
+export class Matrix extends Array<CellPointer[]> {
     readonly height: number = 0;
     readonly width: number = 0;
     readonly lastRow: number = 0;
@@ -116,38 +116,3 @@ function transposeMatrix(
     return transposedMatrix;
 }
 
-export const matrix = null;
-const matrix2 = new Matrix();
-matrix2.eachCell(cell => {
-    // console.log(cell)
-    cell.cell.type = getRandomInt(5)
-})
-
-matrix2.eachRow((row, r) => {
-    if (r === 2) {
-        console.log(row)
-        row.forEach(cellPointer => {
-            cellPointer.cell.type = CellTypes.booster;
-        })
-    }
-})
-
-matrix2.eachCol((col, c) => {
-    // console.log(col)
-    if (c === 2) {
-        console.log(col)
-        for(let i = 0; i < col.length; i++) {
-            if (col[i].cell.type === CellTypes.booster) {
-                const tmp = col[0].cell;
-                col[0].cell = col[i].cell;
-                col[i].cell = tmp;
-            }
-        }
-    }
-})
-
-console.log(matrix2)
-
-function getRandomInt(max: number) {
-    return Math.floor(Math.random() * max);
-}

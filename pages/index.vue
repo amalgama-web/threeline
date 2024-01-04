@@ -57,12 +57,12 @@
                 .grid__row(v-for="(row, rowIndex) in matrix")
                     CellComponent(@cell-click="removeRow(rowIndex)") {{rowIndex}}
                     CellComponent(
-                        v-for="(cell, cellIndex) in row"
-                        :type="cell.type"
-                        :highlighted="cell.isCellInFigure"
-                        :is-cell-for-removing="cell.isCellForRemoving"
-                        :future-booster="cell.emergingBooster"
-                        :booster="cell.booster"
+                        v-for="(cellPointer, cellIndex) in row"
+                        :type="cellPointer.cell.type"
+                        :highlighted="cellPointer.cell.isCellInFigure"
+                        :is-cell-for-removing="cellPointer.cell.isCellForRemoving"
+                        :future-booster="cellPointer.cell.emergingBooster"
+                        :booster="cellPointer.cell.booster"
                         @cell-click="gridCellClick(rowIndex, cellIndex)"
                     )
             .game__selectors
@@ -109,14 +109,14 @@ import { getSnowflakesVariants } from '~/logic/snowflake-variants';
 import { highlightFigures } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
-import {matrix} from '~/logic/classes';
+import { Matrix } from '~/logic/classes';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
 export default {
     data() {
         return {
-            matrix: Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(0, 0), 0),
+            matrix: new Matrix(),
 
             MATRIX_HEIGHT: MATRIX_HEIGHT,
             MATRIX_WIDTH: MATRIX_WIDTH,
@@ -161,6 +161,7 @@ export default {
             }))
             return symbols.join('')
         },
+        // todo счетчик вынести в геттеры матрицы
         typesCounter() {
             const counter = {
                 '0': 0,
@@ -170,8 +171,8 @@ export default {
                 '4': 0,
                 '5': 0,
             }
-            this.matrix.map(row => row.map(cell => {
-                counter[cell.type]++
+            this.matrix.map(row => row.map(cellPointer => {
+                counter[cellPointer.cell.type]++
             }))
             return counter
 
@@ -261,7 +262,7 @@ export default {
         getVariants() {
             this.existedVariants = getSwapVariants(this.matrix, 3);
 
-            // todo в этой функции мы помечаем только не находим
+            // todo в этой функции мы помечаем только, не находим
             findSunInVariantsTree(this.existedVariants)
             this.snowflakeBoosters = getSnowflakesVariants(this.matrix);
         },
@@ -341,8 +342,11 @@ export default {
             }
             this.fillText = ''
         },
+
+
         fillRandom() {
             fillMatrix(this.matrix);
+            console.log(this.matrix);
         },
 
 
@@ -364,20 +368,19 @@ export default {
     },
 
     mounted() {
-        const LSGameNumber = window.localStorage.getItem(`gameNumber`);
-        this.gameNumber = LSGameNumber ? LSGameNumber : 0;
+        // const LSGameNumber = window.localStorage.getItem(`gameNumber`);
+        // this.gameNumber = LSGameNumber ? LSGameNumber : 0;
+        //
+        // this.matrix = this.matrix.map(row => row.map(cell => new ZeroCell()))
+        //
+        // let LSKeys = Object.keys(localStorage)
+        //     .filter(item => item.includes(`game${this.gameNumber}`))
+        //     .map(item => item.replace(`game${this.gameNumber}`, ''));
+        // LSKeys = LSKeys.sort((item1,
+        //                       item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
+        // this.steps = LSKeys.map(item => ({stepChain: item}))
 
-        this.matrix = this.matrix.map(row => row.map(cell => new ZeroCell()))
 
-        let LSKeys = Object.keys(localStorage)
-            .filter(item => item.includes(`game${this.gameNumber}`))
-            .map(item => item.replace(`game${this.gameNumber}`, ''));
-        LSKeys = LSKeys.sort((item1,
-                              item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
-        this.steps = LSKeys.map(item => ({stepChain: item}))
-
-
-        console.log(matrix);
     },
 
     components: {

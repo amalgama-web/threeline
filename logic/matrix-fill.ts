@@ -1,5 +1,6 @@
-import { CellTypes, Coords, createMatrix, Matrix } from "~/logic/types";
+import { CellTypes, Coords, createMatrix } from "~/logic/types";
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from "~/logic/constant-params";
+import { Matrix } from "~/logic/classes";
 
 /*
 * Заполнение матрицы
@@ -20,32 +21,25 @@ const possibleTypes: CellTypes[] = [
 ]
 
 export function fillMatrix(matrix: Matrix) {
-    // todo c классами тут утрясти по итогу все, для сгенерированной матрицы можно добавлять только тип без всей остальной инфы по ячейке
-    const matrixToFill: Matrix = createMatrix();
+    const matrixToFill = new Matrix();
 
-    for (let r = 0; r <= MATRIX_LAST_ROW; r++) {
-        for (let c = 0; c <= MATRIX_LAST_COL; c++) {
-            if (matrix[r][c].type === CellTypes.empty) {
-                fillCell(matrixToFill, { r, c })
-            }
-        }
-    }
+    matrix.eachEmptyCell((cellPointer) => {
+        fillCell(matrixToFill, { r: cellPointer.coords.r, c: cellPointer.coords.c })
+    })
 
     mergeMatrices(matrix, matrixToFill)
 }
 
 function mergeMatrices(targetMatrix: Matrix, fromMatrix: Matrix) {
-    for (let r = 0; r <= MATRIX_LAST_ROW; r++) {
-        for (let c = 0; c <= MATRIX_LAST_COL; c++) {
-            if (targetMatrix[r][c].type === CellTypes.empty) {
-                targetMatrix[r][c].type = fromMatrix[r][c].type;
-            }
-        }
-    }
+    targetMatrix.eachEmptyCell((cellPointer) => {
+        const {r, c} = cellPointer.coords;
+        cellPointer.cell.type = fromMatrix[r][c].cell.type
+    });
 }
+
 function fillCell(matrix: Matrix, { r, c }: Coords) {
     const possibleTypesForCell: CellTypes[] = getPossibleTypesForCell(matrix, { r, c });
-    matrix[r][c].type = getRandType(possibleTypesForCell);
+    matrix[r][c].cell.type = getRandType(possibleTypesForCell);
 }
 
 function getPossibleTypesForCell(matrix: Matrix, { r, c }: Coords) {
@@ -79,13 +73,13 @@ function getRandType(types: CellTypes[]) {
 }
 
 function getCellType(matrix: Matrix, { r, c }: Coords): CellTypes | null {
-    return isCellInsideMatrix({ r, c }) ? matrix[r][c].type : null
+    return isCellInsideMatrix(matrix, { r, c }) ? matrix[r][c].cell.type : null
 }
 
 function getRandomInt(max: number) {
     return Math.floor(Math.random() * max);
 }
 
-function isCellInsideMatrix({ r, c }: Coords) {
-    return r >= 0 && r <= MATRIX_LAST_ROW && c >= 0 && c <= MATRIX_LAST_COL;
+function isCellInsideMatrix(matrix: Matrix, { r, c }: Coords) {
+    return r >= 0 && r <= matrix.lastRow && c >= 0 && c <= matrix.lastCol;
 }
