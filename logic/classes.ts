@@ -2,7 +2,7 @@ import { Booster, BoosterTypes, CellTypes, Coords } from "~/logic/types";
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 
 class CellPointer {
-    cell: Cell | null = null;
+    cell: Cell = new Cell();
     coords: Coords = {
         r: 0,
         c: 0
@@ -40,27 +40,46 @@ type TMatrix<T> = T[][];
 
 
 
-class Matrix extends Array {
-    height: number = 0;
-    width: number = 0;
-    lastRow: number = 0;
-    lastCol: number = 0;
+class Matrix extends Array<CellPointer[]> {
+    // todo readonly
+    readonly height: number = 0;
+    readonly width: number = 0;
+    readonly lastRow: number = 0;
+    readonly lastCol: number = 0;
 
-    transposed: TMatrix<CellPointer> | TMatrix<null> = [[null]];
+    transposed: TMatrix<CellPointer> = [[new CellPointer({r: 0, c: 0})]];
 
-    eachRow(cb: (row: CellPointer[]) => void) {
+    constructor(mHeight: number = MATRIX_HEIGHT, mWidth: number = MATRIX_WIDTH) {
+        let matrix: TMatrix<CellPointer> = Array(mHeight).fill(Array(mWidth).fill(null))
+
+        matrix = matrix.map(
+            (row: CellPointer[], r: number) => row.map(
+                (cell: CellPointer, c: number) => new CellPointer({r, c})
+            )
+        )
+
+        super(...matrix)
+
+        this.height = mHeight;
+        this.width = mWidth;
+        this.lastRow = mHeight - 1;
+        this.lastCol = mWidth - 1;
+        this.transposed = transposeMatrix(matrix, mWidth, mHeight);
+    }
+
+    eachRow(cb: (row: CellPointer[], index: number) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
-            cb(this[r])
+            cb(this[r], r)
         }
     }
 
-    eachCol(cb: (col: CellPointer[] | null[]) => void) {
+    eachCol(cb: (col: CellPointer[], index: number) => void) {
         for (let c = 0; c <= this.lastCol; c++) {
-            cb(this.transposed[c])
+            cb(this.transposed[c], c)
         }
     }
 
-    eachCell(cb: (cell: CellPointer) => void) {
+    eachCell(cb: (cPointer: CellPointer) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
             for (let c = 0; c <= this.lastCol; c++) {
                 cb(this[r][c]);
@@ -68,7 +87,7 @@ class Matrix extends Array {
         }
     }
 
-    eachEmptyCell(cb: (cell: CellPointer) => void) {
+    eachEmptyCell(cb: (cPointer: CellPointer) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
             for (let c = 0; c <= this.lastCol; c++) {
                 if (this[r][c].cell.type === 0) {
@@ -79,41 +98,57 @@ class Matrix extends Array {
     }
 }
 
-// todo вынести в декоратор
-class MatrixCreator {
-    constructor(mHeight: number = MATRIX_HEIGHT, mWidth: number = MATRIX_WIDTH) {
-        let matrix = new Matrix(mHeight).fill(Array(mWidth).fill(null))
-        // todo
-        matrix = matrix.map(
-            (row: CellPointer[], r: number) => row.map(
-                (cell: CellPointer, c: number) => new CellPointer({r, c})
-            )
-        ) as Matrix
-
-        matrix.height = mHeight;
-        matrix.width = mWidth;
-        matrix.lastRow = mHeight - 1;
-        matrix.lastCol = mWidth - 1;
-
-        matrix.transposed = transposeMatrix(matrix);
-        return matrix;
-    }
-}
-
-
-function transposeMatrix(matrix: Matrix): TMatrix<CellPointer> | TMatrix<null> {
-    let transposedMatrix: TMatrix<CellPointer> | TMatrix<null> = Array(matrix.width).fill(Array(matrix.height))
+function transposeMatrix(
+    matrix: TMatrix<CellPointer>,
+    width: number,
+    height: number
+): TMatrix<CellPointer> {
+    let transposedMatrix: TMatrix<CellPointer> = Array(width).fill(Array(height))
     transposedMatrix = transposedMatrix.map(
-        (col: (CellPointer | null)[]) => col.map(
-            (cell: CellPointer | null) => null
+        (col: CellPointer[], colIndex) => col.map(
+            (cell: CellPointer, rowIndex) => new CellPointer({r: rowIndex, c: colIndex})
         )
     )
-    for (let r = 0; r <= matrix.lastRow; r++) {
-        for (let c = 0; c<= matrix.lastCol; c++) {
+    for (let r = 0; r < height; r++) {
+        for (let c = 0; c< width; c++) {
             transposedMatrix[c][r] = matrix[r][c]
         }
     }
     return transposedMatrix;
 }
 
-export const matrix = new MatrixCreator();
+export const matrix = null;
+const matrix2 = new Matrix();
+matrix2.eachCell(cell => {
+    // console.log(cell)
+    cell.cell.type = getRandomInt(5)
+})
+
+matrix2.eachRow((row, r) => {
+    if (r === 2) {
+        console.log(row)
+        row.forEach(cellPointer => {
+            cellPointer.cell.type = CellTypes.booster;
+        })
+    }
+})
+
+matrix2.eachCol((col, c) => {
+    // console.log(col)
+    if (c === 2) {
+        console.log(col)
+        for(let i = 0; i < col.length; i++) {
+            if (col[i].cell.type === CellTypes.booster) {
+                const tmp = col[0].cell;
+                col[0].cell = col[i].cell;
+                col[i].cell = tmp;
+            }
+        }
+    }
+})
+
+console.log(matrix2)
+
+function getRandomInt(max: number) {
+    return Math.floor(Math.random() * max);
+}
