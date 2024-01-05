@@ -74,13 +74,13 @@
                 ) {{typesCounter[index]}}
         .game__grid-info
             | '{{currentSymbols}}'
-        //.flex.flex_p-center.flex_s-center
-        //    span Rmv
-        //    CellComponent(
-        //        v-for="(item, index) in cellTypesIDs"
-        //        :type="index"
-        //        @cell-click="fullyRemoveType($event)"
-        //    )
+        .flex.flex_p-center.flex_s-center
+            span Rmv
+            CellComponent(
+                v-for="(item, index) in cellTypesIDs"
+                :type="index"
+                @cell-click="fullyRemoveType($event)"
+            )
         //.flex.flex_p-center.flex_s-center
         //    span Snow
         //    CellComponent(
@@ -93,6 +93,8 @@
 
 
 <script>
+
+//todo перевести на TS index.vue
 import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';

@@ -42,6 +42,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                 return
             }
 
+            // todo вынести applyCellSwap в Matrix (обычным методом swapCells
             applyCellsSwap(variationMatrix, [
                 { r: r, c: c },
                 { r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc }

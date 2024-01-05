@@ -25,9 +25,9 @@ export function getSnowflakesVariants(matrix: Matrix) {
 function findSnowflakes(matrix: Matrix): Coords[] {
     const snowflakesCoords: Coords[] = [];
 
-    matrix.eachCell(cPointer => {
-        const cell = cPointer.cell;
-        const { r, c } = cPointer.coords;
+    matrix.eachCell(cellPointer => {
+        const cell = cellPointer.cell;
+        const { r, c } = cellPointer.coords;
         if (cell.booster === BoosterTypes.snowflake) {
             snowflakesCoords.push({ r, c })
         }
