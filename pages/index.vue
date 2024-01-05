@@ -24,7 +24,7 @@
                 button.btn.mr-8(@click="consoleVariants") Console Variants
             input.game__buttons-input(v-model="fillText")
         .mb-24
-            button.btn.mr-8(@click="highlightFigures") Пдсв
+            button.btn.mr-8(@click="highlightShapes") Пдсв
             button.btn.mr-8(@click="resetMatrix") Убр пдсв
             button.btn.mr-8(@click="apply") Прим
             button.btn.mr-8(@click="getDown") Свиг
@@ -59,11 +59,11 @@
                     CellComponent(
                         v-for="(cellPointer, cellIndex) in row"
                         :type="cellPointer.cell.type"
-                        :highlighted="cellPointer.cell.isCellInFigure"
+                        :highlighted="cellPointer.cell.isCellInShape"
                         :is-cell-for-removing="cellPointer.cell.isCellForRemoving"
                         :future-booster="cellPointer.cell.emergingBooster"
                         :booster="cellPointer.cell.booster"
-                        @cell-click="gridCellClick(rowIndex, cellIndex)"
+                        @cell-click="matrixCellClick(rowIndex, cellIndex)"
                     )
             .game__selectors
                 CellComponent(
@@ -105,11 +105,11 @@ import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
-import { getSnowflakesVariants } from '~/logic/snowflake-variants';
-import { highlightFigures } from '~/logic/highlighting/highlighting';
+import { highlightShapes } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
 import { Matrix } from '~/logic/classes';
+import {getSnowflakesVariants} from '~/logic/snowflake-variants';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
@@ -173,7 +173,7 @@ export default {
             window.localStorage.setItem('gameNumber', this.gameNumber)
         },
 
-        gridCellClick(r, c) {
+        matrixCellClick(r, c) {
             if (!this.snowflakeClickActive) {
                 this.setCellType(r, c)
             } else {
@@ -207,13 +207,13 @@ export default {
         },
 
         // cell defines and loads
-        setCellType(rowIndex, cellIndex) {
-            this.matrix[rowIndex][cellIndex].type = this.selectorType;
+        setCellType(r, c) {
+            this.matrix[r][c].cell.type = this.selectorType;
         },
 
         //  combinations
-        highlightFigures() {
-            highlightFigures(this.matrix, this.initialCombination)
+        highlightShapes() {
+            highlightShapes(this.matrix, this.initialCombination)
             this.initialCombination = null;
         },
         apply() {
@@ -231,7 +231,7 @@ export default {
             console.log(this.existedVariants)
         },
         makeFullStep() {
-            highlightFigures(this.matrix, this.initialCombination)
+            highlightShapes(this.matrix, this.initialCombination)
             this.initialCombination = null;
 
             setTimeout(() => {
@@ -333,7 +333,6 @@ export default {
 
         fillRandom() {
             fillMatrix(this.matrix);
-            console.log(this.matrix);
         },
 
 

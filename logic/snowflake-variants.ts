@@ -4,16 +4,16 @@ import { matrixGetDown } from "~/logic/matrix-get-down";
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
-import { highlightFigures } from '~/logic/highlighting/highlighting';
+import { highlightShapes } from '~/logic/highlighting/highlighting';
 import {
     BoosterTypes,
     Cell,
     CellTypes,
     Coords,
-    Matrix,
     SnowflakeMoveDirections, SnowflakeMovingVariants,
     SnowflakeVariant
 } from '~/logic/types';
+import { Matrix } from "~/logic/classes";
 
 
 export function getSnowflakesVariants(matrix: Matrix) {
@@ -25,12 +25,12 @@ export function getSnowflakesVariants(matrix: Matrix) {
 function findSnowflakes(matrix: Matrix): Coords[] {
     const snowflakesCoords: Coords[] = [];
 
-    matrix.forEach((row: Cell[], r) => {
-        row.forEach((cell: Cell, c) => {
-            if (cell['booster'] === BoosterTypes.snowflake) {
-                snowflakesCoords.push({ r, c })
-            }
-        })
+    matrix.eachCell(cPointer => {
+        const cell = cPointer.cell;
+        const {r, c} = cPointer.coords;
+        if (cell.booster === BoosterTypes.snowflake) {
+            snowflakesCoords.push({ r, c })
+        }
     })
 
     return snowflakesCoords;
@@ -70,7 +70,7 @@ function calcSnowflakeMovingVariants(matrix: Matrix, { r: curRow, c: curCol }: C
     const variants: (SnowflakeVariant | null)[] = directionsExisting.map((directionExist, index): SnowflakeVariant | null => {
         if (!directionExist) return null;
 
-        const variationMatrix: Matrix = JSON.parse(JSON.stringify(matrix));
+        const variationMatrix: Matrix = Matrix.copy(matrix);
         const rowInc = directionsCoordsIncrement[index].r;
         const colInc = directionsCoordsIncrement[index].c;
 
@@ -106,13 +106,13 @@ function calcSnowflakeMovingVariants(matrix: Matrix, { r: curRow, c: curCol }: C
 function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
     let points = 0;
 
-    matrix[coords.r][coords.c].type = CellTypes.empty
-    matrix[coords.r][coords.c].booster = null
+    matrix[coords.r][coords.c].cell.type = CellTypes.empty
+    matrix[coords.r][coords.c].cell.booster = null
 
-    if (coords.r > 0) markCellDeleted(matrix[coords.r - 1][coords.c])
-    if (coords.r < MATRIX_LAST_ROW) markCellDeleted(matrix[coords.r + 1][coords.c])
-    if (coords.c > 0) markCellDeleted(matrix[coords.r][coords.c - 1])
-    if (coords.c < MATRIX_LAST_COL) markCellDeleted(matrix[coords.r][coords.c + 1])
+    if (coords.r > 0) markCellDeleted(matrix[coords.r - 1][coords.c].cell)
+    if (coords.r < MATRIX_LAST_ROW) markCellDeleted(matrix[coords.r + 1][coords.c].cell)
+    if (coords.c > 0) markCellDeleted(matrix[coords.r][coords.c - 1].cell)
+    if (coords.c < MATRIX_LAST_COL) markCellDeleted(matrix[coords.r][coords.c + 1].cell)
 
     points = getTotalPoints(matrix)
     cutFiguresAndSetBoosters(matrix)
@@ -123,7 +123,7 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
 
     do {
         additionalPoints = 0
-        highlightFigures(matrix);
+        highlightShapes(matrix);
         additionalPoints = getTotalPoints(matrix);
         cutFiguresAndSetBoosters(matrix)
         resetMatrix(matrix)

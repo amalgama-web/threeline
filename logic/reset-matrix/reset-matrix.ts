@@ -1,14 +1,13 @@
-import { Matrix, Cell } from "~/logic/types";
+import { Matrix, Cell } from "~/logic/classes";
 
 export function resetMatrix(matrix: Matrix) {
-    matrix.forEach((row: Cell[]) => {
-        row.forEach((cell: Cell) => {
-            cell.isCellInFigure = false;
-            cell.isCellForRemoving = false;
-            cell.hLine = null;
-            cell.vLine = null;
-            cell.square = null;
-            cell.emergingBooster = null;
-        })
+    matrix.eachCell(cellPointer => {
+        const cell: Cell = cellPointer.cell;
+        cell.isCellInShape = false;
+        cell.isCellForRemoving = false;
+        cell.hLine = null;
+        cell.vLine = null;
+        cell.square = null;
+        cell.emergingBooster = null;
     })
 }

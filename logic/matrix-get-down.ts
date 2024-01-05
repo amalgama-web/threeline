@@ -1,23 +1,22 @@
-import { Cell, CellTypes, Matrix, ZeroCell } from "~/logic/types";
-import { MATRIX_HEIGHT, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~/logic/constant-params";
+import { CellTypes, ZeroCell } from "~/logic/types";
+import { Matrix, Cell } from "~/logic/classes";
 
 export function matrixGetDown(matrix: Matrix) {
-    const colsWithEmptyCells = [];
+    const colsWithEmptyCells: number[] = [];
 
     // each column for
-    for (let c = 0; c < MATRIX_WIDTH; c++) {
+    matrix.eachCol((col, c) => {
         let currentType = CellTypes.empty;
         for (let r = 0, colHasEmptyCells = false;
-             r < MATRIX_HEIGHT && !colHasEmptyCells;
-             r++)
-        {
-            if (matrix[r][c].type === CellTypes.empty && currentType !== CellTypes.empty) {
+             r < matrix.height && !colHasEmptyCells;
+             r++) {
+            if (matrix[r][c].cell.type === CellTypes.empty && currentType !== CellTypes.empty) {
                 colsWithEmptyCells.push(c);
                 colHasEmptyCells = true;
             }
-            currentType = matrix[r][c].type;
+            currentType = matrix[r][c].cell.type;
         }
-    }
+    })
 
     colsWithEmptyCells.forEach(col => {
         columnGetDown(matrix, col)
@@ -29,15 +28,15 @@ function columnGetDown(matrix: Matrix, col: number) {
     /* Проходим один раз по колонке
     *  Перемещаем непустые ячейки вниз в строку currentRowIndexForFilling
     * */
-    let currentRowIndexForFilling = MATRIX_LAST_ROW;
+    let currentRowIndexForFilling = matrix.lastRow;
     let tmpCell: Cell | null = null;
 
-    for (let r = MATRIX_LAST_ROW; r >= 0; r--) {
-        if (matrix[r][col].type !== CellTypes.empty) {
+    for (let r = matrix.lastRow; r >= 0; r--) {
+        if (matrix[r][col].cell.type !== CellTypes.empty) {
             if (r !== currentRowIndexForFilling) {
-                tmpCell = matrix[r][col];
-                matrix[r][col] = new ZeroCell();
-                matrix[currentRowIndexForFilling][col] = tmpCell;
+                tmpCell = matrix[r][col].cell;
+                matrix[r][col].cell = new Cell();
+                matrix[currentRowIndexForFilling][col].cell = tmpCell;
                 tmpCell = null;
             }
             currentRowIndexForFilling--;

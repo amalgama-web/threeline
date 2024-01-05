@@ -1,4 +1,4 @@
-import { Booster, BoosterTypes, CellTypes, Coords, Line } from "~/logic/types";
+import { Booster, BoosterTypes, CellTypes, Coords } from "~/logic/types";
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
 
 export class CellPointer {
@@ -17,7 +17,7 @@ export class CellPointer {
 export interface TCell {
     type: CellTypes,
     isCellForRemoving: boolean,
-    isCellInFigure: boolean,
+    isCellInShape: boolean,
     vLine: string | null,
     hLine: string | null,
     square: string | null,
@@ -26,14 +26,14 @@ export interface TCell {
 }
 
 export class Cell implements TCell {
-    type = CellTypes.empty;
-    isCellForRemoving = false;
-    isCellInFigure = false;
-    vLine = null;
-    hLine = null;
-    square = null;
-    emergingBooster = null;
-    booster = null;
+    type: CellTypes = CellTypes.empty;
+    isCellForRemoving: boolean = false;
+    isCellInShape: boolean = false;
+    vLine: string | null = null;
+    hLine: string | null = null;
+    square: string | null = null;
+    emergingBooster: Booster | null = null;
+    booster: BoosterTypes | null = null;
 }
 
 type TMatrix<T> = T[][];
@@ -113,6 +113,35 @@ export class Matrix extends Array<CellPointer[]> {
             typesCounter[cellPointer.cell.type]++
         });
         return typesCounter;
+    }
+
+    get sunCounter() {
+        let sum = 0;
+        this.eachCell(cellPointer => {
+            if (cellPointer.cell.booster === BoosterTypes.sun) sum++;
+        });
+        return sum;
+    }
+
+    get totalPoints() {
+        let sum = 0;
+        this.eachCell(cellPointer => {
+            if (cellPointer.cell.isCellForRemoving) sum++;
+        });
+        return sum;
+    }
+
+    isCoordsInside({ r, c }: Coords) {
+        return r >= 0 && r <= this.lastRow && c >= 0 && c <= this.lastCol;
+    }
+
+    static copy(originalMatrix: Matrix) {
+        const copy = new Matrix();
+        copy.eachCell(cellPointer => {
+            const {r, c} = cellPointer.coords;
+            cellPointer.cell = JSON.parse(JSON.stringify(originalMatrix[r][c].cell))
+        })
+        return copy;
     }
 }
 

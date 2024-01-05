@@ -1,101 +1,101 @@
-import { BoosterTypes, Cell, CellTypes, Coords, Lines, Matrix, Squares } from "~/logic/types";
-import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~/logic/constant-params";
+import { BoosterTypes, CellTypes, Coords, Lines, Squares } from "~/logic/types";
+import { Matrix } from "~/logic/classes";
 
 export function markDeletedForOrdinaryLines(matrix: Matrix, hLines: Lines, vLines: Lines) {
-    matrix.forEach((row: Cell[]) => {
-        row.forEach((cell: Cell) => {
-            if (cell.hLine && !hLines[cell.hLine]['disabled'] ||
-                cell.vLine && !vLines[cell.vLine]['disabled']) {
-                cell.isCellForRemoving = true;
-            }
-        })
+    matrix.eachCell(cellPointer => {
+        const cell = cellPointer.cell;
+        if (cell.hLine && !hLines[cell.hLine]['disabled'] ||
+            cell.vLine && !vLines[cell.vLine]['disabled']) {
+            cell.isCellForRemoving = true;
+        }
     })
 }
 
 export function markDeletedForSquares(matrix: Matrix, squares: Squares) {
-    matrix.forEach((row: Cell[]) => {
-        row.forEach((cell: Cell) => {
-            if (cell.square && !squares[cell.square]['disabled']) {
-                cell.isCellForRemoving = true;
-            }
-        })
+    matrix.eachCell( cPointer => {
+        const cell = cPointer.cell;
+        if (cell.square && !squares[cell.square]['disabled']) {
+            cell.isCellForRemoving = true;
+        }
     })
 }
 
 export function markDeletedForSun(matrix: Matrix) {
     const sunCentersCoords = findSunCenter(matrix)
 
+
     sunCentersCoords.forEach(sunCenterCoords => {
+        const {r ,c} = sunCenterCoords;
         const sunRays = findSunRays(matrix, sunCenterCoords)
         markCellAsDeleted(matrix, sunCenterCoords)
         markCellAsEmergingSunBooster(matrix, sunCenterCoords)
 
-
         if (sunRays.r && !sunRays.l) {
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 1})
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 2})
+            markCellAsDeleted(matrix, { r: r, c: c + 1 })
+            markCellAsDeleted(matrix, { r: r, c: c + 2 })
         } else if (sunRays.l) {
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c - 1})
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c - 2})
+            markCellAsDeleted(matrix, { r: r, c: c - 1 })
+            markCellAsDeleted(matrix, { r: r, c: c - 2 })
         } else if (!sunRays.l && !sunRays.r) {
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c - 1})
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 1})
+            markCellAsDeleted(matrix, { r: r, c: c - 1 })
+            markCellAsDeleted(matrix, { r: r, c: c + 1 })
         }
 
         if (sunRays.t && !sunRays.b) {
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r - 1, c: sunCenterCoords.c})
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r - 2, c: sunCenterCoords.c})
+            markCellAsDeleted(matrix, { r: r - 1, c: c })
+            markCellAsDeleted(matrix, { r: r - 2, c: c })
         } else if (sunRays.b) {
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r + 1, c: sunCenterCoords.c})
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r + 2, c: sunCenterCoords.c})
+            markCellAsDeleted(matrix, { r: r + 1, c: c })
+            markCellAsDeleted(matrix, { r: r + 2, c: c })
         } else if (!sunRays.b && !sunRays.t) {
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r - 1, c: sunCenterCoords.c})
-            markCellAsDeleted(matrix, {r: sunCenterCoords.r + 1, c: sunCenterCoords.c})
+            markCellAsDeleted(matrix, { r: r - 1, c: c })
+            markCellAsDeleted(matrix, { r: r + 1, c: c })
         }
     })
 
 }
 
-function markCellAsDeleted(matrix: Matrix, coords: Coords) {
-    matrix[coords.r][coords.c]['isCellForRemoving'] = true;
+function markCellAsDeleted(matrix: Matrix, { r, c }: Coords) {
+    matrix[r][c].cell.isCellForRemoving = true;
 }
 
-function markCellAsEmergingSunBooster(matrix: Matrix, coords: Coords) {
-    matrix[coords.r][coords.c]['emergingBooster'] = {
+function markCellAsEmergingSunBooster(matrix: Matrix, { r, c }: Coords) {
+    matrix[r][c].cell.emergingBooster = {
         type: BoosterTypes.sun,
-        coords: {r: coords.r, c: coords.c}
+        coords: { r, c }
     };
 }
 
 function findSunCenter(matrix: Matrix) {
     const sun: Coords[] = []
-    matrix.forEach((row: Cell[], rIndex: number) => {
-        row.forEach((cell: Cell, cIndex: number) => {
-            if (cell.hLine && cell.vLine) {
-                sun.push({
-                    r: rIndex,
-                    c: cIndex
-                })
-            }
-        })
+    matrix.eachCell(cellPointer => {
+        const cell = cellPointer.cell;
+        const {r ,c} = cellPointer.coords
+        if (cell.hLine && cell.vLine) {
+            sun.push({
+                r,
+                c
+            })
+        }
     })
     return sun
 }
 
 function findSunRays(matrix: Matrix, sunCenterCoords: Coords) {
-    const currentType: CellTypes = matrix[sunCenterCoords.r][sunCenterCoords.c].type
+    const {r, c} = sunCenterCoords;
+    const currentType: CellTypes = matrix[r][c].cell.type
 
-    const rayLeft = checkCellAndType(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c - 1}, currentType) &&
-        checkCellAndType(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c - 2}, currentType)
+    const rayLeft = checkCellAndType(matrix, { r: r, c: c - 1 }, currentType) &&
+        checkCellAndType(matrix, { r: r, c: c - 2 }, currentType)
 
-    const rayRight = checkCellAndType(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 1}, currentType) &&
-        checkCellAndType(matrix, {r: sunCenterCoords.r, c: sunCenterCoords.c + 2}, currentType)
+    const rayRight = checkCellAndType(matrix, { r: r, c: c + 1 }, currentType) &&
+        checkCellAndType(matrix, { r: r, c: c + 2 }, currentType)
 
-    const rayTop = checkCellAndType(matrix, {r: sunCenterCoords.r - 1, c: sunCenterCoords.c}, currentType) &&
-        checkCellAndType(matrix, {r: sunCenterCoords.r - 2, c: sunCenterCoords.c}, currentType)
+    const rayTop = checkCellAndType(matrix, { r: r - 1, c: c }, currentType) &&
+        checkCellAndType(matrix, { r: r - 2, c: c }, currentType)
 
-    const rayBottom = checkCellAndType(matrix, {r: sunCenterCoords.r + 1, c: sunCenterCoords.c}, currentType) &&
-        checkCellAndType(matrix, {r: sunCenterCoords.r + 2, c: sunCenterCoords.c}, currentType)
+    const rayBottom = checkCellAndType(matrix, { r: r + 1, c: c }, currentType) &&
+        checkCellAndType(matrix, { r: r + 2, c: c }, currentType)
 
     return {
         l: rayLeft,
@@ -105,11 +105,6 @@ function findSunRays(matrix: Matrix, sunCenterCoords: Coords) {
     }
 }
 
-function checkCellAndType(matrix: Matrix, coords: Coords, type: CellTypes) {
-    return checkIsCellExist(coords) && matrix[coords.r][coords.c].type === type
-}
-
-function checkIsCellExist(coords: Coords) {
-    return coords.r >= 0 && coords.r <= MATRIX_LAST_ROW &&
-           coords.c >= 0 && coords.c <= MATRIX_LAST_COL
+function checkCellAndType(matrix: Matrix, { r, c }: Coords, type: CellTypes) {
+    return matrix.isCoordsInside({ r, c }) && matrix[r][c].cell.type === type
 }

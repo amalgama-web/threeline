@@ -2,14 +2,23 @@ import { findHLines, findVLines } from "~/logic/highlighting/find-lines";
 import { findSquare } from "~/logic/highlighting/find-square";
 import { createBoostersForHLines, createBoostersForVLines } from "~/logic/boosters/lines-boosters";
 import { createBoostersForSquares } from "~/logic/boosters/square-boosters";
-import { markHLinesInMatrix, markSquaresInMatrix, markVLinesInMatrix } from "~/logic/highlighting/mark-figures-in-matrix";
+import {
+    markHLinesInMatrix,
+    markSquaresInMatrix,
+    markVLinesInMatrix
+} from "~/logic/highlighting/mark-figures-in-matrix";
 import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from "~/logic/highlighting/merge-figures";
 import { markEmergingBoostersInMatrix } from "~/logic/highlighting/mark-boosters-in-matrix";
-import { markDeletedForOrdinaryLines, markDeletedForSquares, markDeletedForSun } from "~/logic/highlighting/mark-cell-for-removing";
-import { Lines, Matrix, SwapCells, Squares, Cell } from "~/logic/types";
+import {
+    markDeletedForOrdinaryLines,
+    markDeletedForSquares,
+    markDeletedForSun
+} from "~/logic/highlighting/mark-cell-for-removing";
+import { Lines, SwapCells, Squares } from "~/logic/types";
+import { Matrix, CellPointer } from "~/logic/classes";
 
 
-export function highlightFigures(matrix: Matrix, stepSwapCells: SwapCells | null = null) {
+export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null = null) {
     // находим фигуры (линии и квадраты) из ячеек одного типа
     const hLines: Lines = findHLines(matrix)
     const vLines: Lines = findVLines(matrix)
@@ -43,12 +52,12 @@ export function highlightFigures(matrix: Matrix, stepSwapCells: SwapCells | null
     markDeletedForSquares(matrix, squares)
 }
 
+
 function highlightCells(matrix: Matrix) {
-    matrix.forEach((row: Cell[]) => {
-        row.forEach((cell: Cell) => {
-            if (cell.vLine || cell.hLine || cell.square) {
-                cell.isCellInFigure = true;
-            }
-        })
+    matrix.eachCell((cellPointer: CellPointer) => {
+        const cell = cellPointer.cell
+        if (cell.vLine || cell.hLine || cell.square) {
+            cell.isCellInShape = true;
+        }
     })
 }

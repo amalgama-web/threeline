@@ -4,18 +4,19 @@ import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~
 export interface Cell {
     type: CellTypes,
     isCellForRemoving: boolean,
-    isCellInFigure: boolean,
+    isCellInShape: boolean,
     vLine: string | null,
     hLine: string | null,
     square: string | null,
-    emergingBooster?: Booster | null,
+    // todo убрать необязательный параметр потом когда не будет ошибок
+    emergingBooster: Booster | null,
     booster?: BoosterTypes | null,
 }
 
 export class ZeroCell implements Cell {
     type = CellTypes.empty;
     isCellForRemoving = false;
-    isCellInFigure = false;
+    isCellInShape = false;
     vLine = null;
     hLine = null;
     square = null;
@@ -24,13 +25,6 @@ export class ZeroCell implements Cell {
 }
 
 
-export type Matrix = Cell[][];
-
-export function createMatrix(): Matrix {
-    let newMatrix = Array(MATRIX_HEIGHT).fill(Array(MATRIX_WIDTH).fill(null));
-    newMatrix = newMatrix.map((row: []) => row.map((cell: Cell) => new ZeroCell()))
-    return newMatrix;
-}
 
 
 export interface Coords {
@@ -46,7 +40,7 @@ export interface Line {
     coords: Coords,
     length: number,
     disabled: boolean,
-    booster?: Booster | null,
+    booster: Booster | null,
     sunPart?: boolean,
 }
 
@@ -69,7 +63,9 @@ export enum CellTypes {
     purple,
     booster,
 }
-export const TypesInFigures = [
+
+// типы ячеек для комбинаций
+export const TypesForShapes = [
     CellTypes.yellow,
     CellTypes.red,
     CellTypes.blue,
