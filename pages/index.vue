@@ -105,11 +105,12 @@ import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
-import { highlightShapes } from '~/logic/highlighting/highlighting';
+import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
 import { Matrix } from '~/logic/classes/Matrix';
-import {getSnowflakesVariants} from '~/logic/snowflake-variants';
+import { Cell } from '~/logic/classes/Cell';
+import { getSnowflakesVariants } from '~/logic/snowflake-variants';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
@@ -174,15 +175,15 @@ export default {
         },
 
         matrixCellClick(r, c) {
-            if (!this.snowflakeClickActive) {
-                this.setCellType(r, c)
-            } else {
-                this.matrix[r][c] = new ZeroCell()
-                if (r > 0) this.matrix[r - 1][c] = new ZeroCell()
-                if (r < MATRIX_LAST_ROW) this.matrix[r + 1][c] = new ZeroCell()
-                if (c > 0) this.matrix[r][c - 1] = new ZeroCell()
-                if (c < MATRIX_LAST_COL) this.matrix[r][c + 1] = new ZeroCell()
-            }
+            this.setCellType(r, c)
+            // if (!this.snowflakeClickActive) {
+            // } else {
+            //     this.matrix[r][c] = new ZeroCell()
+            //     if (r > 0) this.matrix[r - 1][c] = new ZeroCell()
+            //     if (r < MATRIX_LAST_ROW) this.matrix[r + 1][c] = new ZeroCell()
+            //     if (c > 0) this.matrix[r][c - 1] = new ZeroCell()
+            //     if (c < MATRIX_LAST_COL) this.matrix[r][c + 1] = new ZeroCell()
+            // }
         },
         // removeCol(c) {
         //     for (let r = 0; r < MATRIX_HEIGHT; r++) {
@@ -197,13 +198,11 @@ export default {
         // },
 
         fullyRemoveType(removedType) {
-            for (let r = 0; r < MATRIX_HEIGHT; r++) {
-                for (let c = 0; c < MATRIX_WIDTH; c++) {
-                    if (this.matrix[r][c]['type'] === removedType) {
-                        this.matrix[r][c] = new ZeroCell();
-                    }
+            this.matrix.eachCell(cellPointer => {
+                if (cellPointer.cell.type === removedType) {
+                    cellPointer.cell = new Cell()
                 }
-            }
+            })
         },
 
         // cell defines and loads

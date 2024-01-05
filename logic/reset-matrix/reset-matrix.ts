@@ -1,6 +1,7 @@
 import { Cell } from '~/logic/classes/Cell';
 import { Matrix } from '~/logic/classes/Matrix';
 
+// todo вынести в класс Matrix
 export function resetMatrix(matrix: Matrix) {
     matrix.eachCell(cellPointer => {
         const cell: Cell = cellPointer.cell;

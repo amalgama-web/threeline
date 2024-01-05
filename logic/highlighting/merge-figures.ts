@@ -1,4 +1,4 @@
-import { Cell, Lines, Squares } from '~/logic/types';
+import { Lines, Squares } from '~/logic/types';
 import { Matrix } from '~/logic/classes/Matrix';
 
 // отмечаем пересекающиеся линии как солнце

@@ -1,5 +1,5 @@
-import { BoosterTypes, Cell, CellTypes, Coords, SwapCells, Variant } from '~/logic/types';
-import { highlightShapes } from '~/logic/highlighting/highlighting';
+import { CellTypes, Coords, SwapCells, Variant } from '~/logic/types';
+import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import { matrixGetDown } from '~/logic/matrix-get-down';
 import { applyCellsSwap } from '~/logic/matrix-cell-swap';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
@@ -14,7 +14,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     let variationMatrix: Matrix = Matrix.copy(matrix)
 
     variationMatrix.eachCell(cellPointer => {
-        const {r, c} = cellPointer.coords;
+        const {r, c}: Coords = cellPointer.coords;
 
         // vertical and horizontal swaps
         const orientationVariants = [

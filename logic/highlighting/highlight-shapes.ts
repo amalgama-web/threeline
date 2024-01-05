@@ -1,7 +1,8 @@
-import { findHLines, findVLines } from '~/logic/highlighting/find-lines';
-import { findSquare } from '~/logic/highlighting/find-square';
-import { createBoostersForHLines, createBoostersForVLines } from '~/logic/boosters/lines-boosters';
-import { createBoostersForSquares } from '~/logic/boosters/square-boosters';
+import { findHLines } from '~/logic/highlighting/find-shapes/find-hLines';
+import { findVLines } from '~/logic/highlighting/find-shapes/find-vLines';
+import { findSquare } from '~/logic/highlighting/find-shapes/find-square';
+import { createBoostersForHLines, createBoostersForVLines } from '~/logic/highlighting/create-boosters/lines-boosters';
+import { createBoostersForSquares } from '~/logic/highlighting/create-boosters/square-boosters';
 import {
     markHLinesInMatrix,
     markSquaresInMatrix,

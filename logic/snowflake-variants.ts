@@ -4,7 +4,7 @@ import { matrixGetDown } from '~/logic/matrix-get-down';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
-import { highlightShapes } from '~/logic/highlighting/highlighting';
+import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import {
     BoosterTypes,
     Cell,
