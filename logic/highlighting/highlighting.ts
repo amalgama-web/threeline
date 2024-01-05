@@ -1,21 +1,22 @@
-import { findHLines, findVLines } from "~/logic/highlighting/find-lines";
-import { findSquare } from "~/logic/highlighting/find-square";
-import { createBoostersForHLines, createBoostersForVLines } from "~/logic/boosters/lines-boosters";
-import { createBoostersForSquares } from "~/logic/boosters/square-boosters";
+import { findHLines, findVLines } from '~/logic/highlighting/find-lines';
+import { findSquare } from '~/logic/highlighting/find-square';
+import { createBoostersForHLines, createBoostersForVLines } from '~/logic/boosters/lines-boosters';
+import { createBoostersForSquares } from '~/logic/boosters/square-boosters';
 import {
     markHLinesInMatrix,
     markSquaresInMatrix,
     markVLinesInMatrix
-} from "~/logic/highlighting/mark-figures-in-matrix";
-import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from "~/logic/highlighting/merge-figures";
-import { markEmergingBoostersInMatrix } from "~/logic/highlighting/mark-boosters-in-matrix";
+} from '~/logic/highlighting/mark-figures-in-matrix';
+import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from '~/logic/highlighting/merge-figures';
+import { markEmergingBoostersInMatrix } from '~/logic/highlighting/mark-boosters-in-matrix';
 import {
     markDeletedForOrdinaryLines,
     markDeletedForSquares,
     markDeletedForSun
-} from "~/logic/highlighting/mark-cell-for-removing";
-import { Lines, SwapCells, Squares } from "~/logic/types";
-import { Matrix, CellPointer } from "~/logic/classes";
+} from '~/logic/highlighting/mark-cell-for-removing';
+import { Lines, SwapCells, Squares } from '~/logic/types';
+import { CellPointer } from '~/logic/classes/cellPointer';
+import { Matrix } from '~/logic/classes/matrix';
 
 
 export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null = null) {

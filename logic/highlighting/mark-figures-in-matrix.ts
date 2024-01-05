@@ -1,5 +1,5 @@
-import { Lines, Squares } from "~/logic/types";
-import { Matrix } from "~/logic/classes";
+import { Lines, Squares } from '~/logic/types';
+import { Matrix } from '~/logic/classes/matrix';
 
 export function markHLinesInMatrix(matrix: Matrix, hLines: Lines) {
     // перебираем все горизонтальные линии

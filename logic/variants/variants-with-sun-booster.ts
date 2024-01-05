@@ -1,4 +1,4 @@
-import { Variant } from "~/logic/types";
+import { Variant } from '~/logic/types';
 
 export function findSunInVariantsTree(variants: Variant[]) {
     checkSunInVariantDescendant(variants);

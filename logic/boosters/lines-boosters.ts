@@ -1,4 +1,4 @@
-import { Booster, BoosterTypes, Coords, Line, Lines, SwapCells } from "~/logic/types";
+import { Booster, BoosterTypes, Coords, Line, Lines, SwapCells } from '~/logic/types';
 
 
 export function createBoostersForHLines(hLines: Lines, stepSwapCells: SwapCells | null) {

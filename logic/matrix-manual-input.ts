@@ -1,4 +1,4 @@
-import { BoosterTypes, CellTypes } from "~/logic/types";
+import { BoosterTypes, CellTypes } from '~/logic/types';
 
 export const symbolTypePairs = {
     'ж': CellTypes.yellow,

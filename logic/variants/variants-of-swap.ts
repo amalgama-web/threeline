@@ -1,11 +1,10 @@
-import { MATRIX_HEIGHT, MATRIX_WIDTH } from "~/logic/constant-params";
-import { BoosterTypes, Cell, CellTypes, Coords, SwapCells, Variant } from "~/logic/types";
-import { highlightShapes } from "~/logic/highlighting/highlighting";
-import { matrixGetDown } from "~/logic/matrix-get-down";
-import { applyCellsSwap } from "~/logic/matrix-cell-swap";
-import { resetMatrix } from "~/logic/reset-matrix/reset-matrix";
-import { cutFiguresAndSetBoosters } from "~/logic/cut/cut-figures";
-import { CellPointer, Matrix } from "~/logic/classes";
+import { BoosterTypes, Cell, CellTypes, Coords, SwapCells, Variant } from '~/logic/types';
+import { highlightShapes } from '~/logic/highlighting/highlighting';
+import { matrixGetDown } from '~/logic/matrix-get-down';
+import { applyCellsSwap } from '~/logic/matrix-cell-swap';
+import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
+import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
+import { Matrix } from '~/logic/classes/matrix';
 
 export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];
@@ -20,12 +19,12 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
         // vertical and horizontal swaps
         const orientationVariants = [
             {
-                condition: c < MATRIX_WIDTH - 1,
+                condition: c < matrix.lastCol,
                 rowInc: 0,
                 colInc: 1
             },
             {
-                condition: r < MATRIX_HEIGHT - 1,
+                condition: r < matrix.lastRow,
                 rowInc: 1,
                 colInc: 0
             }

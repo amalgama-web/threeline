@@ -1,6 +1,3 @@
-import Variants from "~/components/variants.vue";
-import { MATRIX_HEIGHT, MATRIX_LAST_COL, MATRIX_LAST_ROW, MATRIX_WIDTH } from "~/logic/constant-params";
-
 export interface Cell {
     type: CellTypes,
     isCellForRemoving: boolean,
@@ -26,6 +23,7 @@ export class ZeroCell implements Cell {
 
 
 
+export type TMatrix<T> = T[][];
 
 export interface Coords {
     r: number,

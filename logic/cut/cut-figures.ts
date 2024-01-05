@@ -1,5 +1,5 @@
-import { CellTypes } from "~/logic/types";
-import { Matrix } from "~/logic/classes";
+import { CellTypes } from '~/logic/types';
+import { Matrix } from '~/logic/classes/matrix';
 
 export function cutFiguresAndSetBoosters(matrix: Matrix) {
     matrix.eachCell(cellPointer => {

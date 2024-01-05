@@ -1,4 +1,5 @@
-import { Matrix, Cell } from "~/logic/classes";
+import { Cell } from '~/logic/classes/cell';
+import { Matrix } from '~/logic/classes/matrix';
 
 export function resetMatrix(matrix: Matrix) {
     matrix.eachCell(cellPointer => {

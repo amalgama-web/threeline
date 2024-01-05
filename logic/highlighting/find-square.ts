@@ -1,5 +1,5 @@
-import { Squares, CellTypes, TypesForShapes } from "~/logic/types";
-import { Matrix } from "~/logic/classes";
+import { Squares, CellTypes, TypesForShapes } from '~/logic/types';
+import { Matrix } from '~/logic/classes/matrix';
 
 export function findSquare(matrix: Matrix) {
     let foundSquares: Squares = {};

@@ -108,7 +108,7 @@ import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
 import { highlightShapes } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
-import { Matrix } from '~/logic/classes';
+import { Matrix } from '~/logic/classes/matrix';
 import {getSnowflakesVariants} from '~/logic/snowflake-variants';
 
 
@@ -184,17 +184,17 @@ export default {
                 if (c < MATRIX_LAST_COL) this.matrix[r][c + 1] = new ZeroCell()
             }
         },
-        removeCol(c) {
-            for (let r = 0; r < MATRIX_HEIGHT; r++) {
-                this.matrix[r][c] = new ZeroCell();
-            }
-        },
+        // removeCol(c) {
+        //     for (let r = 0; r < MATRIX_HEIGHT; r++) {
+        //         this.matrix[r][c] = new ZeroCell();
+        //     }
+        // },
 
-        removeRow(r) {
-            for (let c = 0; c < MATRIX_WIDTH; c++) {
-                this.matrix[r][c] = new ZeroCell();
-            }
-        },
+        // removeRow(r) {
+        //     for (let c = 0; c < MATRIX_WIDTH; c++) {
+        //         this.matrix[r][c] = new ZeroCell();
+        //     }
+        // },
 
         fullyRemoveType(removedType) {
             for (let r = 0; r < MATRIX_HEIGHT; r++) {

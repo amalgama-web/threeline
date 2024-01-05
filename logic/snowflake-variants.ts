@@ -1,6 +1,6 @@
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
-import { applyCellsSwap } from "~/logic/matrix-cell-swap";
-import { matrixGetDown } from "~/logic/matrix-get-down";
+import { applyCellsSwap } from '~/logic/matrix-cell-swap';
+import { matrixGetDown } from '~/logic/matrix-get-down';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
@@ -13,7 +13,7 @@ import {
     SnowflakeMoveDirections, SnowflakeMovingVariants,
     SnowflakeVariant
 } from '~/logic/types';
-import { Matrix } from "~/logic/classes";
+import { Matrix } from '~/logic/classes/matrix';
 
 
 export function getSnowflakesVariants(matrix: Matrix) {

@@ -1,5 +1,5 @@
-import { Lines, Squares } from "~/logic/types";
-import { Matrix } from "~/logic/classes";
+import { Lines, Squares } from '~/logic/types';
+import { Matrix } from '~/logic/classes/matrix';
 
 export function markEmergingBoostersInMatrix(matrix: Matrix, hLines: Lines, vLines: Lines, squares: Squares) {
     for (let hLineID in hLines) {

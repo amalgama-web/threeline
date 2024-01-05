@@ -1,5 +1,5 @@
-import { SwapCells } from "~/logic/types";
-import { Matrix } from "~/logic/classes";
+import { SwapCells } from '~/logic/types';
+import { Matrix } from '~/logic/classes/matrix';
 
 // todo перенести в метод для Matrix класса
 export function applyCellsSwap(matrix: Matrix, swap: SwapCells) {
