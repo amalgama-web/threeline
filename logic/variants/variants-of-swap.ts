@@ -4,7 +4,7 @@ import { matrixGetDown } from '~/logic/matrix-get-down';
 import { applyCellsSwap } from '~/logic/matrix-cell-swap';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
-import { Matrix } from '~/logic/classes/matrix';
+import { Matrix } from '~/logic/classes/Matrix';
 
 export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];

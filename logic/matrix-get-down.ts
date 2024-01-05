@@ -1,6 +1,6 @@
 import { CellTypes } from '~/logic/types';
-import { Cell } from '~/logic/classes/cell';
-import { Matrix } from '~/logic/classes/matrix';
+import { Cell } from '~/logic/classes/Cell';
+import { Matrix } from '~/logic/classes/Matrix';
 
 export function matrixGetDown(matrix: Matrix) {
     const colsWithEmptyCells: number[] = [];

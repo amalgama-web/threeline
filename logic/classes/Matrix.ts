@@ -1,7 +1,7 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
 import { BoosterTypes, CellTypes, Coords, TMatrix } from '~/logic/types';
-import { TypesCounter } from '~/logic/classes';
-import { CellPointer } from '~/logic/classes/cellPointer';
+import { TypesCounter } from '~/logic/types';
+import { CellPointer } from '~/logic/classes/CellPointer';
 
 export class Matrix extends Array<CellPointer[]> {
     readonly height: number = 0;

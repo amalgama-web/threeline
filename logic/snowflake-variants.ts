@@ -13,7 +13,7 @@ import {
     SnowflakeMoveDirections, SnowflakeMovingVariants,
     SnowflakeVariant
 } from '~/logic/types';
-import { Matrix } from '~/logic/classes/matrix';
+import { Matrix } from '~/logic/classes/Matrix';
 
 
 export function getSnowflakesVariants(matrix: Matrix) {

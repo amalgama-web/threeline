@@ -108,7 +108,7 @@ import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
 import { highlightShapes } from '~/logic/highlighting/highlighting';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
-import { Matrix } from '~/logic/classes/matrix';
+import { Matrix } from '~/logic/classes/Matrix';
 import {getSnowflakesVariants} from '~/logic/snowflake-variants';
 
 

@@ -111,3 +111,7 @@ export interface SnowflakeVariant {
 export type SnowflakeMovingVariants = {
     [key in SnowflakeMoveDirections]: SnowflakeVariant | null
 }
+
+export type TypesCounter = {
+    [type in CellTypes]: number
+}

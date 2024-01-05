@@ -15,8 +15,8 @@ import {
     markDeletedForSun
 } from '~/logic/highlighting/mark-cell-for-removing';
 import { Lines, SwapCells, Squares } from '~/logic/types';
-import { CellPointer } from '~/logic/classes/cellPointer';
-import { Matrix } from '~/logic/classes/matrix';
+import { CellPointer } from '~/logic/classes/CellPointer';
+import { Matrix } from '~/logic/classes/Matrix';
 
 
 export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null = null) {

@@ -1,5 +1,5 @@
 import { CellTypes, Line, Lines, TypesForShapes } from '~/logic/types';
-import { Matrix } from '~/logic/classes/matrix';
+import { Matrix } from '~/logic/classes/Matrix';
 
 export function findHLines(matrix: Matrix): Lines {
     let foundLines: Lines = {};

@@ -1,6 +1,6 @@
 import { CellTypes, Coords } from '~/logic/types';
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
-import { Matrix } from '~/logic/classes/matrix';
+import { Matrix } from '~/logic/classes/Matrix';
 
 /*
 * Заполнение матрицы
