@@ -7,13 +7,13 @@ import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-sw
 import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import {
     BoosterTypes,
-    Cell,
     CellTypes,
     Coords,
     SnowflakeMoveDirections, SnowflakeMovingVariants,
     SnowflakeVariant
 } from '~/logic/types';
 import { Matrix } from '~/logic/classes/Matrix';
+import { Cell } from '~/logic/classes/Cell';
 
 
 export function getSnowflakesVariants(matrix: Matrix) {
@@ -27,7 +27,7 @@ function findSnowflakes(matrix: Matrix): Coords[] {
 
     matrix.eachCell(cPointer => {
         const cell = cPointer.cell;
-        const {r, c} = cPointer.coords;
+        const { r, c } = cPointer.coords;
         if (cell.booster === BoosterTypes.snowflake) {
             snowflakesCoords.push({ r, c })
         }

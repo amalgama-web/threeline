@@ -1,30 +1,3 @@
-export interface Cell {
-    type: CellTypes,
-    isCellForRemoving: boolean,
-    isCellInShape: boolean,
-    vLine: string | null,
-    hLine: string | null,
-    square: string | null,
-    // todo убрать необязательный параметр потом когда не будет ошибок
-    emergingBooster: Booster | null,
-    booster?: BoosterTypes | null,
-}
-
-export class ZeroCell implements Cell {
-    type = CellTypes.empty;
-    isCellForRemoving = false;
-    isCellInShape = false;
-    vLine = null;
-    hLine = null;
-    square = null;
-    emergingBooster = null;
-    booster = null;
-}
-
-
-
-export type TMatrix<T> = T[][];
-
 export interface Coords {
     r: number,
     c: number,
@@ -90,6 +63,7 @@ export interface Variant {
     variantDescendantHasSun?: boolean,
     childVariants: Variant[] | null,
 }
+
 export type SwapCells = [
     Coords,
     Coords
@@ -115,3 +89,5 @@ export type SnowflakeMovingVariants = {
 export type TypesCounter = {
     [type in CellTypes]: number
 }
+
+export type TMatrix<T> = T[][];

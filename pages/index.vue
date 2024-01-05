@@ -96,7 +96,7 @@
 import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
-import { CellTypes, SnowflakeMoveDirections, ZeroCell } from '~/logic/types';
+import { CellTypes, SnowflakeMoveDirections } from '~/logic/types';
 import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { applyCellsSwap } from '~/logic/matrix-cell-swap';

@@ -26,7 +26,7 @@ export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null 
     const vLines: Lines = findVLines(matrix)
     const squares: Squares = findSquare(matrix)
 
-    // создаем бустеры в фигурах (линий длиннее 3 и квадратов) с учетом свапнутых ячеек
+    // создаем бустеры в фигурах (линиях длиннее 3 и квадратах) с учетом свапнутых ячеек
     createBoostersForHLines(hLines, stepSwapCells)
     createBoostersForVLines(vLines, stepSwapCells)
     createBoostersForSquares(squares, stepSwapCells)
@@ -55,6 +55,7 @@ export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null 
 }
 
 
+// todo можно вынести в геттер
 function highlightCells(matrix: Matrix) {
     matrix.eachCell((cellPointer: CellPointer) => {
         const cell = cellPointer.cell
