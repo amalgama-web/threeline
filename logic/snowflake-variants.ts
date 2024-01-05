@@ -1,5 +1,4 @@
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
-import { applyCellsSwap } from '~/logic/matrix-cell-swap';
 import { matrixGetDown } from '~/logic/matrix-get-down';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
@@ -74,7 +73,8 @@ function calcSnowflakeMovingVariants(matrix: Matrix, { r: curRow, c: curCol }: C
         const rowInc = directionsCoordsIncrement[index].r;
         const colInc = directionsCoordsIncrement[index].c;
 
-        applyCellsSwap(variationMatrix, [
+
+        variationMatrix.swapCells([
             {
                 r: curRow,
                 c: curCol

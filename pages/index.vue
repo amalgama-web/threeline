@@ -36,7 +36,7 @@
             button.btn.btn_scs(@click="getVariants") Просчитать варианты
 
 
-        variants(:variants="existedVariants" @variant-click="applyCellsSwap($event)")
+        variants(:variants="existedVariants" @variant-click="applySwap($event)")
 
 
         .variants(v-for="snowflake in snowflakeBoosters" )
@@ -46,7 +46,7 @@
                     ) {{`${SnowflakeMoveDirections[directionId]}:`}} {{directionVariants?.points}}
 
                     .variants__popup(v-if="directionVariants && directionVariants.childVariants")
-                        variants(:variants="directionVariants.childVariants" @variant-click="applyCellsSwap($event)")
+                        variants(:variants="directionVariants.childVariants" @variant-click="applySwap($event)")
 
     .game__grid
         .game__grid-inner
@@ -101,7 +101,6 @@ import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
 import { CellTypes, SnowflakeMoveDirections } from '~/logic/types';
 import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
-import { applyCellsSwap } from '~/logic/matrix-cell-swap';
 import { matrixGetDown } from '~/logic/matrix-get-down';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
@@ -254,19 +253,20 @@ export default {
             findSunInVariantsTree(this.existedVariants)
             this.snowflakeBoosters = getSnowflakesVariants(this.matrix);
         },
-        applyCellsSwap(variant) {
+        applySwap(variant) {
+            const [{r: r1, c: c1}, {r: r2, c: c2}] = variant.swap
             this.initialCombination = [
                 {
-                    r: variant.swap[0].r,
-                    c: variant.swap[0].c
+                    r: r1,
+                    c: c1
                 },
                 {
-                    r: variant.swap[1].r,
-                    c: variant.swap[1].c
+                    r: r2,
+                    c: c2
                 }
             ];
-            this.stepAction = `${variant.swap[0].r}${variant.swap[0].c}:${variant.swap[1].r}${variant.swap[1].c}`;
-            applyCellsSwap(this.matrix, variant.swap);
+            this.stepAction = `${r1}${c1}:${r2}${c2}`;
+            this.matrix.swapCells(variant.swap)
         },
 
         // stamps

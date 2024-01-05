@@ -1,7 +1,6 @@
 import { CellTypes, Coords, SwapCells, Variant } from '~/logic/types';
 import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import { matrixGetDown } from '~/logic/matrix-get-down';
-import { applyCellsSwap } from '~/logic/matrix-cell-swap';
 import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { Matrix } from '~/logic/classes/Matrix';
@@ -17,35 +16,38 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
         const {r, c}: Coords = cellPointer.coords;
 
         // vertical and horizontal swaps
-        const orientationVariants = [
+        const swapOrientations: {
+            isSwapPossible: boolean,
+            rInc: 0 | 1,
+            cInc: 0 | 1
+        }[] = [
             {
-                condition: c < matrix.lastCol,
-                rowInc: 0,
-                colInc: 1
+                isSwapPossible: c < matrix.lastCol,
+                rInc: 0,
+                cInc: 1
             },
             {
-                condition: r < matrix.lastRow,
-                rowInc: 1,
-                colInc: 0
+                isSwapPossible: r < matrix.lastRow,
+                rInc: 1,
+                cInc: 0
             }
         ]
 
 
-        orientationVariants.forEach(orientationVariant => {
+        swapOrientations.forEach(({ isSwapPossible, rInc, cInc }) => {
 
             // return if it is last col or last row
-            if (!orientationVariant.condition) return;
+            if (!isSwapPossible) return;
 
             // prevent boosters swap
             if (variationMatrix[r][c].cell.type === CellTypes.booster ||
-                variationMatrix[r + orientationVariant.rowInc][c + orientationVariant.colInc].cell.type === CellTypes.booster) {
+                variationMatrix[r + rInc][c + cInc].cell.type === CellTypes.booster) {
                 return
             }
 
-            // todo вынести applyCellSwap в Matrix (обычным методом swapCells
-            applyCellsSwap(variationMatrix, [
+            variationMatrix.swapCells([
                 { r: r, c: c },
-                { r: r + orientationVariant.rowInc, c: c + orientationVariant.colInc }
+                { r: r + rInc, c: c + cInc }
             ])
 
             let points = 0;
@@ -57,12 +59,12 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                     c
                 },
                 {
-                    r: r + orientationVariant.rowInc,
-                    c: c + orientationVariant.colInc
+                    r: r + rInc,
+                    c: c + cInc
                 }
             ]
 
-            // todo заменить на рекурсию
+            // todo заменить на рекурсию или вынести в фукнцию рассчета остаточных очков
             do {
                 additionalPoints = 0;
                 highlightShapes(variationMatrix, isInitialCombination ? initialCombination : null);
@@ -84,8 +86,8 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                             c
                         },
                         {
-                            r: r + orientationVariant.rowInc,
-                            c: c + orientationVariant.colInc
+                            r: r + rInc,
+                            c: c + cInc
                         },
                     ],
                     points: points,

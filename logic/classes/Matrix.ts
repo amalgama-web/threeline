@@ -1,5 +1,5 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
-import { BoosterTypes, CellTypes, Coords, TMatrix } from '~/logic/types';
+import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix } from '~/logic/types';
 import { TypesCounter } from '~/logic/types';
 import { CellPointer } from '~/logic/classes/CellPointer';
 
@@ -59,6 +59,18 @@ export class Matrix extends Array<CellPointer[]> {
         }
     }
 
+    isCoordsInside({ r, c }: Coords) {
+        return r >= 0 && r <= this.lastRow && c >= 0 && c <= this.lastCol;
+    }
+
+    swapCells(swap: SwapCells) {
+        const [{r: r1, c: c1}, {r: r2, c: c2}] = swap;
+        const tmpPointer = this[r1][c1].cell
+
+        this[r1][c1].cell = this[r2][c2].cell
+        this[r2][c2].cell = tmpPointer
+    }
+
     get counters() {
         const typesCounter: TypesCounter = {
             [CellTypes.empty]: 0,
@@ -91,13 +103,10 @@ export class Matrix extends Array<CellPointer[]> {
         return sum;
     }
 
-    isCoordsInside({ r, c }: Coords) {
-        return r >= 0 && r <= this.lastRow && c >= 0 && c <= this.lastCol;
-    }
-
     static copy(originalMatrix: Matrix) {
         const copy = new Matrix();
         // todo копировать все параметры а не только ячейки
+        // todo поэкспериментировать с копированием json и посмотреть что будет с классами и прототипами
         copy.eachCell(cellPointer => {
             const { r, c } = cellPointer.coords;
             cellPointer.cell = JSON.parse(JSON.stringify(originalMatrix[r][c].cell))
