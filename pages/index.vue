@@ -25,7 +25,7 @@
             input.game__buttons-input(v-model="fillText")
         .mb-24
             button.btn.mr-8(@click="highlightShapes") Пдсв
-            button.btn.mr-8(@click="resetMatrix") Убр пдсв
+            button.btn.mr-8(@click="rst") Убр пдсв
             button.btn.mr-8(@click="apply") Прим
             button.btn.mr-8(@click="getDown") Свиг
             button.btn.mr-8(@click="makeFullStep") =>
@@ -102,7 +102,6 @@ import { CellTypes, SnowflakeMoveDirections } from '~/logic/types';
 import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { matrixGetDown } from '~/logic/matrix-get-down';
-import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
@@ -218,7 +217,7 @@ export default {
         },
         apply() {
             cutFiguresAndSetBoosters(this.matrix)
-            resetMatrix(this.matrix)
+            this.matrix.reset();
             this.initialCombination = null;
         },
         getDown() {
@@ -236,14 +235,15 @@ export default {
 
             setTimeout(() => {
                 cutFiguresAndSetBoosters(this.matrix)
-                resetMatrix(this.matrix)
+                this.matrix.reset();
                 setTimeout(() => {
                     matrixGetDown(this.matrix)
                 }, 200);
             }, 200);
         },
-        resetMatrix() {
-            resetMatrix(this.matrix)
+
+        rst() {
+            this.matrix.reset();
         },
 
         getVariants() {

@@ -2,6 +2,7 @@ import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
 import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix } from '~/logic/types';
 import { TypesCounter } from '~/logic/types';
 import { CellPointer } from '~/logic/classes/CellPointer';
+import { Cell } from '~/logic/classes/Cell';
 
 export class Matrix extends Array<CellPointer[]> {
     readonly height: number = 0;
@@ -64,11 +65,28 @@ export class Matrix extends Array<CellPointer[]> {
     }
 
     swapCells(swap: SwapCells) {
-        const [{r: r1, c: c1}, {r: r2, c: c2}] = swap;
+        const [{ r: r1, c: c1 }, { r: r2, c: c2 }] = swap;
         const tmpPointer = this[r1][c1].cell
 
         this[r1][c1].cell = this[r2][c2].cell
         this[r2][c2].cell = tmpPointer
+    }
+
+    reset() {
+        this.eachCell(({ cell }) => {
+            cell.isCellInShape = false;
+            cell.isCellForRemoving = false;
+            cell.hLine = null;
+            cell.vLine = null;
+            cell.square = null;
+            cell.emergingBooster = null;
+        })
+    }
+
+    clear() {
+        this.eachCell(cellPointer => {
+            cellPointer.cell = new Cell();
+        })
     }
 
     get counters() {

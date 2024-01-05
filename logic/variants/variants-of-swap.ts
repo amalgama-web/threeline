@@ -1,7 +1,6 @@
 import { CellTypes, Coords, SwapCells, Variant } from '~/logic/types';
 import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import { matrixGetDown } from '~/logic/matrix-get-down';
-import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { Matrix } from '~/logic/classes/Matrix';
 
@@ -70,7 +69,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                 highlightShapes(variationMatrix, isInitialCombination ? initialCombination : null);
                 additionalPoints = getTotalPoints(variationMatrix);
                 cutFiguresAndSetBoosters(variationMatrix)
-                resetMatrix(variationMatrix);
+                variationMatrix.reset();
                 matrixGetDown(variationMatrix);
                 points += additionalPoints;
                 isInitialCombination = false;

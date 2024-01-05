@@ -1,6 +1,5 @@
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
 import { matrixGetDown } from '~/logic/matrix-get-down';
-import { resetMatrix } from '~/logic/reset-matrix/reset-matrix';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
@@ -116,7 +115,7 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
 
     points = getTotalPoints(matrix)
     cutFiguresAndSetBoosters(matrix)
-    resetMatrix(matrix)
+    matrix.reset();
     matrixGetDown(matrix)
 
     let additionalPoints = 0;
@@ -126,7 +125,7 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
         highlightShapes(matrix);
         additionalPoints = getTotalPoints(matrix);
         cutFiguresAndSetBoosters(matrix)
-        resetMatrix(matrix)
+        matrix.reset();
         matrixGetDown(matrix)
         points += additionalPoints;
     } while (additionalPoints > 0)
