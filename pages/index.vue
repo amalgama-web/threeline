@@ -17,9 +17,10 @@
 
         .gap-15.mb-24
             div
-                button.btn.mr-8(@click="fillFromText") Заполнить
-                button.btn.mr-8(@click="fillOnlyGaps") Запполнить пропуски
+                //button.btn.mr-8(@click="fillFromText") Заполнить
+                //button.btn.mr-8(@click="fillOnlyGaps") Запполнить пропуски
                 button.btn.mr-8(@click="fillRandom") Rand
+                button.btn.mr-8(@click="clr") Clr
                 button.btn.mr-8(@click="consoleMatrix") Console Matrix
                 button.btn.mr-8(@click="consoleVariants") Console Variants
             input.game__buttons-input(v-model="fillText")
@@ -229,21 +230,27 @@ export default {
         consoleVariants() {
             console.log(this.existedVariants)
         },
-        makeFullStep() {
+        async makeFullStep() {
             highlightShapes(this.matrix, this.initialCombination)
             this.initialCombination = null;
 
-            setTimeout(() => {
-                cutFiguresAndSetBoosters(this.matrix)
-                this.matrix.reset();
-                setTimeout(() => {
-                    matrixGetDown(this.matrix)
-                }, 200);
-            }, 200);
+            await this.delay();
+            cutFiguresAndSetBoosters(this.matrix)
+            this.matrix.reset();
+
+            await this.delay();
+            matrixGetDown(this.matrix)
+        },
+        async delay() {
+            return new Promise(r => setTimeout(r, 200))
         },
 
         rst() {
             this.matrix.reset();
+        },
+
+        clr() {
+            this.matrix.clear();
         },
 
         getVariants() {

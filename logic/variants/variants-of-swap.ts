@@ -7,7 +7,7 @@ import { Matrix } from '~/logic/classes/Matrix';
 export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];
 
-    const initialSunBoosterCount = countSun(matrix);
+    const initialSunBoosterCount = matrix.sunCounter;
 
     let variationMatrix: Matrix = Matrix.copy(matrix)
 
@@ -64,10 +64,11 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
             ]
 
             // todo заменить на рекурсию или вынести в фукнцию рассчета остаточных очков
+            // todo может быть функция генератор тут подойдет
             do {
                 additionalPoints = 0;
                 highlightShapes(variationMatrix, isInitialCombination ? initialCombination : null);
-                additionalPoints = getTotalPoints(variationMatrix);
+                additionalPoints = variationMatrix.totalPoints;
                 cutFiguresAndSetBoosters(variationMatrix)
                 variationMatrix.reset();
                 matrixGetDown(variationMatrix);
@@ -75,7 +76,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                 isInitialCombination = false;
             } while (additionalPoints !== 0)
 
-            const newSunBoosterCount = countSun(variationMatrix);
+            const newSunBoosterCount = variationMatrix.sunCounter;
 
             if (points) {
                 const variant: Variant = {
@@ -105,10 +106,6 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     })
 
     return variants;
-}
-
-function countSun(matrix: Matrix) {
-    return matrix.sunCounter;
 }
 
 export function getTotalPoints(matrix: Matrix) {

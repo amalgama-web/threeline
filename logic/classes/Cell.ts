@@ -10,6 +10,11 @@ export class Cell {
     emergingBooster: Booster | null = null;
     booster: BoosterTypes | null = null;
 
+    get isCellInShape2() {
+        console.log('getter hooray')
+        return this.vLine || this.hLine || this.square
+    }
+
     constructor(type = CellTypes.empty) {
         this.type = type;
     }

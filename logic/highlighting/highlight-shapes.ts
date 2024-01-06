@@ -55,7 +55,7 @@ export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null 
 }
 
 
-// todo можно вынести в геттер ячейки
+// todo ОК можно вынести в геттер для ячейки, но тогда он будет обрабатываться каждый раз как происходит изменение
 function highlightCells(matrix: Matrix) {
     matrix.eachCell((cellPointer: CellPointer) => {
         const cell = cellPointer.cell
