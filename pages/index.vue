@@ -373,8 +373,6 @@ export default {
         // LSKeys = LSKeys.sort((item1,
         //                       item2) => (item1.match(/_/g) || []).length > (item2.match(/_/g) || []).length ? 1 : -1)
         // this.steps = LSKeys.map(item => ({stepChain: item}))
-
-
     },
 
     components: {

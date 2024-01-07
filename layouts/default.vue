@@ -31,6 +31,9 @@ body {
 .mr-8 {
     margin-right: 8px;
 }
+.mr-16 {
+    margin-right: 16px;
+}
 .mb-20 {
     margin-bottom: 20px;
 }
