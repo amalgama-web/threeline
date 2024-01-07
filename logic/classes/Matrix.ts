@@ -1,6 +1,5 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
-import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix } from '~/logic/types';
-import { TypesCounter } from '~/logic/types';
+import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix, TypesCounter } from '~/logic/types';
 import { CellPointer } from '~/logic/classes/CellPointer';
 import { Cell } from '~/logic/classes/Cell';
 
@@ -58,6 +57,44 @@ export class Matrix extends Array<CellPointer[]> {
                 }
             }
         }
+    }
+
+    /*
+    * возвращает коллбеком все возможные пары ячеек, меняющихся местами
+    * ислюкчаются случаи в которых хотя бы одна ячейка - бустер
+    * */
+    eachPossibleSwap(cb: (swap: SwapCells) => void) {
+        this.eachCell(({ cell, coords: { r, c } }) => {
+
+            if (cell.type === CellTypes.booster) return;
+
+            // todo вынести за eachCell
+            // todo найти инструмент анализа памяти для браузера (посмотреть сколько там занимает массивы и др)
+            const swapOrientations: {
+                isSwapPossible: boolean,
+                rInc: 0 | 1,
+                cInc: 0 | 1
+            }[] = [
+                {
+                    isSwapPossible: c < this.lastCol,
+                    rInc: 0,
+                    cInc: 1
+                },
+                {
+                    isSwapPossible: r < this.lastRow,
+                    rInc: 1,
+                    cInc: 0
+                }
+            ]
+
+            swapOrientations.forEach(({ isSwapPossible, rInc, cInc }) => {
+                if (!isSwapPossible ||
+                    this[r + rInc][c + cInc].cell.type === CellTypes.booster
+                ) return;
+
+                cb([{ r, c }, { r: r + rInc, c: c + cInc }]);
+            })
+        })
     }
 
     isCoordsInside({ r, c }: Coords) {
@@ -121,14 +158,15 @@ export class Matrix extends Array<CellPointer[]> {
         return sum;
     }
 
-    static copy(originalMatrix: Matrix) {
-        const copy = new Matrix();
-        // todo копировать все параметры а не только ячейки
+    static copy(matrix: Matrix) {
+        const copy = new Matrix(matrix.height, matrix.width);
         // todo поэкспериментировать с копированием json и посмотреть что будет с классами и прототипами
         copy.eachCell(cellPointer => {
             const { r, c } = cellPointer.coords;
-            cellPointer.cell = JSON.parse(JSON.stringify(originalMatrix[r][c].cell))
+            cellPointer.cell.type = matrix[r][c].cell.type
+            cellPointer.cell.booster = matrix[r][c].cell.booster
         })
+
         return copy;
     }
 }
