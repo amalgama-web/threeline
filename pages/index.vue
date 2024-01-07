@@ -107,7 +107,7 @@ import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booste
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
 import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
-import { getTotalPoints, getSwapVariants } from '~/logic/variants/variants-of-swap';
+import { getSwapVariants } from '~/logic/variants/variants-of-swap';
 import { fillMatrix } from '~/logic/matrix-fill';
 import { Matrix } from '~/logic/classes/Matrix';
 import { Cell } from '~/logic/classes/Cell';
@@ -150,7 +150,7 @@ export default {
             return SnowflakeMoveDirections
         },
         points() {
-            return getTotalPoints(this.matrix)
+            return this.matrix.totalPoints
         },
         currentSymbols() {
             const symbols = []
