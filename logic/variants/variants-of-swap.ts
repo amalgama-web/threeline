@@ -13,6 +13,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
         variationMatrix.swapCells(swap)
 
         // todo вынести это в функцию получения очков
+        // todo swap надо зашивать в матрицу при методе swapCells и вести построение бустера из этого значения
         let points = 0;
         let iterationPoints = 0;
         let initialCombination: SwapCells | null = swap;
@@ -31,17 +32,16 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
         // todo конец функции
 
 
-        if (points) {
-            const newSunBoosterCount = variationMatrix.sunCounter;
-            variants.push({
-                    swap: swap,
-                    points: points,
-                    variantHasSun: initialSunBoosterCount < newSunBoosterCount,
-                    childVariants: nextStepDepth === 0 ? null : getSwapVariants(variationMatrix, nextStepDepth - 1)
-                }
-            );
+        if (!points) return;
 
-        }
+        const newSunBoosterCount = variationMatrix.sunCounter;
+        variants.push({
+                swap: swap,
+                points: points,
+                variantHasSun: initialSunBoosterCount < newSunBoosterCount,
+                childVariants: nextStepDepth === 0 ? null : getSwapVariants(variationMatrix, nextStepDepth - 1)
+            }
+        );
     })
 
     return variants;

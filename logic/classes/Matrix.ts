@@ -64,31 +64,28 @@ export class Matrix extends Array<CellPointer[]> {
     * ислюкчаются случаи в которых хотя бы одна ячейка - бустер
     * */
     eachPossibleSwaps(cb: (swap: SwapCells) => void) {
+        const swapOrientations: {
+            rInc: 0 | 1,
+            cInc: 0 | 1
+        }[] = [
+            {
+                rInc: 0,
+                cInc: 1
+            },
+            {
+                rInc: 1,
+                cInc: 0
+            }
+        ]
+
         this.eachCell(({ cell, coords: { r, c } }) => {
 
             if (cell.type === CellTypes.booster) return;
 
-            // todo вынести за eachCell
             // todo найти инструмент анализа памяти для браузера (посмотреть сколько там занимает массивы и др)
-            const swapOrientations: {
-                isSwapPossible: boolean,
-                rInc: 0 | 1,
-                cInc: 0 | 1
-            }[] = [
-                {
-                    isSwapPossible: c < this.lastCol,
-                    rInc: 0,
-                    cInc: 1
-                },
-                {
-                    isSwapPossible: r < this.lastRow,
-                    rInc: 1,
-                    cInc: 0
-                }
-            ]
-
-            swapOrientations.forEach(({ isSwapPossible, rInc, cInc }) => {
-                if (!isSwapPossible ||
+            swapOrientations.forEach(({ rInc, cInc }) => {
+                if (r + rInc > this.lastRow ||
+                    c + cInc > this.lastCol ||
                     this[r + rInc][c + cInc].cell.type === CellTypes.booster
                 ) return;
 
