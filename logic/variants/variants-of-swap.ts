@@ -7,13 +7,12 @@ import { Matrix } from '~/logic/classes/Matrix';
 export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];
     const initialSunBoosterCount = matrix.sunCounter;
-    let variationMatrix: Matrix = Matrix.copy(matrix)
 
-    // todo тут матрикс, и сразу первым шагом делать копию уже внутри
-    variationMatrix.eachPossibleSwap(swap => {
-
+    matrix.eachPossibleSwap(swap => {
+        const variationMatrix: Matrix = Matrix.copy(matrix)
         variationMatrix.swapCells(swap)
 
+        // todo вынести это в функцию получения очков
         let points = 0;
         let iterationPoints = 0;
         let initialCombination: SwapCells | null = swap;
@@ -29,6 +28,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
             matrixGetDown(variationMatrix);
             points += iterationPoints;
         } while (iterationPoints !== 0)
+        // todo конец функции
 
 
         if (points) {
@@ -42,9 +42,6 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
             );
 
         }
-
-        // todo вверх вынести
-        variationMatrix = Matrix.copy(matrix)
     })
 
     return variants;
