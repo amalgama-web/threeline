@@ -8,7 +8,7 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];
     const initialSunBoosterCount = matrix.sunCounter;
 
-    matrix.eachPossibleSwap(swap => {
+    matrix.eachPossibleSwaps(swap => {
         const variationMatrix: Matrix = Matrix.copy(matrix)
         variationMatrix.swapCells(swap)
 

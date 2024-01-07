@@ -63,7 +63,7 @@ export class Matrix extends Array<CellPointer[]> {
     * возвращает коллбеком все возможные пары ячеек, меняющихся местами
     * ислюкчаются случаи в которых хотя бы одна ячейка - бустер
     * */
-    eachPossibleSwap(cb: (swap: SwapCells) => void) {
+    eachPossibleSwaps(cb: (swap: SwapCells) => void) {
         this.eachCell(({ cell, coords: { r, c } }) => {
 
             if (cell.type === CellTypes.booster) return;
