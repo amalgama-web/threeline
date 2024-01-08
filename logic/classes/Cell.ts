@@ -9,6 +9,7 @@ export class Cell {
     square: string | null = null;
     emergingBooster: Booster | null = null;
     booster: BoosterTypes | null = null;
+    isSwappedCell: boolean = false;
 
     get isCellInShape2() {
         console.log('getter hooray')

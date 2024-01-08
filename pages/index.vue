@@ -262,16 +262,7 @@ export default {
         },
         applySwap(variant) {
             const [{r: r1, c: c1}, {r: r2, c: c2}] = variant.swap
-            this.initialCombination = [
-                {
-                    r: r1,
-                    c: c1
-                },
-                {
-                    r: r2,
-                    c: c2
-                }
-            ];
+            this.initialCombination = variant.swap;
             this.stepAction = `${r1}${c1}:${r2}${c2}`;
             this.matrix.swapCells(variant.swap)
         },

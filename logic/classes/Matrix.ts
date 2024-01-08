@@ -10,6 +10,7 @@ export class Matrix extends Array<CellPointer[]> {
     readonly lastCol: number = 0;
 
     readonly transposed: TMatrix<CellPointer>;
+    swappedCells: SwapCells | null = null;
 
     constructor(mHeight: number = MATRIX_HEIGHT, mWidth: number = MATRIX_WIDTH) {
         let matrix: TMatrix<CellPointer> = Array(mHeight).fill(Array(mWidth).fill(null))
@@ -104,6 +105,8 @@ export class Matrix extends Array<CellPointer[]> {
 
         this[r1][c1].cell = this[r2][c2].cell
         this[r2][c2].cell = tmpPointer
+
+        this.swappedCells = swap;
     }
 
     reset() {
