@@ -1,5 +1,5 @@
 import { Cell } from '~/logic/classes/Cell';
-import { Coords } from '~/logic/types';
+import { CellTypes, Coords } from '~/logic/types';
 
 export class CellPointer {
     cell: Cell = new Cell();
@@ -8,8 +8,8 @@ export class CellPointer {
         c: 0
     }
 
-    constructor(coords: Coords) {
-        this.cell = new Cell();
+    constructor(coords: Coords, type: CellTypes = CellTypes.empty) {
+        this.cell = new Cell(type);
         this.coords.r = coords.r;
         this.coords.c = coords.c;
     }

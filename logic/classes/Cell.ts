@@ -10,9 +10,9 @@ export class Cell {
     emergingBooster: Booster | null = null;
     booster: BoosterTypes | null = null;
     isSwappedCell: boolean = false;
+    isCellSelected: boolean = false;
 
     get isCellInShape2() {
-        console.log('getter hooray')
         return this.vLine || this.hLine || this.square
     }
 

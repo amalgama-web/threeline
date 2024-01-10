@@ -12,6 +12,9 @@ export class Matrix extends Array<CellPointer[]> {
     readonly transposed: TMatrix<CellPointer>;
     swappedCells: SwapCells | null = null;
 
+    selectedCell1: CellPointer | null = null;
+    selectedCell2: CellPointer | null = null;
+
     constructor(mHeight: number = MATRIX_HEIGHT, mWidth: number = MATRIX_WIDTH) {
         let matrix: TMatrix<CellPointer> = Array(mHeight).fill(Array(mWidth).fill(null))
 
@@ -30,6 +33,25 @@ export class Matrix extends Array<CellPointer[]> {
         this.transposed = transposeMatrix(matrix, mWidth, mHeight);
     }
 
+    getRow(rowIndex: number) {
+        return this[rowIndex];
+    }
+
+    getCol(colIndex: number) {
+        return this.transposed[colIndex]
+    }
+
+    eachCellInCol(colIndex: number, cb: (pointer: CellPointer) => void) {
+        this.transposed[colIndex].forEach(cellPointer => {
+            cb(cellPointer);
+        })
+    }
+
+    eachCellInRow(rowIndex: number, cb: (pointer: CellPointer) => void) {
+        this[rowIndex].forEach(cellPointer => {
+            cb(cellPointer);
+        })
+    }
     eachRow(cb: (row: CellPointer[], index: number) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
             cb(this[r], r)

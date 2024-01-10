@@ -2,6 +2,7 @@ import { CellTypes } from '~/logic/types';
 import { Matrix } from '~/logic/classes/Matrix';
 
 
+// todo переименовать cutShapes, вынести в класс матрицы
 export function cutFiguresAndSetBoosters(matrix: Matrix) {
     matrix.eachCell(cellPointer => {
         const cell = cellPointer.cell;

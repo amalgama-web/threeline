@@ -20,6 +20,8 @@ const possibleTypes: CellTypes[] = [
     CellTypes.purple,
 ]
 
+
+// todo добавить в метод класса Matrix
 export function fillMatrix(matrix: Matrix) {
     const matrixToFill = new Matrix();
 

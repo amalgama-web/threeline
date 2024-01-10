@@ -22,7 +22,7 @@ html {
   }
 }
 body {
-  background-color: #e0e0e0;
+  background-color: #e3eaf1;
   font-family: sans-serif;
 }
 .mr-4 {

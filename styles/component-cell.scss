@@ -1,17 +1,18 @@
-
 .cell {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    $cell: 50px;
+    $cell: 47px;
     width: $cell;
     height: $cell;
-    border: 1px solid #a8a8a8;
-    background-color: rgba(255, 255, 255, 0.7);
+
+    border-radius: 7px;
+    background-color: #fff;
 
     font-size: 20px;
     font-family: sans-serif;
+    transition: all 150ms ease-in 0ms;
 
     &.cell_highlighted {
         background-color: rgba(0, 0, 0, 0.1);
@@ -39,12 +40,15 @@
             border: 3px solid black;
         }
     }
+    &.cell_selected {
+        transform: scale(.9);
+    }
 
     &__inner {
-        width: 80%;
-        height: 80%;
+        $square: 80%;
+        width: $square;
+        height: $square;
         border-radius: 6px;
-        //border: 1px solid rgba(0, 0, 0, 0.1);
         background-size: contain;
     }
 
