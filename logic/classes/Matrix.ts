@@ -105,7 +105,7 @@ export class Matrix extends Array<CellPointer[]> {
 
             if (cell.type === CellTypes.booster) return;
 
-            // todo найти инструмент анализа памяти для браузера (посмотреть сколько там занимает массивы и др)
+            // todo education: найти инструмент анализа памяти для браузера (посмотреть сколько там занимает массивы и др)
             swapOrientations.forEach(({ rInc, cInc }) => {
                 if (r + rInc > this.lastRow ||
                     c + cInc > this.lastCol ||

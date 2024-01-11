@@ -12,6 +12,7 @@ import {
 } from '~/logic/types';
 import { Matrix } from '~/logic/classes/Matrix';
 import { Cell } from '~/logic/classes/Cell';
+import { getPointsFromStepIteration } from '~/logic/variants/get-points-from-step-iteration';
 
 
 export function getSnowflakesVariants(matrix: Matrix) {
@@ -109,6 +110,7 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
     matrix[coords.r][coords.c].cell.type = CellTypes.empty
     matrix[coords.r][coords.c].cell.booster = null
 
+    // todo сделать это через функции booster action
     if (coords.r > 0) markCellDeleted(matrix[coords.r - 1][coords.c].cell)
     if (coords.r < MATRIX_LAST_ROW) markCellDeleted(matrix[coords.r + 1][coords.c].cell)
     if (coords.c > 0) markCellDeleted(matrix[coords.r][coords.c - 1].cell)
@@ -121,19 +123,7 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
     matrix.reset();
     matrixGetDown(matrix)
 
-    let additionalPoints = 0;
-
-    do {
-        additionalPoints = 0
-        highlightShapes(matrix);
-        additionalPoints = matrix.totalPoints;
-        cutFiguresAndSetBoosters(matrix)
-        matrix.reset();
-        matrixGetDown(matrix)
-        points += additionalPoints;
-    } while (additionalPoints > 0)
-
-    return points
+    return points + getPointsFromStepIteration(matrix)
 
 }
 

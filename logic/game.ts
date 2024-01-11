@@ -105,9 +105,7 @@ export async function makeIterationAndGetPoints(matrix: Matrix, swap: SwapCells 
     fillMatrix(matrix)
     await gameDelay()
 
-    const additionPoints = await makeIterationAndGetPoints(matrix);
-
-    return points + additionPoints;
+    return points + await makeIterationAndGetPoints(matrix);
 }
 
 export async function gameDelay(delay: number = 300) {
