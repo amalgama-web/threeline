@@ -16,7 +16,7 @@ export async function applyBooster(matrix: Matrix, { r, c }: Coords) {
     }])
 
     let points = matrix.totalPoints;
-    // return
+
     await gameDelay()
     cutFiguresAndSetBoosters(matrix)
     matrix.reset()
@@ -83,7 +83,10 @@ function activateBoosters(matrix: Matrix, boosters: AffectedBooster[]) {
     }
 }
 
-// todo поглядеть как компилятся числовые имена функций в js
+
+/**
+ * actions для каждого типа бустера
+ * */
 const boostersActions: BoostersActions = {
     [BoosterTypes.vRocket](matrix: Matrix, { r, c }: Coords) {
         matrix.eachCellInCol(c, ({ cell }) => {
