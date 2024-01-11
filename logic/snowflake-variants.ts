@@ -114,6 +114,8 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
     if (coords.c > 0) markCellDeleted(matrix[coords.r][coords.c - 1].cell)
     if (coords.c < MATRIX_LAST_COL) markCellDeleted(matrix[coords.r][coords.c + 1].cell)
 
+
+    // todo это вынести в функцию итерацию
     points = matrix.totalPoints
     cutFiguresAndSetBoosters(matrix)
     matrix.reset();

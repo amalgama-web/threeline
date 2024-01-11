@@ -62,7 +62,7 @@ export interface Variant {
     swap: SwapCells,
     points: number,
     variantHasSun: boolean,
-    variantDescendantHasSun?: boolean,
+    variantDescendantHasSun: boolean,
     childVariants: Variant[] | null,
 }
 

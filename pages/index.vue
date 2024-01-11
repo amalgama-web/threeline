@@ -103,7 +103,6 @@ import { CellTypes, SnowflakeMoveDirections } from '~/logic/types';
 import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { matrixGetDown } from '~/logic/matrix-get-down';
-import { findSunInVariantsTree } from '~/logic/variants/variants-with-sun-booster';
 import { BoosterTypes } from '~/logic/types';
 import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
 import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
@@ -256,8 +255,7 @@ export default {
         getVariants() {
             this.existedVariants = getSwapVariants(this.matrix, 3);
 
-            // todo в этой функции мы только помечаем, не находим, само солнце находится в getSwapVariants
-            findSunInVariantsTree(this.existedVariants)
+
             this.snowflakeBoosters = getSnowflakesVariants(this.matrix);
         },
         applySwap(variant) {

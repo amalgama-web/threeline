@@ -92,7 +92,6 @@ export async function makeIterationAndGetPoints(matrix: Matrix, swap: SwapCells 
     highlightShapes(matrix, swap)
     const points = matrix.totalPoints;
     if (points === 0) {
-        // todo надо ли тут ресет делать уточнить
         matrix.reset()
         return 0;
     }

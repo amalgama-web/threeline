@@ -1,13 +1,13 @@
 import { Variant } from '~/logic/types';
 
-export function findSunInVariantsTree(variants: Variant[]) {
-    checkSunInVariantDescendant(variants);
+export function markVariantsWithSunInDescendant(variants: Variant[]) {
+    checkSunInVariantsDescendant(variants);
     return variants;
 }
 
-function checkSunInVariantDescendant(variants: Variant[]) {
+function checkSunInVariantsDescendant(variants: Variant[]) {
     variants.forEach(variant => {
-        variant.variantDescendantHasSun = variant.childVariants ? checkSunInVariantDescendant(variant.childVariants) : false
+        variant.variantDescendantHasSun = variant.childVariants ? checkSunInVariantsDescendant(variant.childVariants) : false
     })
     return variants.some(variant => variant.variantHasSun || variant.variantDescendantHasSun)
 }

@@ -3,6 +3,7 @@ import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
 import { matrixGetDown } from '~/logic/matrix-get-down';
 import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
 import { Matrix } from '~/logic/classes/Matrix';
+import { markVariantsWithSunInDescendant } from '~/logic/variants/variants-with-sun-booster';
 
 export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
     const variants: Variant[] = [];
@@ -39,10 +40,14 @@ export function getSwapVariants(matrix: Matrix, nextStepDepth = 0): Variant[] {
                 swap: swap,
                 points: points,
                 variantHasSun: initialSunBoosterCount < newSunBoosterCount,
+                variantDescendantHasSun: false,
                 childVariants: nextStepDepth === 0 ? null : getSwapVariants(variationMatrix, nextStepDepth - 1)
             }
         );
     })
 
+    // todo в этой функции мы только помечаем, не находим, само солнце находится в getSwapVariants
+    markVariantsWithSunInDescendant(variants)
+    
     return variants;
 }
