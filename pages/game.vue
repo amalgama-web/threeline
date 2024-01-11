@@ -31,12 +31,12 @@
 
 <script>
 import CellComponent from '~/components/cell.vue';
-import { Matrix } from '~/logic/classes/Matrix';
-import { fillMatrix } from '~/logic/matrix-fill';
-import { cellClick } from '~/logic/game';
-import { applyBooster } from '~/logic/apply-boosters';
-import { BoosterTypes, CellTypes } from '~/logic/types';
-import { CellPointer } from '~/logic/classes/CellPointer';
+import { Matrix } from '~/core/classes/Matrix';
+import { fillMatrix } from '~/core/matrix-fill';
+import { cellClick } from '~/core/game';
+import { applyBooster } from '~/core/apply-boosters';
+import { BoosterTypes, CellTypes } from '~/core/types';
+import { CellPointer } from '~/core/classes/CellPointer';
 
 
 export default {

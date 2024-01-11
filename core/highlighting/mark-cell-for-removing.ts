@@ -1,5 +1,5 @@
-import { BoosterTypes, CellTypes, Coords, Lines, Squares } from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
+import { BoosterTypes, CellTypes, Coords, Lines, Squares } from '../types';
+import { Matrix } from '../classes/Matrix';
 
 export function markDeletedForOrdinaryLines(matrix: Matrix, hLines: Lines, vLines: Lines) {
     matrix.eachCell(cellPointer => {

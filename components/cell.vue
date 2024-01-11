@@ -19,7 +19,7 @@ import icon_hRocket from 'assets/icon-hrocket.png'
 import icon_vRocket from 'assets/icon-vrocket.png'
 import icon_sun from 'assets/icon-sun.png'
 
-import { CellTypes } from '~/logic/types';
+import { CellTypes } from '~/core/types';
 const typeColors = [
     '#eabd29',
     '#ce1f1f',
@@ -44,7 +44,7 @@ const boostersBgs = {
     [BoosterTypes.sun]: `url(${icon_sun})`,
 }
 
-import { BoosterTypes } from '~/logic/types';
+import { BoosterTypes } from '~/core/types';
 
 export default {
     data() {

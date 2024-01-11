@@ -1,23 +1,23 @@
-import { findHLines } from '~/logic/highlighting/find-shapes/find-hLines';
-import { findVLines } from '~/logic/highlighting/find-shapes/find-vLines';
-import { findSquare } from '~/logic/highlighting/find-shapes/find-square';
-import { createBoostersForHLines, createBoostersForVLines } from '~/logic/highlighting/create-boosters/lines-boosters';
-import { createBoostersForSquares } from '~/logic/highlighting/create-boosters/square-boosters';
+import { findHLines } from '../highlighting/find-shapes/find-hLines';
+import { findVLines } from '../highlighting/find-shapes/find-vLines';
+import { findSquare } from '../highlighting/find-shapes/find-square';
+import { createBoostersForHLines, createBoostersForVLines } from '../highlighting/create-boosters/lines-boosters';
+import { createBoostersForSquares } from '../highlighting/create-boosters/square-boosters';
 import {
     markHLinesInMatrix,
     markSquaresInMatrix,
     markVLinesInMatrix
-} from '~/logic/highlighting/mark-figures-in-matrix';
-import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from '~/logic/highlighting/merge-figures';
-import { markEmergingBoostersInMatrix } from '~/logic/highlighting/mark-boosters-in-matrix';
+} from '../highlighting/mark-figures-in-matrix';
+import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from '../highlighting/merge-figures';
+import { markEmergingBoostersInMatrix } from '../highlighting/mark-boosters-in-matrix';
 import {
     markDeletedForOrdinaryLines,
     markDeletedForSquares,
     markDeletedForSun
-} from '~/logic/highlighting/mark-cell-for-removing';
-import { Lines, SwapCells, Squares } from '~/logic/types';
-import { CellPointer } from '~/logic/classes/CellPointer';
-import { Matrix } from '~/logic/classes/Matrix';
+} from '../highlighting/mark-cell-for-removing';
+import { Lines, SwapCells, Squares } from '../types';
+import { CellPointer } from '../classes/CellPointer';
+import { Matrix } from '../classes/Matrix';
 
 
 export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null = null) {

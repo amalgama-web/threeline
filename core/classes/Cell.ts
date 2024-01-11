@@ -1,4 +1,4 @@
-import { Booster, BoosterTypes, CellTypes } from '~/logic/types';
+import { Booster, BoosterTypes, CellTypes } from '../types';
 
 export class Cell {
     type: CellTypes;

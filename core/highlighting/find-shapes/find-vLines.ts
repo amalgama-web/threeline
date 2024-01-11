@@ -1,5 +1,5 @@
-import { CellTypes, Line, Lines, TypesForShapes } from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
+import { CellTypes, Line, Lines, TypesForShapes } from '../../types';
+import { Matrix } from '../../classes/Matrix';
 
 
 export function findVLines(matrix: Matrix): Lines {

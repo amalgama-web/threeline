@@ -1,18 +1,18 @@
-import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from '~/logic/constant-params';
-import { matrixGetDown } from '~/logic/matrix-get-down';
-import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
-import { getSwapVariants } from '~/logic/variants/variants-of-swap';
-import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
+import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from './constant-params';
+import { matrixGetDown } from './matrix-get-down';
+import { cutFiguresAndSetBoosters } from './cut/cut-figures';
+import { getSwapVariants } from './variants/variants-of-swap';
+import { highlightShapes } from './highlighting/highlight-shapes';
 import {
     BoosterTypes,
     CellTypes,
     Coords,
     SnowflakeMoveDirections, SnowflakeMovingVariants,
     SnowflakeVariant
-} from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
-import { Cell } from '~/logic/classes/Cell';
-import { getPointsFromStepIteration } from '~/logic/variants/get-points-from-step-iteration';
+} from './types';
+import { Matrix } from './classes/Matrix';
+import { Cell } from './classes/Cell';
+import { getPointsFromStepIteration } from './variants/get-points-from-step-iteration';
 
 
 export function getSnowflakesVariants(matrix: Matrix) {

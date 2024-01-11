@@ -1,7 +1,7 @@
-import { Variant } from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
-import { markVariantsWithSunInDescendant } from '~/logic/variants/variants-with-sun-booster';
-import { getPointsFromStepIteration } from '~/logic/variants/get-points-from-step-iteration';
+import { Variant } from '../types';
+import { Matrix } from '../classes/Matrix';
+import { markVariantsWithSunInDescendant } from '../variants/variants-with-sun-booster';
+import { getPointsFromStepIteration } from '../variants/get-points-from-step-iteration';
 
 // todo common: swap надо зашивать в матрицу при методе swapCells и вести построение бустера из этого значения
 

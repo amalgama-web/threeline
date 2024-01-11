@@ -1,4 +1,4 @@
-import { Booster, BoosterTypes, Coords, Squares, SwapCells, Square } from '~/logic/types';
+import { Booster, BoosterTypes, Coords, Squares, SwapCells, Square } from '../../types';
 
 export function createBoostersForSquares(squares: Squares, stepSwapCells: SwapCells | null) {
     for (let squareID in squares) {

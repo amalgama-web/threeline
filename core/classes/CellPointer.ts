@@ -1,5 +1,5 @@
-import { Cell } from '~/logic/classes/Cell';
-import { CellTypes, Coords } from '~/logic/types';
+import { Cell } from '../classes/Cell';
+import { CellTypes, Coords } from '../types';
 
 export class CellPointer {
     cell: Cell = new Cell();

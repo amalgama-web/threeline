@@ -21,11 +21,11 @@
 
 <script>
 
-import { CellTypes } from '~/logic/types';
-import { getSwapVariants } from '~/logic/variants/variants-of-swap';
-import { fillMatrix } from '~/logic/matrix-fill';
-import { Matrix } from '~/logic/classes/Matrix';
-import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
+import { CellTypes } from '~/core/types';
+import { getSwapVariants } from '~/core/variants/variants-of-swap';
+import { fillMatrix } from '~/core/matrix-fill';
+import { Matrix } from '~/core/classes/Matrix';
+import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/core/constant-params';
 
 const maxPossibleVariants = (MATRIX_HEIGHT - 1) * (MATRIX_WIDTH - 1) * 2 + MATRIX_HEIGHT + MATRIX_WIDTH - 1
 export default {

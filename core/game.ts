@@ -1,10 +1,10 @@
-import { CellPointer } from '~/logic/classes/CellPointer';
-import { Matrix } from '~/logic/classes/Matrix';
-import { BoosterTypes, Coords, SwapCells } from '~/logic/types';
-import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
-import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
-import { matrixGetDown } from '~/logic/matrix-get-down';
-import { fillMatrix } from '~/logic/matrix-fill';
+import { CellPointer } from './classes/CellPointer';
+import { Matrix } from './classes/Matrix';
+import { BoosterTypes, Coords, SwapCells } from './types';
+import { highlightShapes } from './highlighting/highlight-shapes';
+import { cutFiguresAndSetBoosters } from './cut/cut-figures';
+import { matrixGetDown } from './matrix-get-down';
+import { fillMatrix } from './matrix-fill';
 
 export function cellClick(matrix: Matrix, cellPointer: CellPointer) {
     if (matrix.selectedCell1 !== null) {

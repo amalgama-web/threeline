@@ -1,4 +1,4 @@
-import { Matrix } from '~/logic/classes/Matrix';
+import { Matrix } from './classes/Matrix';
 
 export interface Coords {
     r: number,

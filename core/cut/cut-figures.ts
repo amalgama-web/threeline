@@ -1,5 +1,5 @@
-import { CellTypes } from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
+import { CellTypes } from '../types';
+import { Matrix } from '../classes/Matrix';
 
 
 // todo переименовать cutShapes, вынести в класс матрицы

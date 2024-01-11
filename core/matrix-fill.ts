@@ -1,5 +1,5 @@
-import { CellTypes, Coords } from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
+import { CellTypes, Coords } from './types';
+import { Matrix } from './classes/Matrix';
 
 /*
 * Заполнение матрицы

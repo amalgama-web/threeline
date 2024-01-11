@@ -1,5 +1,5 @@
-import { Lines, Squares } from '~/logic/types';
-import { Matrix } from '~/logic/classes/Matrix';
+import { Lines, Squares } from '../types';
+import { Matrix } from '../classes/Matrix';
 
 // отмечаем пересекающиеся линии как солнце
 export function mergeLinesAndSun(matrix: Matrix, hLines: Lines, vLines: Lines) {

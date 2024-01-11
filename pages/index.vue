@@ -98,19 +98,19 @@
 //todo перевести на TS index.vue
 import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
-import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/logic/constant-params';
-import { CellTypes, SnowflakeMoveDirections } from '~/logic/types';
-import { symbolTypePairs, symbolTypePairsRevert } from '~/logic/matrix-manual-input';
-import { cutFiguresAndSetBoosters } from '~/logic/cut/cut-figures';
-import { matrixGetDown } from '~/logic/matrix-get-down';
-import { BoosterTypes } from '~/logic/types';
-import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/logic/constant-params';
-import { highlightShapes } from '~/logic/highlighting/highlight-shapes';
-import { getSwapVariants } from '~/logic/variants/variants-of-swap';
-import { fillMatrix } from '~/logic/matrix-fill';
-import { Matrix } from '~/logic/classes/Matrix';
-import { Cell } from '~/logic/classes/Cell';
-import { getSnowflakesVariants } from '~/logic/snowflake-variants';
+import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/core/constant-params';
+import { CellTypes, SnowflakeMoveDirections } from '~/core/types';
+import { symbolTypePairs, symbolTypePairsRevert } from '~/core/matrix-manual-input';
+import { cutFiguresAndSetBoosters } from '~/core/cut/cut-figures';
+import { matrixGetDown } from '~/core/matrix-get-down';
+import { BoosterTypes } from '~/core/types';
+import { MATRIX_LAST_ROW, MATRIX_LAST_COL } from '~/core/constant-params';
+import { highlightShapes } from '~/core/highlighting/highlight-shapes';
+import { getSwapVariants } from '~/core/variants/variants-of-swap';
+import { fillMatrix } from '~/core/matrix-fill';
+import { Matrix } from '~/core/classes/Matrix';
+import { Cell } from '~/core/classes/Cell';
+import { getSnowflakesVariants } from '~/core/snowflake-variants';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
