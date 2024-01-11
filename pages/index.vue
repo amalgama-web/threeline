@@ -164,7 +164,7 @@ export default {
             return symbols.join('')
         },
         typesCounter() {
-            return this.matrix.counters
+            return this.matrix.typesCounters
         }
     },
 

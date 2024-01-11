@@ -1,3 +1,5 @@
+import { Matrix } from '~/logic/classes/Matrix';
+
 export interface Coords {
     r: number,
     c: number,
@@ -69,6 +71,7 @@ export type SwapCells = [
     Coords
 ]
 
+
 export enum SnowflakeMoveDirections {
     default,
     top,
@@ -87,7 +90,41 @@ export type SnowflakeMovingVariants = {
 }
 
 export type TypesCounter = {
-    [type in CellTypes]: number
+    [key in CellTypes]: number
+}
+
+export type BoostersActions = {
+    [key in BoosterTypes]: (m: Matrix, coords: Coords) => void;
 }
 
 export type TMatrix<T> = T[][];
+
+export type SnowflakeRay = {
+    direction: string,
+    rInc: -1 | 0 | 1,
+    cInc: -1 | 0 | 1,
+}
+
+export const snowflakeRays: SnowflakeRay[] = [
+    {
+        direction: 'top',
+        rInc: -1,
+        cInc: 0
+    },
+    {
+        direction: 'right',
+        rInc: 0,
+        cInc: 1
+    },
+    {
+        direction: 'bottom',
+        rInc: 1,
+        cInc: 0
+    },
+    {
+        direction: 'left',
+        rInc: 0,
+        cInc: -1
+    },
+]
+

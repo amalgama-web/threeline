@@ -66,11 +66,11 @@ export default {
             default: false
         },
         futureBooster: {
-            type: Boolean,
+            type: [Boolean, Object],
             default: false
         },
         booster: {
-            type: String,
+            type: Number,
             default: null,
         },
         selected: {

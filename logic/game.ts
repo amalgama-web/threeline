@@ -111,7 +111,7 @@ export async function makeIterationAndGetPoints(matrix: Matrix, swap: SwapCells 
     return points + additionPoints;
 }
 
-export async function gameDelay(delay: number = 200) {
+export async function gameDelay(delay: number = 300) {
     return new Promise(r => setTimeout(r, delay))
 }
 

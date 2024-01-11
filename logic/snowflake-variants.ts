@@ -105,6 +105,7 @@ function calcSnowflakeMovingVariants(matrix: Matrix, { r: curRow, c: curCol }: C
 function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
     let points = 0;
 
+    // todo для снежинки сделать общую экспортируемую функцию по отметке удаляемых ячеек
     matrix[coords.r][coords.c].cell.type = CellTypes.empty
     matrix[coords.r][coords.c].cell.booster = null
 

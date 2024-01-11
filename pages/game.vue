@@ -66,7 +66,6 @@ export default {
             }
         },
         dblclick(cellPointer) {
-            console.log('dbl click')
             if (cellPointer.cell.type === CellTypes.booster) {
                 applyBooster(this.matrix, cellPointer.coords);
             }

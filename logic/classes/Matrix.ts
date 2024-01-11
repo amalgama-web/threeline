@@ -1,5 +1,5 @@
 import { MATRIX_HEIGHT, MATRIX_WIDTH } from '~/logic/constant-params';
-import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix, TypesCounter } from '~/logic/types';
+import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix, TypesCounter, TypesForShapes } from '~/logic/types';
 import { CellPointer } from '~/logic/classes/CellPointer';
 import { Cell } from '~/logic/classes/Cell';
 
@@ -148,7 +148,7 @@ export class Matrix extends Array<CellPointer[]> {
         })
     }
 
-    get counters() {
+    get typesCounters(): TypesCounter {
         const typesCounter: TypesCounter = {
             [CellTypes.empty]: 0,
             [CellTypes.yellow]: 0,
@@ -164,6 +164,39 @@ export class Matrix extends Array<CellPointer[]> {
         return typesCounter;
     }
 
+    get typesCountersExcludeRemovingCells(): TypesCounter {
+        const typesCounter: TypesCounter = {
+            [CellTypes.empty]: 0,
+            [CellTypes.yellow]: 0,
+            [CellTypes.red]: 0,
+            [CellTypes.blue]: 0,
+            [CellTypes.pink]: 0,
+            [CellTypes.purple]: 0,
+            [CellTypes.booster]: 0,
+        }
+        this.eachCell(cellPointer => {
+            if (cellPointer.cell.isCellForRemoving) return;
+            typesCounter[cellPointer.cell.type]++
+        });
+        console.log('calc typesCountersExcludeRemovingCells')
+        return typesCounter;
+    }
+
+    get typeWithMaxCounter() {
+        const typesCounters: TypesCounter = this.typesCountersExcludeRemovingCells;
+        let max = 0;
+        let maxType: CellTypes | null = null;
+        TypesForShapes.forEach(type => {
+            console.log(CellTypes[type], typesCounters[type])
+            if (typesCounters[type] > max) {
+                max = typesCounters[type];
+                maxType = type;
+
+            }
+        })
+        return maxType;
+    }
+
     get sunCounter() {
         let sum = 0;
         this.eachCell(cellPointer => {
@@ -175,7 +208,9 @@ export class Matrix extends Array<CellPointer[]> {
     get totalPoints() {
         let sum = 0;
         this.eachCell(cellPointer => {
-            if (cellPointer.cell.isCellForRemoving) sum++;
+            if (cellPointer.cell.isCellForRemoving &&
+                TypesForShapes.includes(cellPointer.cell.type)
+            ) sum++;
         });
         return sum;
     }
