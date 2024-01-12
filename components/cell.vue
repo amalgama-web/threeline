@@ -5,7 +5,7 @@
     @dblclick="cellDblClick()"
 )
     .cell__inner(:style="cellStyle")
-    slot
+        slot
 </template>
 <script>
 

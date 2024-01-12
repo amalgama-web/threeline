@@ -1,7 +1,7 @@
-import { CellTypes, Coords } from './types';
+import { CellTypes, Coords, TypesForShapes } from './types';
 import { Matrix } from './classes/Matrix';
 
-/*
+/**
 * Заполнение матрицы
 *
 * Заполняем матрицу matrix на основании пустых ячеек в ней
@@ -11,16 +11,7 @@ import { Matrix } from './classes/Matrix';
 *
 * */
 
-const possibleTypes: CellTypes[] = [
-    CellTypes.yellow,
-    CellTypes.red,
-    CellTypes.blue,
-    CellTypes.pink,
-    CellTypes.purple,
-]
-
-
-// todo добавить в метод класса Matrix
+// todo move to Matrix
 export function fillMatrix(matrix: Matrix) {
     const matrixToFill = new Matrix();
 
@@ -66,7 +57,7 @@ function getPossibleTypesForCell(matrix: Matrix, { r, c }: Coords) {
         excludedTypes.add(t1type)
     }
 
-    return possibleTypes.filter((type: CellTypes) => !excludedTypes.has(type));
+    return TypesForShapes.filter((type: CellTypes) => !excludedTypes.has(type));
 }
 
 function getRandType(types: CellTypes[]) {

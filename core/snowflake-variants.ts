@@ -1,18 +1,19 @@
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from './constant-params';
 import { matrixGetDown } from './matrix-get-down';
-import { cutFiguresAndSetBoosters } from './cut/cut-figures';
+import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters';
 import { getSwapVariants } from './variants/variants-of-swap';
-import { highlightShapes } from './highlighting/highlight-shapes';
 import {
     BoosterTypes,
     CellTypes,
     Coords,
-    SnowflakeMoveDirections, SnowflakeMovingVariants,
+    SnowflakeMoveDirections,
+    SnowflakeMovingVariants,
     SnowflakeVariant
 } from './types';
 import { Matrix } from './classes/Matrix';
 import { Cell } from './classes/Cell';
 import { getPointsFromStepIteration } from './variants/get-points-from-step-iteration';
+import { activateBoosters } from './boosters/activate-boosters';
 
 
 export function getSnowflakesVariants(matrix: Matrix) {
@@ -66,32 +67,33 @@ function calcSnowflakeMovingVariants(matrix: Matrix, { r: curRow, c: curCol }: C
         { r: 0, c: -1 }
     ]
 
-    const variants: (SnowflakeVariant | null)[] = directionsExisting.map((directionExist, index): SnowflakeVariant | null => {
-        if (!directionExist) return null;
+    const variants: (SnowflakeVariant | null)[] = directionsExisting.map(
+        (directionExist, index): SnowflakeVariant | null => {
+            if (!directionExist) return null;
 
-        const variationMatrix: Matrix = Matrix.copy(matrix);
-        const rowInc = directionsCoordsIncrement[index].r;
-        const colInc = directionsCoordsIncrement[index].c;
+            const variationMatrix: Matrix = Matrix.copy(matrix);
+            const rowInc = directionsCoordsIncrement[index].r;
+            const colInc = directionsCoordsIncrement[index].c;
 
 
-        variationMatrix.swapCells([
-            {
-                r: curRow,
-                c: curCol
-            },
-            {
-                r: curRow + rowInc,
-                c: curCol + colInc
+            variationMatrix.swapCells([
+                {
+                    r: curRow,
+                    c: curCol
+                },
+                {
+                    r: curRow + rowInc,
+                    c: curCol + colInc
+                }
+            ])
+            return {
+                points: calcPointsForSnowflake(variationMatrix, {
+                    r: curRow + rowInc,
+                    c: curCol + colInc
+                }),
+                childVariants: getSwapVariants(variationMatrix, 2)
             }
-        ])
-        return {
-            points: calcPointsForSnowflake(variationMatrix, {
-                r: curRow + rowInc,
-                c: curCol + colInc
-            }),
-            childVariants: getSwapVariants(variationMatrix, 2)
-        }
-    })
+        })
 
     return {
         [SnowflakeMoveDirections.default]: variants[0],
@@ -104,33 +106,17 @@ function calcSnowflakeMovingVariants(matrix: Matrix, { r: curRow, c: curCol }: C
 }
 
 function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
-    let points = 0;
 
-    // todo для снежинки сделать общую экспортируемую функцию по отметке удаляемых ячеек
-    matrix[coords.r][coords.c].cell.type = CellTypes.empty
-    matrix[coords.r][coords.c].cell.booster = null
+    activateBoosters(matrix, [{
+        type: BoosterTypes.snowflake,
+        coords
+    }])
 
-    // todo сделать это через функции booster action
-    if (coords.r > 0) markCellDeleted(matrix[coords.r - 1][coords.c].cell)
-    if (coords.r < MATRIX_LAST_ROW) markCellDeleted(matrix[coords.r + 1][coords.c].cell)
-    if (coords.c > 0) markCellDeleted(matrix[coords.r][coords.c - 1].cell)
-    if (coords.c < MATRIX_LAST_COL) markCellDeleted(matrix[coords.r][coords.c + 1].cell)
-
-
-    // todo это вынести в функцию итерацию
-    points = matrix.totalPoints
-    cutFiguresAndSetBoosters(matrix)
+    const points = matrix.totalPoints
+    cutShapesAndSetBoosters(matrix)
     matrix.reset();
     matrixGetDown(matrix)
 
     return points + getPointsFromStepIteration(matrix)
 
-}
-
-
-// todo вынести в одну функцию
-function markCellDeleted(cell: Cell) {
-    if (cell) {
-        cell.isCellForRemoving = true;
-    }
 }

@@ -2,8 +2,8 @@ import { CellTypes } from '../types';
 import { Matrix } from '../classes/Matrix';
 
 
-// todo переименовать cutShapes, вынести в класс матрицы
-export function cutFiguresAndSetBoosters(matrix: Matrix) {
+// todo вынести в класс матрицы
+export function cutShapesAndSetBoosters(matrix: Matrix) {
     matrix.eachCell(({ cell }) => {
         // todo для удаляемой ячейки с бустером оба условия выполняются как то не очень
         if (cell.isCellForRemoving) {

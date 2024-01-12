@@ -2,6 +2,7 @@ import { CellTypes } from './types';
 import { Cell } from './classes/Cell';
 import { Matrix } from './classes/Matrix';
 
+// todo common вынести в класс матрицы
 export function matrixGetDown(matrix: Matrix) {
     const colsWithEmptyCells: number[] = [];
 
