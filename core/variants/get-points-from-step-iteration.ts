@@ -2,7 +2,6 @@ import { Matrix } from '../classes/Matrix';
 import { SwapCells } from '../types';
 import { highlightShapes } from '../highlighting/highlight-shapes';
 import { cutShapesAndSetBoosters } from '../cut/cut-shapes-and-set-boosters';
-import { matrixGetDown } from '../matrix-get-down';
 
 export function getPointsFromStepIteration(matrix: Matrix, swap: SwapCells | null = null): number {
     highlightShapes(matrix, swap);
@@ -18,7 +17,7 @@ export function getPointsFromStepIteration(matrix: Matrix, swap: SwapCells | nul
 
     matrix.reset();
 
-    matrixGetDown(matrix);
+    matrix.matrixGetDown();
 
     return points + getPointsFromStepIteration(matrix)
 }

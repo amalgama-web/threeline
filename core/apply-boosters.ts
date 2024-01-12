@@ -3,7 +3,6 @@ import { Cell } from './classes/Cell'
 import { BoostersActions, BoosterTypes, CellTypes, Coords, snowflakeRays } from './types';
 import { gameDelay, makeIterationAndGetPoints } from './game';
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters';
-import { matrixGetDown } from './matrix-get-down';
 import { fillMatrix } from './matrix-fill';
 import { activateBoosters } from './boosters/activate-boosters';
 
@@ -23,7 +22,7 @@ export async function applyBooster(matrix: Matrix, { r, c }: Coords) {
     cutShapesAndSetBoosters(matrix)
     matrix.reset()
     await gameDelay()
-    matrixGetDown(matrix);
+    matrix.matrixGetDown()
     await gameDelay()
     fillMatrix(matrix)
     await gameDelay()

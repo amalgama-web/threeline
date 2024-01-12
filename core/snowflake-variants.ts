@@ -1,5 +1,4 @@
 import { MATRIX_LAST_COL, MATRIX_LAST_ROW } from './constant-params';
-import { matrixGetDown } from './matrix-get-down';
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters';
 import { getSwapVariants } from './variants/variants-of-swap';
 import {
@@ -115,7 +114,7 @@ function calcPointsForSnowflake(matrix: Matrix, coords: Coords) {
     const points = matrix.totalPoints
     cutShapesAndSetBoosters(matrix)
     matrix.reset();
-    matrixGetDown(matrix)
+    matrix.matrixGetDown();
 
     return points + getPointsFromStepIteration(matrix)
 

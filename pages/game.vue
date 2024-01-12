@@ -87,13 +87,13 @@ export default {
 
         for (let key in CellTypes) {
             const index = Number(key)
-            if (isNaN(index) || index === CellTypes.booster) break;
+            if (isNaN(index) || index === CellTypes.booster) continue;
             this.editors.push(new CellPointer({r: 0, c: 0}, index))
         }
 
         for (let key in BoosterTypes) {
             const index = Number(key)
-            if (isNaN(index)) break;
+            if (isNaN(index)) continue;
             const pointer = new CellPointer({r: 0, c: 0}, CellTypes.booster)
             pointer.cell.booster = index
             this.editors.push(pointer)

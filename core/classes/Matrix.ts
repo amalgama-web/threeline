@@ -82,7 +82,7 @@ export class Matrix extends Array<CellPointer[]> {
         }
     }
 
-    /*
+    /**
     * возвращает коллбеком все возможные пары ячеек, меняющихся местами
     * ислюкчаются случаи в которых хотя бы одна ячейка - бустер
     * */
@@ -128,6 +128,7 @@ export class Matrix extends Array<CellPointer[]> {
         this[r1][c1].cell = this[r2][c2].cell
         this[r2][c2].cell = tmpPointer
 
+        // todo common swap cells и просчет положения бустера
         this.swappedCells = swap;
     }
 
@@ -145,6 +146,27 @@ export class Matrix extends Array<CellPointer[]> {
     clear() {
         this.eachCell(cellPointer => {
             cellPointer.cell = new Cell();
+        })
+    }
+
+    /**
+     *  Проходим один раз по колонке снизу вверх и сдвигаем все вниз заполняя пустоты
+     *  Перемещаем непустые ячейки вниз в строку currentRowIndexForFilling
+     * */
+    matrixGetDown() {
+        this.eachCol((col) => {
+            let currentRowIndexForFilling = this.lastRow;
+
+            for (let r = this.lastRow; r >= 0; r--) {
+                if (col[r].cell.type === CellTypes.empty) continue;
+
+                if (r !== currentRowIndexForFilling) {
+                    col[currentRowIndexForFilling].cell = col[r].cell;
+                    col[r].cell = new Cell();
+                }
+
+                currentRowIndexForFilling--;
+            }
         })
     }
 

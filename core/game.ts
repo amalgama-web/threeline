@@ -3,7 +3,6 @@ import { Matrix } from './classes/Matrix';
 import { BoosterTypes, Coords, SwapCells } from './types';
 import { highlightShapes } from './highlighting/highlight-shapes';
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters';
-import { matrixGetDown } from './matrix-get-down';
 import { fillMatrix } from './matrix-fill';
 
 export function cellClick(matrix: Matrix, cellPointer: CellPointer) {
@@ -100,7 +99,7 @@ export async function makeIterationAndGetPoints(matrix: Matrix, swap: SwapCells 
     cutShapesAndSetBoosters(matrix)
     matrix.reset()
     await gameDelay()
-    matrixGetDown(matrix);
+    matrix.matrixGetDown();
     await gameDelay()
     fillMatrix(matrix)
     await gameDelay()

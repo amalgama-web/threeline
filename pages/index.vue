@@ -76,12 +76,10 @@ import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/core/constant-params';
 import { BoosterTypes, CellTypes, SnowflakeMoveDirections } from '~/core/types';
 import { symbolTypePairsRevert } from '~/core/matrix-manual-input';
 import { cutShapesAndSetBoosters } from '~/core/cut/cut-shapes-and-set-boosters';
-import { matrixGetDown } from '~/core/matrix-get-down';
 import { highlightShapes } from '~/core/highlighting/highlight-shapes';
 import { getSwapVariants } from '~/core/variants/variants-of-swap';
 import { fillMatrix } from '~/core/matrix-fill';
 import { Matrix } from '~/core/classes/Matrix';
-import { Cell } from '~/core/classes/Cell';
 import { getSnowflakesVariants } from '~/core/snowflake-variants';
 import { CellPointer } from '~/core/classes/CellPointer';
 import { cellClick } from '~/core/game';
@@ -169,7 +167,7 @@ export default {
             this.initialCombination = null;
         },
         getDown() {
-            matrixGetDown(this.matrix)
+            this.matrix.matrixGetDown();
         },
         consoleMatrix() {
             console.log(this.matrix)
@@ -186,7 +184,7 @@ export default {
             this.matrix.reset();
 
             await this.delay();
-            matrixGetDown(this.matrix)
+            this.matrix.matrixGetDown();
         },
         async delay() {
             return new Promise(r => setTimeout(r, 200))
@@ -246,13 +244,13 @@ export default {
 
         for (let key in CellTypes) {
             const index = Number(key)
-            if (isNaN(index) || index === CellTypes.booster) break;
+            if (isNaN(index) || index === CellTypes.booster) continue;
             this.editors.push(new CellPointer({r: 0, c: 0}, index))
         }
 
         for (let key in BoosterTypes) {
             const index = Number(key)
-            if (isNaN(index)) break;
+            if (isNaN(index)) continue;
             const pointer = new CellPointer({r: 0, c: 0}, CellTypes.booster)
             pointer.cell.booster = index
             this.editors.push(pointer)
