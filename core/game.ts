@@ -8,12 +8,14 @@ import { fillMatrix } from './matrix-fill';
 export function cellClick(matrix: Matrix, cellPointer: CellPointer) {
     if (matrix.selectedCell1 !== null) {
         if (isNeighbours(matrix.selectedCell1, cellPointer)) {
-            setSelectedCell2(matrix, cellPointer)
+            return setSelectedCell2(matrix, cellPointer)
         } else {
             setSelectedCell1(matrix, cellPointer)
+            return false;
         }
     } else {
         setSelectedCell1(matrix, cellPointer)
+        return false;
     }
 }
 
@@ -58,8 +60,10 @@ function setSelectedCell2(matrix: Matrix, cellPointer: CellPointer | null) {
 
     const swap: SwapCells = [matrix.selectedCell1!.coords, matrix.selectedCell2.coords];
     if (checkIsSwapWithPoints(matrix, swap)) {
-        makeFullStep(matrix, swap);
+        // makeFullStep(matrix, swap);
+        return true;
     } else {
+        return false;
         setSelectedCell1(matrix, null)
         setSelectedCell2(matrix, null)
     }

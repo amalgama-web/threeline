@@ -1,0 +1,23 @@
+.opposite {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.counters {
+    width: 302px;
+    margin: 0 auto 20px;
+    &__item {
+        display: inline-block;
+        width: 70px;
+        padding: 15px 10px;
+
+        background-color: #fff;
+        border-radius: 6px;
+
+        font-size: 20px;
+        line-height: 1;
+        font-weight: 700;
+        text-align: center;
+    }
+}

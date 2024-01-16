@@ -1,31 +1,30 @@
 <template lang="pug">
 .container
-    .game__grid.mb-24
-        .game__grid-inner
-            .grid
-                .grid__row(v-for="(row, rowIndex) in matrix")
-                    CellComponent(
-                        v-for="(cellPointer, cellIndex) in row"
-                        :type="cellPointer.cell.type"
-                        :highlighted="cellPointer.cell.isCellInShape"
-                        :is-cell-for-removing="cellPointer.cell.isCellForRemoving"
-                        :future-booster="cellPointer.cell.emergingBooster"
-                        :booster="cellPointer.cell.booster"
-                        :selected="cellPointer.cell.isCellSelected"
-                        @cell-click="click(cellPointer)"
-                        @cell-dbl-click="dblclick(cellPointer)"
-                    )
-    .game__grid
-        .game__grid-inner
-            .grid
-                .grid__row
-                    CellComponent(
-                        v-for="(cellPointer, cellIndex) in editors"
-                        :type="cellPointer.cell.type"
-                        :selected="cellPointer === currentEditor"
-                        :booster="cellPointer.cell.booster"
-                        @cell-click="editorClick(cellPointer)"
-                    )
+    .counters.opposite
+        .counters__item {{points}}
+        .counters__item {{steps}}
+    .grid.mb-24
+        .grid__row(v-for="(row, rowIndex) in matrix")
+            CellComponent(
+                v-for="(cellPointer, cellIndex) in row"
+                :type="cellPointer.cell.type"
+                :highlighted="cellPointer.cell.isCellInShape"
+                :is-cell-for-removing="cellPointer.cell.isCellForRemoving"
+                :future-booster="cellPointer.cell.emergingBooster"
+                :booster="cellPointer.cell.booster"
+                :selected="cellPointer.cell.isCellSelected"
+                @cell-click="click(cellPointer)"
+                @cell-dbl-click="dblclick(cellPointer)"
+            )
+    .grid
+        .grid__row
+            CellComponent(
+                v-for="(cellPointer, cellIndex) in editors"
+                :type="cellPointer.cell.type"
+                :selected="cellPointer === currentEditor"
+                :booster="cellPointer.cell.booster"
+                @cell-click="editorClick(cellPointer)"
+            )
 </template>
 
 
@@ -45,6 +44,9 @@ export default {
             matrix: null,
             editors: null,
             currentEditor: null,
+
+            steps: 20,
+            points: 0,
         }
     },
 
@@ -52,12 +54,17 @@ export default {
 
     methods: {
         click(cellPointer) {
-            if (this.currentEditor === null) {
-                cellClick(this.matrix, cellPointer)
+            if (!this.currentEditor === null) {
+                this.editorModeClick(cellPointer)
                 return;
             }
 
-            // editor click
+            if (cellClick(this.matrix, cellPointer)) {
+
+            }
+
+        },
+        editorModeClick(cellPointer) {
             if (this.currentEditor.cell.type === CellTypes.booster) {
                 cellPointer.cell.type = CellTypes.booster;
                 cellPointer.cell.booster = this.currentEditor.cell.booster;

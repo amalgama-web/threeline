@@ -29,7 +29,7 @@ export async function applyBooster(matrix: Matrix, { r, c }: Coords) {
 
     const additionPoints = await makeIterationAndGetPoints(matrix);
 
-    points += additionPoints;
+    return points + additionPoints;
 }
 
 
