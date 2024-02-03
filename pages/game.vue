@@ -29,6 +29,8 @@
 
 
 <script lang="ts">
+//todo в темплейте как то прокинуть типы
+
 import CellComponent from '@/components/cell.vue'
 import { Matrix } from '@/core/classes/Matrix'
 import { fillMatrix } from '@/core/matrix-fill'
@@ -40,7 +42,7 @@ import { CellPointer } from '@/core/classes/CellPointer'
 
 export default {
   data(): {
-    matrix: Matrix | null,
+    matrix: Matrix<CellPointer> | null,
     editors: CellPointer[] | null,
     currentEditor: CellPointer | null,
     steps: number,
