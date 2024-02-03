@@ -42,15 +42,15 @@ import { CellPointer } from '@/core/classes/CellPointer'
 
 export default {
   data(): {
-    matrix: Matrix<CellPointer> | null,
-    editors: CellPointer[] | null,
+    matrix: Matrix,
+    editors: CellPointer[],
     currentEditor: CellPointer | null,
     steps: number,
     points: number,
   } {
     return {
-      matrix: null,
-      editors: null,
+      matrix: new Matrix<CellPointer>,
+      editors: [],
       currentEditor: null,
 
       steps: 20,
@@ -103,20 +103,21 @@ export default {
   },
 
   mounted() {
-    this.matrix = new Matrix()
     fillMatrix(this.matrix)
 
-    this.editors = []
-
+    // обычные ячейки
     for (let key in CellTypes) {
       const index = Number(key)
       if (isNaN(index) || index === CellTypes.booster) continue
-      this.editors.push(new CellPointer({r: 0, c: 0}, index))
+
+      const pointer = new CellPointer({r: 0, c: 0}, index)
+      this.editors.push(pointer)
     }
 
     for (let key in BoosterTypes) {
       const index = Number(key)
       if (isNaN(index)) continue
+
       const pointer = new CellPointer({r: 0, c: 0}, CellTypes.booster)
       pointer.cell.booster = index
       this.editors.push(pointer)
