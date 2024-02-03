@@ -14,7 +14,7 @@
         :booster="cellPointer.cell.booster"
         :selected="cellPointer.cell.isCellSelected"
         @cell-click="click(cellPointer)"
-        @cell-dbl-click="dblclick(cellPointer)"
+        @cell-dbl-click="doubleClick(cellPointer)"
       )
   .grid
     .grid__row
@@ -28,18 +28,24 @@
 </template>
 
 
-<script>
-import CellComponent from '~/components/cell.vue';
-import { Matrix } from '~/core/classes/Matrix';
-import { fillMatrix } from '~/core/matrix-fill';
-import { cellClick } from '~/core/game';
-import { applyBooster } from '~/core/apply-boosters';
-import { BoosterTypes, CellTypes } from '~/core/types';
-import { CellPointer } from '~/core/classes/CellPointer';
+<script lang="ts">
+import CellComponent from '@/components/cell.vue'
+import { Matrix } from '@/core/classes/Matrix'
+import { fillMatrix } from '@/core/matrix-fill'
+import { cellClick, makeFullStep } from '@/core/game'
+import { applyBooster } from '@/core/apply-boosters'
+import { BoosterTypes, CellTypes, SwapCells } from '@/core/types'
+import { CellPointer } from '@/core/classes/CellPointer'
 
 
 export default {
-  data() {
+  data(): {
+    matrix: Matrix | null,
+    editors: CellPointer[] | null,
+    currentEditor: CellPointer | null,
+    steps: number,
+    points: number,
+  } {
     return {
       matrix: null,
       editors: null,
@@ -53,54 +59,62 @@ export default {
   computed: {},
 
   methods: {
-    click(cellPointer) {
-      cos
-      if (!this.currentEditor === null) {
+    click(cellPointer: CellPointer) {
+      if (this.currentEditor !== null) {
         this.editorModeClick(cellPointer)
-        return;
+        return
       }
 
-      if (cellClick(this.matrix, cellPointer)) {
-
+      const isSuccessSwap: SwapCells | false = cellClick(this.matrix!, cellPointer)
+      if (isSuccessSwap) {
+        makeFullStep(this.matrix!, isSuccessSwap)
       }
     },
-    editorModeClick(cellPointer) {
+    
+    /** устанавливаем типы ячеек редактором */
+    editorModeClick(cellPointer: CellPointer) {
+      if (this.currentEditor === null) return
+
       if (this.currentEditor.cell.type === CellTypes.booster) {
-        cellPointer.cell.type = CellTypes.booster;
-        cellPointer.cell.booster = this.currentEditor.cell.booster;
+        cellPointer.cell.type = CellTypes.booster
+        cellPointer.cell.booster = this.currentEditor.cell.booster
       } else {
-        cellPointer.cell.type = this.currentEditor.cell.type;
+        cellPointer.cell.type = this.currentEditor.cell.type
       }
     },
-    dblclick(cellPointer) {
+
+    /** Применение бустера */
+    doubleClick(cellPointer: CellPointer) {
       if (cellPointer.cell.type === CellTypes.booster) {
-        applyBooster(this.matrix, cellPointer.coords);
+        applyBooster(this.matrix!, cellPointer.coords)
       }
     },
-    editorClick(cellPointer) {
+
+    /** Выбор ячейки редактора */
+    editorClick(cellPointer: CellPointer) {
       if (this.currentEditor === cellPointer) {
-        this.currentEditor = null;
-        return;
+        this.currentEditor = null
+        return
       }
-      this.currentEditor = cellPointer;
+      this.currentEditor = cellPointer
     }
   },
 
   mounted() {
     this.matrix = new Matrix()
-    fillMatrix(this.matrix);
+    fillMatrix(this.matrix)
 
     this.editors = []
 
     for (let key in CellTypes) {
       const index = Number(key)
-      if (isNaN(index) || index === CellTypes.booster) continue;
+      if (isNaN(index) || index === CellTypes.booster) continue
       this.editors.push(new CellPointer({r: 0, c: 0}, index))
     }
 
     for (let key in BoosterTypes) {
       const index = Number(key)
-      if (isNaN(index)) continue;
+      if (isNaN(index)) continue
       const pointer = new CellPointer({r: 0, c: 0}, CellTypes.booster)
       pointer.cell.booster = index
       this.editors.push(pointer)
@@ -111,10 +125,9 @@ export default {
 
   components: {
     CellComponent,
-
   }
 }
 
 </script>
 
-<style lang="scss" src="/styles/game.scss"></style>
+<style lang="scss" src="/styles/page-game.scss"></style>
