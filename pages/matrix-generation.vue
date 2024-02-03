@@ -49,15 +49,12 @@ export default {
     methods: {
         generate() {
             const matrix = new Matrix();
-            console.log('start');
             for (let i = 1; i <= this.generationNumber; i++) {
                 fillMatrix(matrix);
                 const variants = getSwapVariants(matrix);
                 this.variantsCounter[variants.length]++;
                 matrix.clear();
             }
-            console.log('end');
-            console.log(this.variantsCounter);
         },
         graphItemStyle(item, index) {
             return {

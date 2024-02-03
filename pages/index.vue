@@ -16,7 +16,7 @@
         @cell-click="click(cellPointer)"
         @cell-dbl-click="doubleClick(cellPointer)"
       )
-  .grid
+  .grid(v-if="editorsMode")
     .grid__row
       CellComponent(
         v-for="(cellPointer, cellIndex) in editors"
@@ -47,21 +47,27 @@ export default {
     currentEditor: CellPointer | null,
     steps: number,
     points: number,
+    editorsMode: boolean,
+    gameOver: boolean,
   } {
     return {
       matrix: new Matrix<CellPointer>,
       editors: [],
       currentEditor: null,
 
-      steps: 20,
+      steps: 10,
       points: 0,
+
+      editorsMode: false,
+      gameOver: false,
     }
   },
 
   computed: {},
 
   methods: {
-    click(cellPointer: CellPointer) {
+    async click(cellPointer: CellPointer) {
+      if (this.gameOver) return
       if (this.currentEditor !== null) {
         this.editorModeClick(cellPointer)
         return
@@ -69,9 +75,12 @@ export default {
 
       const isSuccessSwap: SwapCells | false = cellClick(this.matrix!, cellPointer)
       if (isSuccessSwap) {
-        makeFullStep(this.matrix!, isSuccessSwap)
+        this.decSteps()
+        this.points += await makeFullStep(this.matrix!, isSuccessSwap)
       }
     },
+
+
     
     /** устанавливаем типы ячеек редактором */
     editorModeClick(cellPointer: CellPointer) {
@@ -86,10 +95,17 @@ export default {
     },
 
     /** Применение бустера */
-    doubleClick(cellPointer: CellPointer) {
+    async doubleClick(cellPointer: CellPointer) {
+      if (this.gameOver) return
       if (cellPointer.cell.type === CellTypes.booster) {
-        applyBooster(this.matrix!, cellPointer.coords)
+        this.decSteps()
+        this.points += await applyBooster(this.matrix!, cellPointer.coords)
       }
+    },
+
+    decSteps() {
+      this.steps--
+      if (this.steps === 0) this.gameOver = true
     },
 
     /** Выбор ячейки редактора */

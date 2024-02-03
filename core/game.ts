@@ -92,6 +92,7 @@ export async function makeFullStep(matrix: Matrix, swap: SwapCells) {
 
   const points = await makeIterationAndGetPoints(matrix, swap)
   console.log(points)
+  return points
 }
 
 function resetSelectedCells(matrix: Matrix) {

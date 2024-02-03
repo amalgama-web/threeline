@@ -200,7 +200,6 @@ export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
             if (cellPointer.cell.isCellForRemoving) return
             typesCounter[cellPointer.cell.type]++
         })
-        console.log('calc typesCountersExcludeRemovingCells')
         return typesCounter
     }
 
@@ -209,7 +208,6 @@ export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
         let max = 0
         let maxType: CellTypes | null = null
         TypesForShapes.forEach(type => {
-            console.log(CellTypes[type], typesCounters[type])
             if (typesCounters[type] > max) {
                 max = typesCounters[type]
                 maxType = type
