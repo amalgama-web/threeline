@@ -5,7 +5,7 @@ import { makeIterationAndGetPoints } from './game'
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters'
 import { fillMatrix } from './matrix-fill'
 import { activateBoosters } from './boosters/activate-boosters'
-import { delay } from '@/utils/main'
+import { delay } from '~/utils/main'
 
 export async function applyBooster(matrix: Matrix, { r, c }: Coords) {
 

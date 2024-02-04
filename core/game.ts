@@ -4,9 +4,9 @@ import { CellTypes, SwapCells } from './types'
 import { highlightShapes } from './highlighting/highlight-shapes'
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters'
 import { fillMatrix } from './matrix-fill'
-import { delay } from '@/utils/main'
+import { delay } from '~/utils/main'
 import { applyBooster } from '~/core/apply-boosters'
-
+import { activateBoosters } from '~/core/boosters/activate-boosters'
 
 /**
  * @return boolean=true - если перемещение ячеек приводит к появлению фигур
@@ -103,10 +103,20 @@ export async function makeFullStep(matrix: Matrix, swap: SwapCells) {
   matrix.swapCells(swap)
 
   if (matrix.selectedCell1?.cell.type === CellTypes.booster) {
-    //   !!!
+    activateBoosters(matrix, [{
+      type: matrix.selectedCell1.cell.booster!,
+      coords: matrix.selectedCell1.coords
+    }])
+  }
+  if (matrix.selectedCell2?.cell.type === CellTypes.booster) {
+    activateBoosters(matrix, [{
+      type: matrix.selectedCell2.cell.booster!,
+      coords: matrix.selectedCell2.coords
+    }])
   }
 
   resetSelectedCells(matrix)
+  console.log(matrix)
   await delay()
 
   return await makeIterationAndGetPoints(matrix, swap)

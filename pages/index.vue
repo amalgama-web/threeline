@@ -29,13 +29,13 @@
 
 
 <script lang="ts">
-import CellComponent from '@/components/cell.vue'
-import { Matrix } from '@/core/classes/Matrix'
-import { fillMatrix } from '@/core/matrix-fill'
-import { cellClick, makeFullStep } from '@/core/game'
-import { applyBooster } from '@/core/apply-boosters'
-import { BoosterTypes, CellTypes, SwapCells } from '@/core/types'
-import { CellPointer } from '@/core/classes/CellPointer'
+import CellComponent from '~/components/cell.vue'
+import { Matrix } from '~/core/classes/Matrix'
+import { fillMatrix } from '~/core/matrix-fill'
+import { cellClick, makeFullStep } from '~/core/game'
+import { applyBooster } from '~/core/apply-boosters'
+import { BoosterTypes, CellTypes, SwapCells } from '~/core/types'
+import { CellPointer } from '~/core/classes/CellPointer'
 
 
 export default {
@@ -116,6 +116,7 @@ export default {
 
   mounted() {
     fillMatrix(this.matrix)
+
 
     // обычные ячейки
     for (let key in CellTypes) {

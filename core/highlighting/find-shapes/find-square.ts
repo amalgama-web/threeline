@@ -1,6 +1,6 @@
-import { Squares, CellTypes, TypesForShapes } from '@/core/types';
-import { Matrix } from '@/core/classes/Matrix';
-import { isCellSuitableForShape } from '@/core/highlighting/find-shapes/is-cell-siutable-for-shapes'
+import { Squares, CellTypes, TypesForShapes } from '~/core/types';
+import { Matrix } from '~/core/classes/Matrix';
+import { isCellSuitableForShape } from '~/core/highlighting/find-shapes/is-cell-siutable-for-shapes'
 
 export function findSquare(matrix: Matrix) {
     let foundSquares: Squares = {};

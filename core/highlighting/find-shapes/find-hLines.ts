@@ -1,22 +1,28 @@
-import { Matrix } from '@/core/classes/Matrix';
-import { CellTypes, Line, Lines, TypesForShapes } from '@/core/types';
-import { isCellSuitableForShape } from '@/core/highlighting/find-shapes/is-cell-siutable-for-shapes'
+import { Matrix } from '~/core/classes/Matrix'
+import { CellTypes, Line, Lines } from '~/core/types'
+import { isCellSuitableForShape } from '~/core/highlighting/find-shapes/is-cell-siutable-for-shapes'
 
 export function findHLines(matrix: Matrix): Lines {
-  let foundLines: Lines = {};
-  let currentLineId: number = 1;
+  let foundLines: Lines = {}
+  let currentLineId: number = 1
 
   matrix.eachRow((row, r) => {
-    let curType: CellTypes | null = null;
-    let lineLength: number = 1;
-    let foundLine: Line | null = null;
+    let curType: CellTypes | null = null
+    let lineLength: number = 1
+    let foundLine: Line | null = null
 
     for (let c = 0; c <= matrix.lastCol; c++) {
 
-      if (curType === row[c].cell.type &&
-        isCellSuitableForShape(row[c].cell)) {
+      if (!isCellSuitableForShape(row[c].cell)) {
+        curType = null
+        lineLength = 1
+        checkFoundedLine()
+        continue
+      }
 
-        lineLength++;
+      if (curType === row[c].cell.type) {
+
+        lineLength++
 
         if (lineLength >= 3) {
           foundLine = {
@@ -26,33 +32,30 @@ export function findHLines(matrix: Matrix): Lines {
             },
             length: lineLength,
             disabled: false,
-            booster: null
+            booster: null,
           }
         }
+
       } else {
-        lineLength = 1;
-
-        if (foundLine !== null) {
-          addLine(foundLine)
-          foundLine = null;
-        }
+        lineLength = 1
+        checkFoundedLine()
       }
+      curType = row[c].cell.type
+    }
+    checkFoundedLine()
 
-      curType = row[c].cell.type;
-
-      // save line if line exist and it is last cell in row
-      if (foundLine !== null && c === matrix.lastCol) {
+    function checkFoundedLine() {
+      if (foundLine !== null) {
         addLine(foundLine)
+        foundLine = null
       }
-
     }
 
   })
 
-
   function addLine(lineConfig: Line) {
-    foundLines[`hLine` + currentLineId++] = lineConfig;
+    foundLines[`hLine` + currentLineId++] = lineConfig
   }
 
-  return foundLines;
+  return foundLines
 }
