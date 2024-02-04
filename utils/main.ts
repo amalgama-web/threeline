@@ -1,3 +1,3 @@
-export const delay = async (delay: number = 2000) => {
+export const delay = async (delay: number = 300) => {
   return new Promise(r => setTimeout(r, delay))
 }
