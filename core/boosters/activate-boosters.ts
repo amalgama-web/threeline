@@ -14,7 +14,6 @@ type AffectedBooster = {
 
 // todo переделать на просто координаты без type
 export function activateBoosters(matrix: Matrix, boosters: AffectedBooster[] = []) {
-    console.log('activateBoosters', boosters)
     /**
      * Сортируем бустеры текущей итерации - sun должно быть первым,
      * так как подсчет количества типов ячеек должен произойти

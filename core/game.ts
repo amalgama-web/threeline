@@ -5,7 +5,6 @@ import { highlightShapes } from './highlighting/highlight-shapes'
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters'
 import { fillMatrix } from './matrix-fill'
 import { delay } from '~/utils/main'
-import { applyBooster } from '~/core/apply-boosters'
 import { activateBoosters } from '~/core/boosters/activate-boosters'
 
 /**
@@ -116,7 +115,6 @@ export async function makeFullStep(matrix: Matrix, swap: SwapCells) {
   }
 
   resetSelectedCells(matrix)
-  console.log(matrix)
   await delay()
 
   return await makeIterationAndGetPoints(matrix, swap)
