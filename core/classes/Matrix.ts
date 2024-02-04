@@ -3,7 +3,7 @@ import { BoosterTypes, CellTypes, Coords, SwapCells, TMatrix, TypesCounter, Type
 import { CellPointer } from '../classes/CellPointer'
 import { Cell } from '../classes/Cell'
 
-export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
+export class Matrix extends Array<CellPointer[]> {
     readonly height: number = 0
     readonly width: number = 0
     readonly lastRow: number = 0
@@ -24,7 +24,7 @@ export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
             )
         )
 
-        super(...matrix as T[][])
+        super(...matrix as CellPointer[][])
 
         this.height = mHeight
         this.width = mWidth
@@ -47,12 +47,12 @@ export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
         })
     }
 
-    eachCellInRow(rowIndex: number, cb: (pointer: T) => void) {
+    eachCellInRow(rowIndex: number, cb: (pointer: CellPointer) => void) {
         this[rowIndex].forEach(cellPointer => {
             cb(cellPointer)
         })
     }
-    eachRow(cb: (row: T[], index: number) => void) {
+    eachRow(cb: (row: CellPointer[], index: number) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
             cb(this[r], r)
         }
@@ -64,7 +64,7 @@ export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
         }
     }
 
-    eachCell(cb: (cPointer: T) => void) {
+    eachCell(cb: (cPointer: CellPointer) => void) {
         for (let r = 0; r <= this.lastRow; r++) {
             for (let c = 0; c <= this.lastCol; c++) {
                 cb(this[r][c])
@@ -140,6 +140,14 @@ export class Matrix<T extends CellPointer = CellPointer> extends Array<T[]> {
             cell.vLine = null
             cell.square = null
             cell.emergingBooster = null
+        })
+    }
+
+    resetShapesData() {
+        this.eachCell(({ cell }) => {
+            cell.hLine = null
+            cell.vLine = null
+            cell.square = null
         })
     }
 

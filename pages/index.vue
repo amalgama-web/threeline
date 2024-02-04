@@ -29,8 +29,6 @@
 
 
 <script lang="ts">
-//todo в темплейте как то прокинуть типы
-
 import CellComponent from '@/components/cell.vue'
 import { Matrix } from '@/core/classes/Matrix'
 import { fillMatrix } from '@/core/matrix-fill'
@@ -51,7 +49,7 @@ export default {
     gameOver: boolean,
   } {
     return {
-      matrix: new Matrix<CellPointer>,
+      matrix: new Matrix,
       editors: [],
       currentEditor: null,
 
@@ -73,15 +71,13 @@ export default {
         return
       }
 
-      const isSuccessSwap: SwapCells | false = cellClick(this.matrix!, cellPointer)
+      const isSuccessSwap: SwapCells | false = cellClick(this.matrix, cellPointer)
       if (isSuccessSwap) {
         this.decSteps()
-        this.points += await makeFullStep(this.matrix!, isSuccessSwap)
+        this.points += await makeFullStep(this.matrix, isSuccessSwap)
       }
     },
 
-
-    
     /** устанавливаем типы ячеек редактором */
     editorModeClick(cellPointer: CellPointer) {
       if (this.currentEditor === null) return
@@ -99,7 +95,7 @@ export default {
       if (this.gameOver) return
       if (cellPointer.cell.type === CellTypes.booster) {
         this.decSteps()
-        this.points += await applyBooster(this.matrix!, cellPointer.coords)
+        this.points += await applyBooster(this.matrix, cellPointer.coords)
       }
     },
 

@@ -1,20 +1,20 @@
-import { findHLines } from '../highlighting/find-shapes/find-hLines';
-import { findVLines } from '../highlighting/find-shapes/find-vLines';
-import { findSquare } from '../highlighting/find-shapes/find-square';
-import { createBoostersForHLines, createBoostersForVLines } from '../highlighting/create-boosters/lines-boosters';
-import { createBoostersForSquares } from '../highlighting/create-boosters/square-boosters';
+import { findHLines } from '@/core/highlighting/find-shapes/find-hLines';
+import { findVLines } from '@/core/highlighting/find-shapes/find-vLines';
+import { findSquare } from '@/core/highlighting/find-shapes/find-square';
+import { createBoostersForHLines, createBoostersForVLines } from '@/core/highlighting/create-boosters/lines-boosters';
+import { createBoostersForSquares } from '@/core/highlighting/create-boosters/square-boosters';
 import {
     markHLinesInMatrix,
     markSquaresInMatrix,
     markVLinesInMatrix
-} from '../highlighting/mark-figures-in-matrix';
-import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from '../highlighting/merge-figures';
-import { markEmergingBoostersInMatrix } from '../highlighting/mark-boosters-in-matrix';
+} from '@/core/highlighting/mark-figures-in-matrix';
+import { mergeLinesAndSquares, mergeLinesAndSun, mergeSquaresAndSun } from '@/core/highlighting/merge-figures';
+import { markEmergingBoostersInMatrix } from '@/core/highlighting/mark-boosters-in-matrix';
 import {
     markDeletedForOrdinaryLines,
     markDeletedForSquares,
     markDeletedForSun
-} from '../highlighting/mark-cell-for-removing';
+} from '@/core/highlighting/mark-cell-for-removing';
 import { Lines, SwapCells, Squares } from '../types';
 import { CellPointer } from '../classes/CellPointer';
 import { Matrix } from '../classes/Matrix';
@@ -52,6 +52,8 @@ export function highlightShapes(matrix: Matrix, stepSwapCells: SwapCells | null 
     markDeletedForOrdinaryLines(matrix, hLines, vLines)
     markDeletedForSun(matrix)
     markDeletedForSquares(matrix, squares)
+
+    matrix.resetShapesData()
 }
 
 

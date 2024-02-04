@@ -7,7 +7,7 @@ import { fillMatrix } from './matrix-fill'
 import { delay } from '@/utils/main'
 
 /**
- * @return boolean=true - если перемещение ячеек приводит к фигур
+ * @return boolean=true - если перемещение ячеек приводит к появлению фигур
  * @return boolean=false - в противном случае
  * */
 export function cellClick(matrix: Matrix, cellPointer: CellPointer) {
@@ -37,9 +37,8 @@ function setSelectedCell1(matrix: Matrix, cellPointer: CellPointer) {
   if (matrix.selectedCell1) {
     resetSelectedCell1(matrix)
   }
-  matrix.selectedCell1 = cellPointer
-  cellPointer.cell.isCellSelected = true
 
+  applySelectedCell1(matrix, cellPointer)
   resetSelectedCell2(matrix)
 }
 
@@ -47,14 +46,13 @@ function setSelectedCell1(matrix: Matrix, cellPointer: CellPointer) {
  *  @return false - если не приводит к фигуре
  * */
 function setSelectedCell2(matrix: Matrix, cellPointer: CellPointer) {
-  if (matrix.selectedCell2) {
+  if (matrix.selectedCell2 !== null) {
     resetSelectedCell2(matrix)
   }
 
-  matrix.selectedCell2 = cellPointer
-  cellPointer.cell.isCellSelected = true
+  applySelectedCell2(matrix, cellPointer)
 
-  const swap: SwapCells = [matrix.selectedCell1!.coords, matrix.selectedCell2.coords]
+  const swap: SwapCells = [matrix.selectedCell1!.coords, matrix.selectedCell2!.coords]
   if (checkIsSwapWithPoints(matrix, swap)) {
     return swap
   } else {
@@ -64,18 +62,26 @@ function setSelectedCell2(matrix: Matrix, cellPointer: CellPointer) {
   }
 }
 
+
+function applySelectedCell1(matrix: Matrix, cellPointer: CellPointer) {
+  matrix.selectedCell1 = cellPointer
+  cellPointer.cell.isCellSelected = true
+}
 function resetSelectedCell1(matrix: Matrix) {
   if (matrix.selectedCell1 !== null) {
     matrix.selectedCell1.cell.isCellSelected = false
     matrix.selectedCell1 = null
   }
 }
-
 function resetSelectedCell2(matrix: Matrix) {
   if (matrix.selectedCell2 !== null) {
     matrix.selectedCell2.cell.isCellSelected = false
     matrix.selectedCell2 = null
   }
+}
+function applySelectedCell2(matrix: Matrix, cellPointer: CellPointer) {
+  matrix.selectedCell2 = cellPointer
+  cellPointer.cell.isCellSelected = true
 }
 
 function checkIsSwapWithPoints(matrix: Matrix, swap: SwapCells) {
@@ -90,9 +96,7 @@ export async function makeFullStep(matrix: Matrix, swap: SwapCells) {
   resetSelectedCells(matrix)
   await delay()
 
-  const points = await makeIterationAndGetPoints(matrix, swap)
-  console.log(points)
-  return points
+  return await makeIterationAndGetPoints(matrix, swap)
 }
 
 function resetSelectedCells(matrix: Matrix) {

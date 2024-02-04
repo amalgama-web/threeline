@@ -1,5 +1,6 @@
-import { Squares, CellTypes, TypesForShapes } from '../../types';
-import { Matrix } from '../../classes/Matrix';
+import { Squares, CellTypes, TypesForShapes } from '@/core/types';
+import { Matrix } from '@/core/classes/Matrix';
+import { isCellSuitableForShape } from '@/core/highlighting/find-shapes/is-cell-siutable-for-shapes'
 
 export function findSquare(matrix: Matrix) {
     let foundSquares: Squares = {};
@@ -11,10 +12,9 @@ export function findSquare(matrix: Matrix) {
 
         if (r === matrix.lastRow || c === matrix.lastCol) return;
 
-        if (TypesForShapes.includes(curType) &&
-            matrix[r + 1][c].cell.type === curType &&
-            matrix[r][c + 1].cell.type === curType &&
-            matrix[r + 1][c + 1].cell.type === curType
+        if (matrix[r + 1][c].cell.type === curType && isCellSuitableForShape(matrix[r + 1][c].cell) &&
+            matrix[r][c + 1].cell.type === curType && isCellSuitableForShape(matrix[r][c + 1].cell) &&
+            matrix[r + 1][c + 1].cell.type === curType && isCellSuitableForShape(matrix[r + 1][c + 1].cell)
         ) {
             foundSquares[`square${currentSquare++}`] = {
                 coords: {
