@@ -1,10 +1,12 @@
 import { CellPointer } from './classes/CellPointer'
 import { Matrix } from './classes/Matrix'
-import { BoosterTypes, Coords, SwapCells } from './types'
+import { CellTypes, SwapCells } from './types'
 import { highlightShapes } from './highlighting/highlight-shapes'
 import { cutShapesAndSetBoosters } from './cut/cut-shapes-and-set-boosters'
 import { fillMatrix } from './matrix-fill'
 import { delay } from '@/utils/main'
+import { applyBooster } from '~/core/apply-boosters'
+
 
 /**
  * @return boolean=true - если перемещение ячеек приводит к появлению фигур
@@ -53,7 +55,10 @@ function setSelectedCell2(matrix: Matrix, cellPointer: CellPointer) {
   applySelectedCell2(matrix, cellPointer)
 
   const swap: SwapCells = [matrix.selectedCell1!.coords, matrix.selectedCell2!.coords]
-  if (checkIsSwapWithPoints(matrix, swap)) {
+  if (checkIsSwapWithPoints(matrix, swap) ||
+    matrix.selectedCell1?.cell.type === CellTypes.booster ||
+    matrix.selectedCell2?.cell.type === CellTypes.booster
+  ) {
     return swap
   } else {
     resetSelectedCell1(matrix)
@@ -67,18 +72,21 @@ function applySelectedCell1(matrix: Matrix, cellPointer: CellPointer) {
   matrix.selectedCell1 = cellPointer
   cellPointer.cell.isCellSelected = true
 }
+
 function resetSelectedCell1(matrix: Matrix) {
   if (matrix.selectedCell1 !== null) {
     matrix.selectedCell1.cell.isCellSelected = false
     matrix.selectedCell1 = null
   }
 }
+
 function resetSelectedCell2(matrix: Matrix) {
   if (matrix.selectedCell2 !== null) {
     matrix.selectedCell2.cell.isCellSelected = false
     matrix.selectedCell2 = null
   }
 }
+
 function applySelectedCell2(matrix: Matrix, cellPointer: CellPointer) {
   matrix.selectedCell2 = cellPointer
   cellPointer.cell.isCellSelected = true
@@ -93,6 +101,11 @@ function checkIsSwapWithPoints(matrix: Matrix, swap: SwapCells) {
 
 export async function makeFullStep(matrix: Matrix, swap: SwapCells) {
   matrix.swapCells(swap)
+
+  if (matrix.selectedCell1?.cell.type === CellTypes.booster) {
+    //   !!!
+  }
+
   resetSelectedCells(matrix)
   await delay()
 

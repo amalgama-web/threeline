@@ -56,7 +56,7 @@ export default {
       steps: 10,
       points: 0,
 
-      editorsMode: false,
+      editorsMode: true,
       gameOver: false,
     }
   },
@@ -71,10 +71,10 @@ export default {
         return
       }
 
-      const isSuccessSwap: SwapCells | false = cellClick(this.matrix, cellPointer)
-      if (isSuccessSwap) {
+      const isSuccessfulSwap: SwapCells | false = cellClick(this.matrix, cellPointer)
+      if (isSuccessfulSwap) {
         this.decSteps()
-        this.points += await makeFullStep(this.matrix, isSuccessSwap)
+        this.points += await makeFullStep(this.matrix, isSuccessfulSwap)
       }
     },
 
