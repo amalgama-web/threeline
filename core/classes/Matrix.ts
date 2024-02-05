@@ -243,6 +243,18 @@ export class Matrix extends Array<CellPointer[]> {
         return sum
     }
 
+    get matrixToString() {
+        let str = ''
+        this.eachCell(({ cell }) => {
+            if (cell.type)
+            str += CellTypes[cell.type]
+            if (cell.type === CellTypes.booster && cell.booster !== null) {
+                str += BoosterTypes[cell.booster]
+            }
+        })
+        return str
+    }
+
     static copy(matrix: Matrix) {
         const copy = new Matrix(matrix.height, matrix.width)
         // todo поэкспериментировать с копированием json и посмотреть что будет с классами и прототипами

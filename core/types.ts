@@ -37,6 +37,7 @@ export enum CellTypes {
     booster,
 }
 
+
 // типы ячеек которые могу образовывать фигур (не бустеры и не пустые)
 export const TypesForShapes: CellTypes[] = [
     CellTypes.yellow,
