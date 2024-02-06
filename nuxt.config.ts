@@ -6,5 +6,7 @@ export default defineNuxtConfig({
     typeCheck: true,
   },
 
-
+  modules: [
+    '@vueuse/nuxt',
+  ],
 })

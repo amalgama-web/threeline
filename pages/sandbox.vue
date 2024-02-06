@@ -36,7 +36,7 @@
             :booster="cellPointer.cell.booster"
             @cell-click="editorClick(cellPointer)"
           )
-    div {{}}
+    div {{stringifyMatrix}}
 
   .game__buttons
     .mb-24
@@ -118,7 +118,6 @@ export default {
       editors: null,
       currentEditor: null,
 
-
     }
   },
   computed: {
@@ -141,6 +140,10 @@ export default {
     },
     typesCounter() {
       return this.matrix.typesCounters
+    },
+
+    stringifyMatrix() {
+      return this.matrix.matrixToString
     }
   },
 

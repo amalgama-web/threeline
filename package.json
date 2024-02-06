@@ -10,6 +10,8 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@vueuse/core": "^10.7.2",
+    "@vueuse/nuxt": "^10.7.2",
     "nuxt": "^3.7.1",
     "sass": "^1.66.1",
     "typescript": "^5.3.3",

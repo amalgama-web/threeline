@@ -25,6 +25,7 @@
         :booster="cellPointer.cell.booster"
         @cell-click="editorClick(cellPointer)"
       )
+  .grid {{stringified}}
 </template>
 
 
@@ -36,7 +37,9 @@ import { cellClick, makeFullStep } from '~/core/game'
 import { applyBooster } from '~/core/apply-boosters'
 import { BoosterTypes, CellTypes, SwapCells } from '~/core/types'
 import { CellPointer } from '~/core/classes/CellPointer'
+import { useStorage } from '@vueuse/core'
 
+const storedMatrix = useStorage('matrix', '')
 
 export default {
   data(): {
@@ -61,7 +64,16 @@ export default {
     }
   },
 
-  computed: {},
+  computed: {
+    stringified: {
+      get() {
+        return this.matrix.matrixToString
+      },
+      set(nV: string) {
+        console.log(nV)
+      },
+    }
+  },
 
   methods: {
     async click(cellPointer: CellPointer) {
@@ -114,16 +126,25 @@ export default {
     }
   },
 
-  mounted() {
-    fillMatrix(this.matrix)
+  watch: {
+    stringified(nV) {
+      storedMatrix.value = nV
+    }
+  },
 
+  mounted() {
+    if (storedMatrix.value) {
+      this.matrix = Matrix.fromString(storedMatrix.value)
+    } else {
+      fillMatrix(this.matrix)
+    }
 
     // обычные ячейки
     for (let key in CellTypes) {
       const index = Number(key)
       if (isNaN(index) || index === CellTypes.booster) continue
 
-      const pointer = new CellPointer({r: 0, c: 0}, index)
+      const pointer = new CellPointer({ r: 0, c: 0 }, index)
       this.editors.push(pointer)
     }
 
@@ -131,7 +152,7 @@ export default {
       const index = Number(key)
       if (isNaN(index)) continue
 
-      const pointer = new CellPointer({r: 0, c: 0}, CellTypes.booster)
+      const pointer = new CellPointer({ r: 0, c: 0 }, CellTypes.booster)
       pointer.cell.booster = index
       this.editors.push(pointer)
     }

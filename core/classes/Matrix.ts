@@ -246,10 +246,9 @@ export class Matrix extends Array<CellPointer[]> {
     get matrixToString() {
         let str = ''
         this.eachCell(({ cell }) => {
-            if (cell.type)
-            str += CellTypes[cell.type]
+            str += cell.type
             if (cell.type === CellTypes.booster && cell.booster !== null) {
-                str += BoosterTypes[cell.booster]
+                str += cell.booster
             }
         })
         return str
@@ -265,6 +264,24 @@ export class Matrix extends Array<CellPointer[]> {
         })
 
         return copy
+    }
+
+    static fromString(str: string): Matrix {
+        const matrix = new Matrix()
+        let pointer = 0
+        matrix.eachCell(({ cell }) => {
+            if (str[pointer] === undefined) return
+
+            if (+str[pointer] === CellTypes.booster) {
+                cell.type = CellTypes.booster
+                cell.booster = +str[pointer + 1]
+                pointer += 2
+                return
+            }
+            cell.type = +str[pointer]
+            pointer++
+        })
+        return matrix
     }
 }
 
