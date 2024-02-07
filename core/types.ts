@@ -12,8 +12,8 @@ export interface Lines {
 export interface Line {
     coords: Coords,
     length: number,
-    disabled: boolean,
-    booster: Booster | null,
+    disabled?: boolean,
+    booster?: Booster | null,
     sunPart?: boolean,
 }
 

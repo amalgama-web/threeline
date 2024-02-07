@@ -20,7 +20,7 @@ export class Cell {
     square: string | null = null
 
     // появляющийся бустер в ячейке
-    emergingBooster: Booster | null = null
+    emergingBooster: Booster | null | undefined = null
 
     // для ячеек с типом бустер - тип бустера
     booster: BoosterTypes | null = null

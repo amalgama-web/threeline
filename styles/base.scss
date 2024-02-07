@@ -1,0 +1,47 @@
+html {
+  font-size: 10px;
+}
+body {
+  font-size: 1.3rem;
+  background-color: #e3eaf1;
+  font-family: Helvetica, sans-serif;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+
+  box-sizing: border-box;
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+}
+
+.link {
+  color: cornflowerblue;
+  cursor: pointer;
+
+  &:hover {
+    color: black;
+  }
+
+  &:active {
+    color: cornflowerblue;
+  }
+
+  &_red {
+    color: indianred;
+
+    &:hover {
+      color: black;
+    }
+
+    &:active {
+      color: indianred;
+    }
+  }
+}

@@ -31,8 +31,6 @@ export function findVLines(matrix: Matrix): Lines {
               c
             },
             length: lineLength,
-            disabled: false,
-            booster: null,
           }
         }
 

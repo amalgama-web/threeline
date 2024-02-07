@@ -30,7 +30,6 @@
 
 
 <script lang="ts">
-import CellComponent from '~/components/cell.vue'
 import { Matrix } from '~/core/classes/Matrix'
 import { fillMatrix } from '~/core/matrix-fill'
 import { cellClick, makeFullStep } from '~/core/game'
@@ -161,7 +160,6 @@ export default {
   },
 
   components: {
-    CellComponent,
   }
 }
 

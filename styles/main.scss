@@ -1,24 +1,3 @@
-.slide-fade-left-enter-active {
-  transition: all 200ms linear;
-}
-
-.slide-fade-left-leave-active {
-  transition: all 200ms linear;
-}
-
-.slide-fade-left-enter-from,
-.slide-fade-left-leave-to {
-  transform: translateX(-200px);
-  opacity: 0;
-}
-
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 400ms ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+@import './animations';
+@import './base';
+@import './margins';

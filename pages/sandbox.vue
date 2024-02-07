@@ -36,7 +36,8 @@
             :booster="cellPointer.cell.booster"
             @cell-click="editorClick(cellPointer)"
           )
-    div {{stringifyMatrix}}
+    div {{stringMatrix}}
+    div {{jsonMatrix}}
 
   .game__buttons
     .mb-24
@@ -73,7 +74,7 @@
 <script>
 
 //todo перевести на TS index.vue
-import CellComponent from '/components/cell.vue'
+// import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
 import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/core/constant-params';
 import { BoosterTypes, CellTypes, SnowflakeMoveDirections } from '~/core/types';
@@ -142,8 +143,12 @@ export default {
       return this.matrix.typesCounters
     },
 
-    stringifyMatrix() {
+    stringMatrix() {
       return this.matrix.matrixToString
+    },
+
+    jsonMatrix() {
+      return this.matrix.matrixToJSON
     }
   },
 
@@ -266,7 +271,6 @@ export default {
   },
 
   components: {
-    CellComponent,
     Variants
   }
 }

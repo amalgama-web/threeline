@@ -27,6 +27,10 @@ const links = computed(() => [
   {
     name: 'Sandbox',
     to: '/sandbox',
+  },
+  {
+    name: 'New matrix',
+    to: '/matrix-component',
   }
 ])
 const toggle = () => {

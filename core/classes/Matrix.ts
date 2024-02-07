@@ -254,6 +254,11 @@ export class Matrix extends Array<CellPointer[]> {
         return str
     }
 
+    get matrixToJSON() {
+        return JSON.stringify(this)
+    }
+
+
     static copy(matrix: Matrix) {
         const copy = new Matrix(matrix.height, matrix.width)
         // todo поэкспериментировать с копированием json и посмотреть что будет с классами и прототипами
