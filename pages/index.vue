@@ -3,29 +3,15 @@
   .counters.opposite
     .counters__item {{points}}
     .counters__item {{steps}}
-  .grid.mb-24
-    .grid__row(v-for="(row, rowIndex) in matrix")
-      CellComponent(
-        v-for="(cellPointer, cellIndex) in row"
-        :type="cellPointer.cell.type"
-        :highlighted="cellPointer.cell.isCellInShape"
-        :is-cell-for-removing="cellPointer.cell.isCellForRemoving"
-        :future-booster="cellPointer.cell.emergingBooster"
-        :booster="cellPointer.cell.booster"
-        :selected="cellPointer.cell.isCellSelected"
-        @cell-click="click(cellPointer)"
-        @cell-dbl-click="doubleClick(cellPointer)"
-      )
-  .grid(v-if="editorsMode")
-    .grid__row
-      CellComponent(
-        v-for="(cellPointer, cellIndex) in editors"
-        :type="cellPointer.cell.type"
-        :selected="cellPointer === currentEditor"
-        :booster="cellPointer.cell.booster"
-        @cell-click="editorClick(cellPointer)"
-      )
-  .grid {{stringified}}
+  .matrix-wrap
+    MatrixComponent.matrix(
+      :matrix="matrix"
+      @cell-click="click($event)"
+      @cell-dbl-click="doubleClick($event)"
+    )
+  div {{currentEditor}}
+  .editors-wrap
+    EditorsComponent.editors(v-model="currentEditor")
 </template>
 
 
@@ -37,6 +23,7 @@ import { applyBooster } from '~/core/apply-boosters'
 import { BoosterTypes, CellTypes, SwapCells } from '~/core/types'
 import { CellPointer } from '~/core/classes/CellPointer'
 import { useStorage } from '@vueuse/core'
+import EditorsComponent from '~/components/EditorsComponent/EditorsComponent.vue'
 
 const storedMatrix = useStorage('matrix', '')
 
@@ -159,10 +146,29 @@ export default {
 
   },
 
-  components: {
-  }
+  components: { EditorsComponent }
 }
 
 </script>
 
-<style lang="scss" src="/styles/page-game.scss"></style>
+<style lang="scss" scoped>
+.matrix-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .matrix {
+    font-size: 1rem;
+  }
+}
+.editors-wrap {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 3rem;
+}
+.editors {
+  font-size: .8rem;
+  display: flex;
+  gap: 1em;
+}
+</style>

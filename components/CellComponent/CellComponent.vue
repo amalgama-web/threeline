@@ -118,4 +118,4 @@ export default {
 }
 </script>
 
-<style lang="scss" src="/styles/component-cell.scss"></style>
+<style lang="scss" src="./styles.scss" scoped></style>

@@ -1,0 +1,58 @@
+.cell {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    $cell: 4.7em;
+    width: $cell;
+    height: $cell;
+
+    border-radius: 15%;
+    background-color: #fff;
+
+    font-size: inherit;
+
+    &__inner {
+        $square: 80%;
+        width: $square;
+        height: $square;
+        background-size: contain;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+    }
+
+    &.cell_highlighted {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+    &.cell_deleted {
+        &:before {
+            position: absolute;
+            content: '';
+            left: 3px;
+            top: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 2px solid red;
+        }
+    }
+    &.cell_future-booster {
+        &:after {
+            position: absolute;
+            content: '';
+            $pos: 5px;
+            left: $pos;
+            top: $pos;
+            right: $pos;
+            bottom: $pos;
+            border: 3px solid black;
+        }
+    }
+    &.cell_selected {
+        transform: scale(.9);
+    }
+}

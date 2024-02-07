@@ -29,7 +29,7 @@ const links = computed(() => [
     to: '/sandbox',
   },
   {
-    name: 'New matrix',
+    name: 'Matrix component',
     to: '/matrix-component',
   }
 ])

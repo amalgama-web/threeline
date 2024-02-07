@@ -39,19 +39,4 @@ const cellDblClick = (cellPointer: CellPointer) => {
 </script>
 
 
-<style scoped lang="scss">
-.matrix {
-  $gap: 4px;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: $gap;
-  &__row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $gap;
-  }
-}
-</style>
+<style src="./styles.scss" scoped lang="scss"></style>
