@@ -200,7 +200,7 @@ export default {
       this.matrix.matrixGetDown();
     },
     async delay() {
-      return new Promise(r => setTimeout(r, 200))
+      return new Promise(r => setTimeout(r, 100))
     },
 
     rst() {

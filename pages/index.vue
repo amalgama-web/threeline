@@ -1,104 +1,122 @@
 <template lang="pug">
 .game-container
+
   .counters.opposite
-    .counters__item {{points}}
-    .counters__item {{steps}}
+    .counters__item {{ outpurPoints }}
+    .counters__item {{ steps }}
+
   .matrix-wrap
     MatrixComponent.matrix(
       :matrix="matrix"
       @cell-click="click($event)"
       @cell-dbl-click="doubleClick($event)"
     )
-  .editors-wrap
+
+  .editors-wrap(v-if="editorsMode")
     EditorsComponent.editors(
       v-model="currentEditor"
     )
+
+  transition(name="fade")
+    .game-over(v-if="showFinalScreen")
+      .game-over__text
+        p Игра завершена
+        p Вы набрали {{outpurPoints}}
+      button.btn.game-over__btn(@click="startNewGame") Начать новую
 </template>
 
 
-<script lang="ts">
+<script lang="ts" setup>
+
 import { Matrix } from '~/core/classes/Matrix'
 import { fillMatrix } from '~/core/matrix-fill'
 import { cellClick, makeFullStep } from '~/core/game'
 import { applyBooster } from '~/core/apply-boosters'
-import { BoosterTypes, CellTypes, SwapCells } from '~/core/types'
+import { BoosterTypes, CellTypes } from '~/core/types'
+import type { SwapCells } from '~/core/types'
 import { CellPointer } from '~/core/classes/CellPointer'
 import { useStorage } from '@vueuse/core'
-import EditorsComponent from '~/components/EditorsComponent/EditorsComponent.vue'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
 
 const storedMatrix = useStorage('matrix', '')
 
-export default {
-  data(): {
-    matrix: Matrix,
-    currentEditor: CellPointer | null,
-    steps: number,
-    points: number,
-    editorsMode: boolean,
-    gameOver: boolean,
-  } {
-    return {
-      matrix: new Matrix,
-      currentEditor: null,
+const matrix: Ref<Matrix> = ref(new Matrix())
 
-      steps: 10,
-      points: 0,
+const currentEditor: Ref<CellPointer | null> = ref(null)
+const editorsMode: Ref<boolean> = ref(false)
 
-      editorsMode: true,
-      gameOver: false,
-    }
-  },
+const initialSteps = 20;
+const steps = ref(initialSteps)
+const points = ref(0)
+const outpurPoints = computed(() => points.value * 10)
+const gameOver = computed(() => steps.value <= 0)
 
-  methods: {
-    async click(cellPointer: CellPointer) {
-      if (this.gameOver) return
-      if (this.currentEditor !== null) {
-        this.editorModeClick(cellPointer)
-        return
-      }
+const isProcessing = ref(false)
 
-      const isSuccessfulSwap: SwapCells | false = cellClick(this.matrix, cellPointer)
-      if (isSuccessfulSwap) {
-        this.decSteps()
-        this.points += await makeFullStep(this.matrix, isSuccessfulSwap)
-      }
-    },
+const click = async (cellPointer: CellPointer) => {
+  if (interactionDisabled.value) return
 
-    /** устанавливаем типы ячеек редактором */
-    editorModeClick(cellPointer: CellPointer) {
-      if (this.currentEditor === null) return
+  if (currentEditor.value !== null) {
+    editorModeClick(cellPointer)
+    return
+  }
 
-      if (this.currentEditor.cell.type === CellTypes.booster) {
-        cellPointer.cell.type = CellTypes.booster
-        cellPointer.cell.booster = this.currentEditor.cell.booster
-      } else {
-        cellPointer.cell.type = this.currentEditor.cell.type
-      }
-    },
+  const isSuccessfulSwap: SwapCells | false = cellClick(matrix.value, cellPointer)
 
-    /** Применение бустера */
-    async doubleClick(cellPointer: CellPointer) {
-      if (this.gameOver) return
-      if (cellPointer.cell.type === CellTypes.booster) {
-        this.decSteps()
-        this.points += await applyBooster(this.matrix, cellPointer.coords)
-      }
-    },
-
-    decSteps() {
-      this.steps--
-      if (this.steps === 0) this.gameOver = true
-    },
-
-  },
-
-  mounted() {
-    fillMatrix(this.matrix)
-  },
-
-  components: { EditorsComponent }
+  if (isSuccessfulSwap) {
+    isProcessing.value = true
+    decSteps()
+    points.value += await makeFullStep(matrix.value, isSuccessfulSwap)
+    isProcessing.value = false
+  }
 }
 
+const doubleClick = async (cellPointer: CellPointer) => {
+  if (interactionDisabled.value) return
+
+  if (cellPointer.cell.type === CellTypes.booster) {
+    isProcessing.value = true
+    decSteps()
+    points.value += await applyBooster(matrix.value, cellPointer.coords)
+    isProcessing.value = false
+  }
+}
+
+const editorModeClick = (cellPointer: CellPointer) => {
+  if (currentEditor.value === null) return
+
+  if (currentEditor.value.cell.type === CellTypes.booster) {
+    cellPointer.cell.type = CellTypes.booster
+    cellPointer.cell.booster = currentEditor.value.cell.booster
+  } else {
+    cellPointer.cell.type = currentEditor.value.cell.type
+  }
+}
+
+const startNewGame = () => {
+  matrix.value.clear()
+  fillMatrix(matrix.value)
+  steps.value = initialSteps
+  points.value = 0
+}
+
+const interactionDisabled = computed(() => {
+  return gameOver.value || isProcessing.value
+})
+
+const showFinalScreen = computed(() => {
+  return gameOver.value && !isProcessing.value
+})
+
+const decSteps = () => {
+  if (gameOver.value) return
+  steps.value--
+}
+
+onMounted(() => {
+  fillMatrix(matrix.value)
+})
 </script>
 
 <style lang="scss" scoped src="/styles/pages/page-game.scss"></style>

@@ -3,3 +3,42 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+
+  background-color: cornflowerblue;
+  &:hover {
+    background-color: darken(cornflowerblue, 10%);
+  }
+  &:active {
+    background-color: cornflowerblue;
+  }
+
+
+  &.btn_err {
+    background-color: indianred;
+    &:hover {
+      background-color: darken(indianred, 10%);
+    }
+    &:active {
+      background-color: indianred;
+    }
+  }
+  &.btn_scs {
+    background-color: mediumseagreen;
+    &:hover {
+      background-color: darken(mediumseagreen, 10%);
+    }
+    &:active {
+      background-color: mediumseagreen;
+    }
+  }
+}
