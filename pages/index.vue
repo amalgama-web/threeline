@@ -90,14 +90,6 @@ export default {
       if (this.steps === 0) this.gameOver = true
     },
 
-    /** Выбор ячейки редактора */
-    editorClick(cellPointer: CellPointer) {
-      if (this.currentEditor === cellPointer) {
-        this.currentEditor = null
-        return
-      }
-      this.currentEditor = cellPointer
-    }
   },
 
   mounted() {
