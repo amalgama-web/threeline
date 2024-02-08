@@ -1,5 +1,5 @@
 <template lang="pug">
-.container
+.game-container
   .counters.opposite
     .counters__item {{points}}
     .counters__item {{steps}}
@@ -9,9 +9,10 @@
       @cell-click="click($event)"
       @cell-dbl-click="doubleClick($event)"
     )
-  div {{currentEditor}}
   .editors-wrap
-    EditorsComponent.editors(v-model="currentEditor")
+    EditorsComponent.editors(
+      v-model="currentEditor"
+    )
 </template>
 
 
@@ -30,7 +31,6 @@ const storedMatrix = useStorage('matrix', '')
 export default {
   data(): {
     matrix: Matrix,
-    editors: CellPointer[],
     currentEditor: CellPointer | null,
     steps: number,
     points: number,
@@ -39,7 +39,6 @@ export default {
   } {
     return {
       matrix: new Matrix,
-      editors: [],
       currentEditor: null,
 
       steps: 10,
@@ -47,17 +46,6 @@ export default {
 
       editorsMode: true,
       gameOver: false,
-    }
-  },
-
-  computed: {
-    stringified: {
-      get() {
-        return this.matrix.matrixToString
-      },
-      set(nV: string) {
-        console.log(nV)
-      },
     }
   },
 
@@ -112,38 +100,8 @@ export default {
     }
   },
 
-  watch: {
-    stringified(nV) {
-      storedMatrix.value = nV
-    }
-  },
-
   mounted() {
-    if (storedMatrix.value) {
-      this.matrix = Matrix.fromString(storedMatrix.value)
-    } else {
-      fillMatrix(this.matrix)
-    }
-
-    // обычные ячейки
-    for (let key in CellTypes) {
-      const index = Number(key)
-      if (isNaN(index) || index === CellTypes.booster) continue
-
-      const pointer = new CellPointer({ r: 0, c: 0 }, index)
-      this.editors.push(pointer)
-    }
-
-    for (let key in BoosterTypes) {
-      const index = Number(key)
-      if (isNaN(index)) continue
-
-      const pointer = new CellPointer({ r: 0, c: 0 }, CellTypes.booster)
-      pointer.cell.booster = index
-      this.editors.push(pointer)
-    }
-
-
+    fillMatrix(this.matrix)
   },
 
   components: { EditorsComponent }
@@ -151,24 +109,4 @@ export default {
 
 </script>
 
-<style lang="scss" scoped>
-.matrix-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  .matrix {
-    font-size: 1rem;
-  }
-}
-.editors-wrap {
-  display: flex;
-  justify-content: center;
-
-  margin-top: 3rem;
-}
-.editors {
-  font-size: .8rem;
-  display: flex;
-  gap: 1em;
-}
-</style>
+<style lang="scss" scoped src="/styles/pages/page-game.scss"></style>

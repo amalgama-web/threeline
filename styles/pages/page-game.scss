@@ -1,0 +1,44 @@
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.matrix-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .matrix {
+    font-size: 1rem;
+  }
+}
+.editors-wrap {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 3rem;
+}
+.editors {
+  font-size: .8rem;
+  display: flex;
+  gap: 1em;
+}
+.counters {
+  width: 302px;
+  margin: 0 auto 20px;
+  &__item {
+    display: inline-block;
+    width: 70px;
+    padding: 15px 10px;
+
+    background-color: #fff;
+    border-radius: 6px;
+
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 700;
+    text-align: center;
+  }
+}

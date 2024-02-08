@@ -16,7 +16,7 @@ import { CellPointer } from '~/core/classes/CellPointer'
 
 interface Props {
   // прокидываем модель текущего редактора ячеек
-  modelValue: CellPointer
+  modelValue: CellPointer | null
 }
 
 const props = defineProps<Props>()
