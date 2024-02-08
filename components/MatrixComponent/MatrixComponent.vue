@@ -1,6 +1,16 @@
 <template lang="pug">
 .matrix
-  .matrix__row(v-for="row in matrix")
+  .matrix__row(v-if="withIndexes")
+    CellComponent(
+      v-for="(cellPointer, idx) in Array(matrix.width + 1).fill(new CellPointer())"
+    )
+      span(v-if="idx !== 0" ) {{idx - 1}}
+
+  .matrix__row(v-for="(row, idx) in matrix")
+    CellComponent(
+      v-if="withIndexes"
+    )
+      span {{idx}}
     CellComponent(
       v-for="cellPointer in row"
       :type="cellPointer.cell.type"
@@ -18,7 +28,8 @@ import { Matrix } from '~/core/classes/Matrix'
 import { CellPointer } from '~/core/classes/CellPointer'
 
 interface Props {
-  matrix: Matrix
+  matrix: Matrix,
+  withIndexes?: boolean,
 }
 
 const props = defineProps<Props>()

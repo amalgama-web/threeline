@@ -1,7 +1,8 @@
 <template lang="pug">
 .matrix-page
-  MatrixComponent(
+  MatrixComponent.matrix-page__matrix(
     :matrix="matrix"
+    :with-indexes="true"
     @cell-click="cellClick($event)"
     @cell-dbl-click="cellDblClick($event)"
   )
@@ -33,5 +34,9 @@ const cellDblClick = (cellPointer: CellPointer) => {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &__matrix {
+    font-size: 1rem;
+  }
 }
 </style>

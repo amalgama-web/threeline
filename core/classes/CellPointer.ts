@@ -8,7 +8,7 @@ export class CellPointer {
         c: 0
     }
 
-    constructor(coords: Coords, type: CellTypes = CellTypes.empty) {
+    constructor(coords: Coords = {r: 0, c: 0}, type: CellTypes = CellTypes.empty) {
         this.cell = new Cell(type);
         this.coords.r = coords.r;
         this.coords.c = coords.c;

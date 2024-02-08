@@ -1,5 +1,5 @@
 <template lang="pug">
-button.burger(@click="toggle" @mouseover="open")
+button.burger(@mouseover="open" :class="{open: isMenuOpen}")
   span.burger__inner
 
 transition(name="fade")
