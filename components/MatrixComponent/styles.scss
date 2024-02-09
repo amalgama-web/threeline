@@ -1,12 +1,12 @@
 .matrix {
-  $gap: 4px;
+  $gap: .5em;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: $gap;
 
-  font-size: .5rem;
+  font-size: 1rem;
   &__row {
     display: flex;
     align-items: center;

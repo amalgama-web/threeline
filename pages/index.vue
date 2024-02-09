@@ -2,7 +2,7 @@
 .game-container
 
   .counters.opposite
-    .counters__item {{ outpurPoints }}
+    .counters__item {{ outputPoints }}
     .counters__item {{ steps }}
 
   .matrix-wrap
@@ -21,7 +21,7 @@
     .game-over(v-if="showFinalScreen")
       .game-over__text
         p Игра завершена
-        p Вы набрали {{outpurPoints}}
+        p Вы набрали {{outputPoints}}
       button.btn.game-over__btn(@click="startNewGame") Начать новую
 </template>
 
@@ -35,11 +35,8 @@ import { applyBooster } from '~/core/apply-boosters'
 import { BoosterTypes, CellTypes } from '~/core/types'
 import type { SwapCells } from '~/core/types'
 import { CellPointer } from '~/core/classes/CellPointer'
-import { useStorage } from '@vueuse/core'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-
-const storedMatrix = useStorage('matrix', '')
 
 const matrix: Ref<Matrix> = ref(new Matrix())
 
@@ -49,7 +46,7 @@ const editorsMode: Ref<boolean> = ref(false)
 const initialSteps = 20;
 const steps = ref(initialSteps)
 const points = ref(0)
-const outpurPoints = computed(() => points.value * 10)
+const outputPoints = computed(() => points.value * 10)
 const gameOver = computed(() => steps.value <= 0)
 
 const isProcessing = ref(false)

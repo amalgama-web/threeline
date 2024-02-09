@@ -1,59 +1,28 @@
 <template lang="pug">
-.game
-  .game__grid
-    .game__grid-inner.mb-24
-      .grid.mr-8
-        .grid__row
-          CellComponent
-          CellComponent(v-for="(item, index) in Array(MATRIX_WIDTH)") {{index}}
-        .grid__row(v-for="(row, rowIndex) in matrix")
-          CellComponent {{rowIndex}}
-          CellComponent(
-            v-for="(cellPointer, cellIndex) in row"
-            :type="cellPointer.cell.type"
-            :highlighted="cellPointer.cell.isCellInShape"
-            :is-cell-for-removing="cellPointer.cell.isCellForRemoving"
-            :future-booster="cellPointer.cell.emergingBooster"
-            :booster="cellPointer.cell.booster"
-            @cell-click="matrixCellClick(cellPointer)"
-          )
-      .game__selectors
-        CellComponent(
-          v-for="(item, index) in cellTypesIDs"
-          :type="index"
-          @cell-click="selectorType = $event"
-          :highlighted="index === selectorType"
-        ) {{typesCounter[index]}}
+.sandbox
+  .sandbox__left
+    CountComponent(:matrix="matrix")
+    MatrixComponent(
+      :matrix="matrix"
+      @cell-click="cellClick($event)"
+    )
+    EditorsComponent(v-model="currentEditor")
 
-
-    .game__grid-inner.mb-24
-      .grid
-        .grid__row
-          CellComponent(
-            v-for="(cellPointer, cellIndex) in editors"
-            :type="cellPointer.cell.type"
-            :selected="cellPointer === currentEditor"
-            :booster="cellPointer.cell.booster"
-            @cell-click="editorClick(cellPointer)"
-          )
-    div {{stringMatrix}}
-    div {{jsonMatrix}}
-
-  .game__buttons
-    .mb-24
-      button.btn.mr-8(@click="fillRandom") Rand
-      button.btn.mr-8(@click="clr") Clr
+  .sandbox__right
+    div
+      button.btn.mr-8(@click="fillRandom") Заполнить
+      button.btn.mr-8(@click="clr") Очистить
+    div
       button.btn.mr-8(@click="consoleMatrix") Console Matrix
       button.btn.mr-8(@click="consoleVariants") Console Variants
-    .mb-24
-      button.btn.mr-8(@click="highlightShapes") Пдсв
-      button.btn.mr-8(@click="rst") Убр пдсв
+    div
+      button.btn.mr-8(@click="highlightShapes") Подсветить фигуры
+      button.btn.mr-8(@click="rst") Убрать подсветку
       button.btn.mr-8(@click="apply") Прим
       button.btn.mr-8(@click="getDown") Свиг
       button.btn.mr-8(@click="makeFullStep") =>
     div
       button.btn.btn_scs(@click="getVariants") Просчитать варианты
-
 
     variants(:variants="swapVariants" @variant-click="applySwap($event)")
 
@@ -94,9 +63,6 @@ export default {
   data() {
     return {
       matrix: new Matrix(),
-
-      MATRIX_HEIGHT: MATRIX_HEIGHT,
-      MATRIX_WIDTH: MATRIX_WIDTH,
 
       swapVariants: [],
       snowflakeVariants: null,
@@ -154,7 +120,7 @@ export default {
 
   methods: {
 
-    matrixCellClick(cellPointer) {
+    cellClick(cellPointer) {
       if (this.currentEditor === null) {
         cellClick(this.matrix, cellPointer)
         return;
@@ -277,4 +243,4 @@ export default {
 
 </script>
 
-<style lang="scss" src="/styles/page-game.scss"></style>
+<style lang="scss" src="/styles/pages/sandbox.scss"></style>

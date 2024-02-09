@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+div.editors
   CellComponent(
     v-for="cellPointer in editors"
     :type="cellPointer.cell.type"
@@ -21,7 +21,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const emits = defineEmits<{
-  'update:modelValue': [ CellPointer ]
+  'update:modelValue': [ CellPointer | null ]
 }>()
 
 const editors: Ref<CellPointer[]> = ref([])
@@ -44,11 +44,19 @@ for (let key in BoosterTypes) {
 }
 
 const cellClick = (cellPointer: CellPointer) => {
+  if (cellPointer === props.modelValue) {
+    emits('update:modelValue', null)
+    return
+  }
   emits('update:modelValue', cellPointer)
 }
 </script>
 
 
 <style scoped lang="scss">
-
+.editors {
+  display: flex;
+  font-size: 1rem;
+  gap: .7em;
+}
 </style>
