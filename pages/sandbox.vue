@@ -22,7 +22,11 @@
       button.btn.mr-8(@click="getDown") Свиг
       button.btn.mr-8(@click="makeFullStep") Полный шаг
     div
-      button.btn.btn_scs(@click="getVariants" :class="{'btn_loading': isCalcProcessing}") Просчитать варианты
+      button.btn.btn_scs(
+        @click="getVariants"
+        :disabled="isCalcProcessing"
+        :class="{'btn_loading': isCalcProcessing}"
+      ) Просчитать варианты
 
     p(v-if="alreadyHasShapes") Текущая матрица уже имеет фигуры, которые могут быть удалены
 
@@ -88,7 +92,7 @@ export default {
 
       alreadyHasShapes: false,
 
-      isCalcProcessing: true,
+      isCalcProcessing: false,
 
     }
   },
@@ -170,8 +174,8 @@ export default {
       await this.delay();
       this.matrix.matrixGetDown();
     },
-    async delay() {
-      return new Promise(r => setTimeout(r, 100))
+    async delay(delay = 100) {
+      return new Promise(r => setTimeout(r, delay))
     },
 
     rst() {
@@ -182,7 +186,7 @@ export default {
       this.matrix.clear();
     },
 
-    getVariants() {
+    async getVariants() {
       const matrixHasFigures = checkMatrixHasShapes(this.matrix)
       if (matrixHasFigures) {
         highlightShapes(this.matrix)
@@ -190,12 +194,13 @@ export default {
         this.swapVariants = []
         return
       }
+      this.alreadyHasShapes = false
+
       this.isCalcProcessing = true
-      nextTick(() => {
-        this.swapVariants = getSwapVariants(this.matrix, 3);
-        this.snowflakeVariants = getSnowflakesVariants(this.matrix);
-        this.isCalcProcessing = false
-      })
+      await this.delay(0)
+      this.swapVariants = getSwapVariants(this.matrix, 3);
+      this.snowflakeVariants = getSnowflakesVariants(this.matrix);
+      this.isCalcProcessing = false
     },
 
     applySwap(variant) {
