@@ -2,7 +2,7 @@
 .matrix
   .matrix__row(v-if="withIndexes")
     CellComponent(
-      v-for="(cellPointer, idx) in Array(matrix.width + 1).fill(new CellPointer())"
+      v-for="(cellPointer, idx) in emptyCells"
     )
       span(v-if="idx !== 0" ) {{idx - 1}}
 
@@ -37,6 +37,8 @@ const emit = defineEmits<{
   cellClick: [ CellPointer ],
   cellDblClick: [ CellPointer ],
 }>()
+
+const emptyCells = new Array(props.matrix.width + 1).fill(new CellPointer())
 
 const cellClick = (cellPointer: CellPointer) => {
   emit('cellClick', cellPointer)
