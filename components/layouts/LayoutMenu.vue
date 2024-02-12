@@ -31,7 +31,12 @@ const links = computed(() => [
   {
     name: 'Matrix component',
     to: '/matrix-component',
-  }
+  },
+  {
+    name: 'Test generation',
+    to: '/test-generate',
+  },
+
 ])
 const toggle = () => {
   isMenuOpen.value = !isMenuOpen.value
