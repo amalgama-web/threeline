@@ -132,6 +132,7 @@ export class Matrix extends Array<CellPointer[]> {
         this.swappedCells = swap
     }
 
+    /** Очистка матрицы от данных рассчета фигур */
     reset() {
         this.eachCell(({ cell }) => {
             cell.isCellInShape = false
@@ -151,6 +152,7 @@ export class Matrix extends Array<CellPointer[]> {
         })
     }
 
+    /** Полная очистка матрицы  */
     clear() {
         this.eachCell(cellPointer => {
             cellPointer.cell = new Cell()

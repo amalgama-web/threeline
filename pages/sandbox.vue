@@ -18,23 +18,24 @@
     div
       button.btn.mr-8(@click="highlightShapes") Подсветить фигуры
       button.btn.mr-8(@click="rst") Убрать подсветку
-      button.btn.mr-8(@click="apply") Прим
+      button.btn.mr-8(@click="apply") Удалить фигуры
       button.btn.mr-8(@click="getDown") Свиг
-      button.btn.mr-8(@click="makeFullStep") =>
+      button.btn.mr-8(@click="makeFullStep") Полный шаг
     div
-      button.btn.btn_scs(@click="getVariants") Просчитать варианты
+      button.btn.btn_scs(@click="getVariants" :class="{'btn_loading': isCalcProcessing}") Просчитать варианты
+
+    p(v-if="alreadyHasShapes") Текущая матрица уже имеет фигуры, которые могут быть удалены
 
     variants(:variants="swapVariants" @variant-click="applySwap($event)")
 
-
-    .variants(v-for="snowflake in snowflakeVariants" )
-      div(v-for="(directionVariants, directionId) in snowflake")
-        .variants__list-item
-          .variants__link(
-          ) {{`${SnowflakeMoveDirections[directionId]}:`}} {{directionVariants?.points}}
-
-          .variants__popup(v-if="directionVariants && directionVariants.childVariants")
-            variants(:variants="directionVariants.childVariants" @variant-click="applySwap($event)")
+    //.variants(v-for="snowflake in snowflakeVariants" )
+    //  div(v-for="(directionVariants, directionId) in snowflake")
+    //    .variants__list-item
+    //      .variants__link(
+    //      ) {{`${SnowflakeMoveDirections[directionId]}:`}} {{directionVariants?.points}}
+    //
+    //      .variants__popup(v-if="directionVariants && directionVariants.childVariants")
+    //        variants(:variants="directionVariants.childVariants" @variant-click="applySwap($event)")
 
 
 </template>
@@ -45,7 +46,6 @@
 //todo перевести на TS index.vue
 // import CellComponent from '/components/cell.vue'
 import Variants from '~/components/variants.vue';
-import { MATRIX_WIDTH, MATRIX_HEIGHT } from '~/core/constant-params';
 import { BoosterTypes, CellTypes, SnowflakeMoveDirections } from '~/core/types';
 import { symbolTypePairsRevert } from '~/core/matrix-manual-input';
 import { cutShapesAndSetBoosters } from '~/core/cut/cut-shapes-and-set-boosters';
@@ -56,6 +56,7 @@ import { Matrix } from '~/core/classes/Matrix';
 import { getSnowflakesVariants } from '~/core/snowflake-variants';
 import { CellPointer } from '~/core/classes/CellPointer';
 import { cellClick } from '~/core/game';
+import { checkMatrixHasShapes } from '~/core/checks';
 
 
 const cellTypesIDs = Object.values(CellTypes).filter(i => !isNaN(Number(i)) && Number(i) !== CellTypes.booster);
@@ -84,6 +85,10 @@ export default {
 
       editors: null,
       currentEditor: null,
+
+      alreadyHasShapes: false,
+
+      isCalcProcessing: true,
 
     }
   },
@@ -178,8 +183,19 @@ export default {
     },
 
     getVariants() {
-      this.swapVariants = getSwapVariants(this.matrix, 3);
-      this.snowflakeVariants = getSnowflakesVariants(this.matrix);
+      const matrixHasFigures = checkMatrixHasShapes(this.matrix)
+      if (matrixHasFigures) {
+        highlightShapes(this.matrix)
+        this.alreadyHasShapes = true
+        this.swapVariants = []
+        return
+      }
+      this.isCalcProcessing = true
+      nextTick(() => {
+        this.swapVariants = getSwapVariants(this.matrix, 3);
+        this.snowflakeVariants = getSnowflakesVariants(this.matrix);
+        this.isCalcProcessing = false
+      })
     },
 
     applySwap(variant) {
