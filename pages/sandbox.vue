@@ -30,7 +30,12 @@
 
     p(v-if="alreadyHasShapes") Текущая матрица уже имеет фигуры, которые могут быть удалены
 
-    variants(:variants="swapVariants" @variant-click="applySwap($event)")
+    variants(
+      :variants="swapVariants"
+      @variant-click="applySwap($event)"
+      @variant-mouseover="highlightSwap($event)"
+      @variant-mouseleave="unHighlightSwap($event)"
+    )
 
     //.variants(v-for="snowflake in snowflakeVariants" )
     //  div(v-for="(directionVariants, directionId) in snowflake")
@@ -187,6 +192,9 @@ export default {
     },
 
     async getVariants() {
+      this.alreadyHasShapes = false
+      this.swapVariants = []
+
       const matrixHasFigures = checkMatrixHasShapes(this.matrix)
       if (matrixHasFigures) {
         highlightShapes(this.matrix)
@@ -194,7 +202,6 @@ export default {
         this.swapVariants = []
         return
       }
-      this.alreadyHasShapes = false
 
       this.isCalcProcessing = true
       await this.delay(0)
@@ -210,6 +217,17 @@ export default {
       this.matrix.swapCells(variant.swap)
     },
 
+    highlightSwap(variant) {
+      const [{r: r1, c: c1}, {r: r2, c: c2}] = variant.swap
+      this.matrix[r1][c1].cell.isCellInShape = true
+      this.matrix[r2][c2].cell.isCellInShape = true
+    },
+
+    unHighlightSwap(variant) {
+      const [{r: r1, c: c1}, {r: r2, c: c2}] = variant.swap
+      this.matrix[r1][c1].cell.isCellInShape = false
+      this.matrix[r2][c2].cell.isCellInShape = false
+    },
 
     fillRandom() {
       fillMatrix(this.matrix);
